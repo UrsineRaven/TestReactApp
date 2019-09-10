@@ -1,0 +1,22 @@
+.symbol {
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 0.75rem;
+  vertical-align: initial !important;
+  text-align: center;
+}
+
+button.symbol {
+  position: relative;
+  padding: 0.6rem;
+}
+
+button.symbol span {
+  position: absolute;
+  top: 0;
+  left: 0.15rem;
+}
+
+.btn-col {
+  line-height: 0;
+}
