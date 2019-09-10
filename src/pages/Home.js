@@ -15,7 +15,7 @@ function Row(props) {
       <td>{props.time}</td>
       <td>{props.event}</td>
       <td className="btn-col">
-        <button class="text-danger symbol" onClick={props.onDelete}>
+        <button className="text-danger symbol" onClick={props.onDelete}>
           <span>&times;</span>
         </button>
       </td>
@@ -42,6 +42,7 @@ function Home() {
         time={row.time}
         event={row.event}
         onDelete={() => handleDelete(row.id)}
+        key={row.id}
       />
     );
   });
@@ -51,9 +52,11 @@ function Home() {
       <h2>Home</h2>
       <Table striped bordered size="sm">
         <thead>
-          <th className="col-auto">Time</th>
-          <th className="col">Event</th>
-          <th className="symbol col-1">&times;</th>
+          <tr>
+            <th className="col-auto">Time</th>
+            <th className="col">Event</th>
+            <th className="symbol col-1">&times;</th>
+          </tr>
         </thead>
         <tbody>{tableRows}</tbody>
       </Table>
