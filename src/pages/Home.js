@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Home.css';
 import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
@@ -37,7 +37,7 @@ function NewEventCard(props) {
   });
   return (
     <Card border="primary">
-      <Card.Header as="h5">New Events:</Card.Header>
+      <Card.Header>New Events:</Card.Header>
       <Card.Body>
         <Form>
           <Form.Group as={Row} controlId="inputTime">
@@ -72,6 +72,11 @@ function TableRow(props) {
 function Home() {
   const [rows, setRows] = useState(testDataEntries);
   const [evtTypes] = useState(testDataEventTypes);
+  const [updateTime, setUpdateTime] = useState(new Date().toLocaleString());
+
+  useEffect(() => {
+    setUpdateTime(new Date().toLocaleString());
+  }, [rows, evtTypes]);
 
   function handleEventClick(id) {
     const newId = Math.max(...rows.map(e => e.id)) + 1;
@@ -113,7 +118,10 @@ function Home() {
 
   return (
     <div>
-      <h2>Home</h2>
+      <h5 class="mt-3">
+        {'Page last updated: '}
+        <small className="text-muted">{updateTime}</small>
+      </h5>
       <NewEventCard
         eventTypes={testDataEventTypes}
         evtClick={handleEventClick}
