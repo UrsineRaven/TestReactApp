@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 const testDataEntries = [
   { time: '12:34', event: '1', id: '123' },
@@ -18,6 +19,7 @@ const testDataEntries = [
 function Home(props) {
   const [rows, setRows] = useState(testDataEntries);
   const [updateTime, setUpdateTime] = useState(new Date().toLocaleString());
+  const [modalInfo, setModalInfo] = useState('');
 
   useEffect(() => {
     setUpdateTime(new Date().toLocaleString());
@@ -52,19 +54,32 @@ function Home(props) {
   });
 
   const tableRows = rows.map(row => {
+    const evtName = eventTypes[row.event].name;
     return (
       <TableRow
         time={row.time}
-        event={eventTypes[row.event].name}
+        event={evtName}
         formatting={eventTypes[row.event].formatting}
-        onDelete={() => handleDelete(row.id)}
+        onDelete={() =>
+          setModalInfo({
+            deleteId: row.id,
+            text: (
+              <>
+                {'Are you sure you want to delete '}
+                <strong>{evtName}</strong>
+                {' at '}
+                <strong>{row.time}</strong>?
+              </>
+            )
+          })
+        }
         key={row.id}
       />
     );
   });
 
   return (
-    <div>
+    <>
       <h5 className="mt-3">
         {'Page last updated: '}
         <small className="text-muted">{updateTime}</small>
@@ -80,7 +95,33 @@ function Home(props) {
         </thead>
         <tbody>{tableRows}</tbody>
       </Table>
-    </div>
+
+      <Modal show={!!modalInfo}>
+        <Modal.Header>
+          <Modal.Title>Are you sure?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modalInfo.text}</Modal.Body>
+        <Modal.Footer className="row justify-content-around">
+          <Button
+            variant="danger"
+            className="col-md-3 col-5"
+            onClick={() => {
+              handleDelete(modalInfo.deleteId);
+              setModalInfo('');
+            }}
+          >
+            Yes
+          </Button>
+          <Button
+            variant="primary"
+            className="col-md-3 col-5"
+            onClick={() => setModalInfo('')}
+          >
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 }
 
