@@ -20,3 +20,15 @@ button.symbol span {
 .btn-col {
   line-height: 0;
 }
+
+.btn:focus.btn-secondary:focus {
+  box-shadow: initial;
+}
+
+.small-col {
+  white-space: nowrap;
+}
+
+.big-col {
+  width: 100%;
+}

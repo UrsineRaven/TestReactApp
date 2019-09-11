@@ -23,23 +23,21 @@ const testDataEntries = [
 function NewEventCard(props) {
   const eventButtons = props.eventTypes.map(evt => {
     return (
-      <Col lg={2} md={3} sm={4} xs={6}>
-        <Button
-          type="submit"
-          variant="secondary"
-          title={'New ' + evt.name}
-          key={evt.id}
-          onClick={() => props.evtClick(props.id)}
-          style={{ width: '100%' }}
-        >
-          {evt.name}
-        </Button>
-      </Col>
+      <Button
+        variant="secondary"
+        title={'New ' + evt.name}
+        key={evt.id}
+        onClick={() => props.evtClick(props.id)}
+        style={{ width: '100%' }}
+        className="col-lg-2 col-md-3 col-sm-4 col-6"
+      >
+        {evt.name}
+      </Button>
     );
   });
   return (
     <Card border="primary">
-      <Card.Header>New Events:</Card.Header>
+      <Card.Header as="h5">New Events:</Card.Header>
       <Card.Body>
         <Form>
           <Form.Group as={Row} controlId="inputTime">
@@ -60,8 +58,8 @@ function NewEventCard(props) {
 function TableRow(props) {
   return (
     <tr>
-      <td>{props.time}</td>
-      <td>{props.event}</td>
+      <td className="small-col">{props.time}</td>
+      <td className="big-col">{props.event}</td>
       <td className="btn-col">
         <button className="text-danger symbol" onClick={props.onDelete}>
           <span>&times;</span>
@@ -76,7 +74,9 @@ function Home() {
 
   function handleEventClick(id) {
     setRows(
-      rows.concat([{ time: Date.now().toLocaleString(), event: id, id: 99 }])
+      rows.concat([
+        { time: new Date().toLocaleTimeString(), event: id, id: 99 }
+      ])
     );
   }
 
@@ -108,12 +108,12 @@ function Home() {
         eventTypes={testDataEventTypes}
         evtClick={handleEventClick}
       />
-      <Table striped bordered size="sm">
+      <Table striped bordered size="sm" className="mt-2">
         <thead>
           <tr>
-            <th className="col-auto">Time</th>
-            <th className="col">Event</th>
-            <th className="symbol col-1">&times;</th>
+            <th className="small-col">Time</th>
+            <th className="big-col">Event</th>
+            <th className="symbol">&times;</th>
           </tr>
         </thead>
         <tbody>{tableRows}</tbody>
