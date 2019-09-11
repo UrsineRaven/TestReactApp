@@ -32,3 +32,7 @@ button.symbol span {
 .big-col {
   width: 100%;
 }
+
+.modal-footer.row {
+  margin: 0;
+}
