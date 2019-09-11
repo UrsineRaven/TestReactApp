@@ -27,7 +27,7 @@ function NewEventCard(props) {
         variant="secondary"
         title={'New ' + evt.name}
         key={evt.id}
-        onClick={() => props.evtClick(props.id)}
+        onClick={() => props.evtClick(evt.id)}
         style={{ width: '100%' }}
         className="col-lg-2 col-md-3 col-sm-4 col-6"
       >
@@ -71,11 +71,21 @@ function TableRow(props) {
 
 function Home() {
   const [rows, setRows] = useState(testDataEntries);
+  const [evtTypes] = useState(testDataEventTypes);
 
   function handleEventClick(id) {
+    const newId = Math.max(...rows.map(e => e.id)) + 1;
+    let eventName;
+    for (let i = 0; i < evtTypes.length; i++) {
+      if (evtTypes[i].id === id) {
+        eventName = evtTypes[i].name;
+        break;
+      }
+    }
+
     setRows(
       rows.concat([
-        { time: new Date().toLocaleTimeString(), event: id, id: 99 }
+        { time: new Date().toLocaleTimeString(), event: eventName, id: newId }
       ])
     );
   }
