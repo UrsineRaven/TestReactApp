@@ -9,41 +9,13 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-const testDataEntries = [
-  { time: '12:34', event: '1', id: '123' },
-  { time: '16:30', event: '2', id: '235' },
-  { time: '17:24', event: '3', id: '332' },
-  { time: '2:19:06 PM', event: '4', id: '333' }
-];
-
 function Home(props) {
-  const [rows, setRows] = useState(testDataEntries);
   const [updateTime, setUpdateTime] = useState(new Date().toLocaleString());
   const [modalInfo, setModalInfo] = useState('');
 
   useEffect(() => {
     setUpdateTime(new Date().toLocaleString());
-  }, [rows, props.evtTypes]);
-
-  function handleEventClick(id) {
-    const newId = Math.max(...rows.map(e => e.id)) + 1;
-
-    setRows(
-      rows.concat([
-        { time: new Date().toLocaleTimeString(), event: id, id: newId }
-      ])
-    );
-  }
-
-  function handleDelete(id) {
-    let resultRows = rows.slice();
-    for (var i = 0; i < resultRows.length; i++) {
-      if (resultRows[i].id === id) {
-        resultRows.splice(i, 1);
-      }
-    }
-    setRows(resultRows);
-  }
+  }, [props.rows, props.evtTypes]);
 
   const eventTypes = {};
   props.evtTypes.forEach(type => {
@@ -53,7 +25,7 @@ function Home(props) {
     };
   });
 
-  const tableRows = rows.map(row => {
+  const tableRows = props.rows.map(row => {
     const evtName = eventTypes[row.event].name;
     return (
       <TableRow
@@ -84,7 +56,7 @@ function Home(props) {
         {'Page last updated: '}
         <small className="text-muted">{updateTime}</small>
       </h5>
-      <NewEventCard eventTypes={props.evtTypes} evtClick={handleEventClick} />
+      <NewEventCard eventTypes={props.evtTypes} evtClick={props.onNewEvent} />
       <Table striped bordered size="sm" className="mt-2">
         <thead>
           <tr>
@@ -106,7 +78,7 @@ function Home(props) {
             variant="danger"
             className="col-md-3 col-5"
             onClick={() => {
-              handleDelete(modalInfo.deleteId);
+              props.onDeleteEvent(modalInfo.deleteId);
               setModalInfo('');
             }}
           >
