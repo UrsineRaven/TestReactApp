@@ -16,17 +16,24 @@ function History(props) {
     };
   });
 
-  const tableRows = props.rows.map(row => {
-    return (
-      <TableRow
-        date={row.date}
-        time={row.time}
-        event={eventTypes[row.event].name}
-        formatting={eventTypes[row.event].formatting}
-        key={row.id}
-      />
-    );
-  });
+  const tableRows = props.rows
+    .filter(row => {
+      return true; // need to apply filters here
+    })
+    .sort((row1, row2) =>
+      (row2.date + row2.time).localeCompare(row1.date + row1.time)
+    ) // sort descending by date and time
+    .map(row => {
+      return (
+        <TableRow
+          date={row.date}
+          time={row.time}
+          event={eventTypes[row.event].name}
+          formatting={eventTypes[row.event].formatting}
+          key={row.id}
+        />
+      );
+    });
 
   return (
     <>
@@ -61,10 +68,10 @@ function FilterCard(props) {
       <Card.Header>Filter Events:</Card.Header>
       <Card.Body>
         <Form>
-          {/* Date (range?) */}
-          {/* Event Type */}
-          {/* Groups (by day, week?, month&year, year?) */}
-          {/* Time range? */}
+          {/* Date (range?)  */}
+          {/* Event Type  */}
+          {/* Groups (by day, week?, month&year, year?)  */}
+          {/* Time range?  */}
           <Form.Group as={Row} controlId="inputTime">
             <Form.Label column xs="auto">
               Time (if not now):
