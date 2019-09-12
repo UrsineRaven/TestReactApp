@@ -2,6 +2,8 @@ import React from 'react';
 import { useState } from 'react';
 import { Route } from 'react-router-dom';
 
+import { getLocalIsoDateAndTime } from './Helpers';
+
 // Pages
 import History from '../pages/History';
 import Home from '../pages/Home';
@@ -21,13 +23,17 @@ const testDataEventTypes = [
 ];
 
 const testDataEntries = [
-  { time: '12:34', event: '1', id: '123' },
-  { time: '16:30', event: '2', id: '235' },
-  { time: '17:24', event: '3', id: '332' },
-  { time: '2:19:06 PM', event: '4', id: '333' }
+  { date: '2019-09-11', time: '12:34', event: '1', id: '123' },
+  { date: '2019-09-11', time: '16:30', event: '2', id: '235' },
+  { date: '2019-09-11', time: '17:24', event: '3', id: '332' },
+  { date: '2019-09-11', time: '14:19:06', event: '4', id: '331' },
+  { date: '2019-09-12', time: '12:34', event: '4', id: '400' },
+  { date: '2019-09-12', time: '16:30', event: '3', id: '404' },
+  { date: '2019-09-12', time: '17:24', event: '2', id: '408' },
+  { date: '2019-09-12', time: '14:19:06', event: '1', id: '402' }
 ];
 
-function DatabaseManagedPages() {
+function DatabaseManagedRoutes() {
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [events, setEvents] = useState(testDataEntries);
 
@@ -42,12 +48,13 @@ function DatabaseManagedPages() {
     }
   }
 
-  function handleNewEvent(id) {
+  function handleNewEvent(id, timeStr) {
     const newId = Math.max(...events.map(e => e.id)) + 1;
+    const [date, time] = getLocalIsoDateAndTime(new Date());
 
     setEvents(
       events.concat([
-        { time: new Date().toLocaleTimeString(), event: id, id: newId }
+        { date: date, time: timeStr || time, event: id, id: newId }
       ])
     );
   }
@@ -86,4 +93,4 @@ function DatabaseManagedPages() {
   ];
 }
 
-export default DatabaseManagedPages;
+export default DatabaseManagedRoutes;

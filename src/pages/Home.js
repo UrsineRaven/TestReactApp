@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import './Home.css';
+import { getLocalIsoString } from '../components/Helpers';
 import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
@@ -17,6 +18,7 @@ function Home(props) {
     setUpdateTime(new Date().toLocaleString());
   }, [props.rows, props.evtTypes]);
 
+  const todaysDate = getLocalIsoString(new Date()).split('T')[0];
   const eventTypes = {};
   props.evtTypes.forEach(type => {
     eventTypes[type.id] = {
@@ -25,30 +27,37 @@ function Home(props) {
     };
   });
 
-  const tableRows = props.rows.map(row => {
-    const evtName = eventTypes[row.event].name;
-    return (
-      <TableRow
-        time={row.time}
-        event={evtName}
-        formatting={eventTypes[row.event].formatting}
-        onDelete={() =>
-          setModalInfo({
-            deleteId: row.id,
-            text: (
-              <>
-                {'Are you sure you want to delete '}
-                <strong>{evtName}</strong>
-                {' at '}
-                <strong>{row.time}</strong>?
-              </>
-            )
-          })
-        }
-        key={row.id}
-      />
-    );
-  });
+  const tableRows = props.rows
+    .filter(row => {
+      return row.date === todaysDate;
+    })
+    .sort((row1, row2) =>
+      (row2.date + row2.time).localeCompare(row1.date + row1.time)
+    ) // sort descending by date and time
+    .map(row => {
+      const evtName = eventTypes[row.event].name;
+      return (
+        <TableRow
+          time={row.time}
+          event={evtName}
+          formatting={eventTypes[row.event].formatting}
+          onDelete={() =>
+            setModalInfo({
+              deleteId: row.id,
+              text: (
+                <>
+                  {'Are you sure you want to delete '}
+                  <strong>{evtName}</strong>
+                  {' at '}
+                  <strong>{row.time}</strong>?
+                </>
+              )
+            })
+          }
+          key={row.id}
+        />
+      );
+    });
 
   return (
     <>
@@ -112,6 +121,13 @@ function TableRow(props) {
 }
 
 function NewEventCard(props) {
+  const [time, setTime] = useState('');
+
+  function handleNewEvent(id) {
+    props.evtClick(id, time && time);
+    setTime('');
+  }
+
   const eventButtons = props.eventTypes.map(evt => {
     return (
       !evt.hidden && (
@@ -119,7 +135,7 @@ function NewEventCard(props) {
           variant="secondary"
           title={'New ' + evt.name}
           key={evt.id}
-          onClick={() => props.evtClick(evt.id)}
+          onClick={() => handleNewEvent(evt.id)}
           style={{ width: '100%' }}
           className="col-lg-2 col-md-3 col-sm-4 col-6"
         >
@@ -138,7 +154,11 @@ function NewEventCard(props) {
               Time (if not now):
             </Form.Label>
             <Col>
-              <Form.Control type="time" />
+              <Form.Control
+                type="time"
+                value={time}
+                onChange={newTime => setTime(newTime.target.value)}
+              />
             </Col>
           </Form.Group>
           <Row>{eventButtons}</Row>
