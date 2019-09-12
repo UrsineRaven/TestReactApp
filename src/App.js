@@ -29,6 +29,7 @@ const testDataEventTypes = [
 
 // Router
 function AppRouter() {
+  const [navCollapsed, setNavCollapsed] = useState(true);
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
 
   function handleEditType(evt) {
@@ -42,16 +43,31 @@ function AppRouter() {
     }
   }
 
+  function changeCollapsed(toggle) {
+    let collapse;
+    if (toggle) collapse = !navCollapsed;
+    else collapse = true;
+    setNavCollapsed(collapse);
+  }
+
   return (
     <Router>
       <Container>
-        <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
+        <Navbar
+          expand="lg"
+          bg="primary"
+          variant="dark"
+          expanded={!navCollapsed}
+        >
           <Navbar.Brand href="/">
             <Logo className="d-inline-block align-top logo" />
             {' TestApp'}
           </Navbar.Brand>
-          <Navbar.Toggle />
-          <Navbar.Collapse>
+          <Navbar.Toggle onClick={() => changeCollapsed(true)} />
+          <Navbar.Collapse
+            className="justify-content-end"
+            onClick={() => changeCollapsed()}
+          >
             <Nav>
               <Nav.Link as={Link} to="/">
                 Home
