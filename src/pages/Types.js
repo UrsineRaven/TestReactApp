@@ -13,6 +13,7 @@ function Types(props) {
   const [deleteType, setDeleteType] = useState(false);
   const [newType, setNewType] = useState(true);
   const [alertText, setAlertText] = useState('');
+  const [showHidden, setShowHidden] = useState(false);
 
   useEffect(() => {
     if (!id) setId(Math.max(...props.evtTypes.map(t => t.id), 0) + 1);
@@ -25,7 +26,7 @@ function Types(props) {
     setId(type.id || '');
     setName(type.name || '');
     setFormatting(type.formatting || '');
-    setDeleteType(false);
+    setDeleteType(type.hidden || false);
   }
 
   function handleSubmit() {
@@ -70,6 +71,7 @@ function Types(props) {
               value={id}
               onChange={newType => handleTypeChange(newType)}
               description="Choose an event type if you want to modify an existing event."
+              nofilter={showHidden}
             />
             <InputName
               value={name}
@@ -86,9 +88,19 @@ function Types(props) {
               onChange={newValue => setDeleteType(newValue)}
               show={!newType}
             />
-            <Button variant="primary" onClick={() => handleSubmit()}>
-              Submit
-            </Button>
+            <span>
+              <Button variant="primary" onClick={() => handleSubmit()}>
+                Submit
+              </Button>
+              <Form.Check // TODO: move this to the settings page
+                className="form-text text-muted"
+                style={{ float: 'right' }}
+                type="checkbox"
+                label="Show deleted event types"
+                checked={showHidden}
+                onChange={evt => setShowHidden(evt.target.checked)}
+              ></Form.Check>
+            </span>
           </Form>
         </Card.Body>
       </Card>
@@ -97,10 +109,6 @@ function Types(props) {
 }
 
 function InputName(props) {
-  function handleChange(evt) {
-    props.onChange(evt.target.value);
-  }
-
   return (
     <Form.Group controlId="inputName">
       <Form.Label>Event Type Name</Form.Label>
@@ -109,17 +117,13 @@ function InputName(props) {
         type="text"
         placeholder="Enter the event type name"
         value={props.value}
-        onChange={handleChange}
+        onChange={evt => props.onChange(evt.target.value)}
       ></Form.Control>
     </Form.Group>
   );
 }
 
 function InputFormatting(props) {
-  function handleChange(evt) {
-    props.onChange(evt.target.value);
-  }
-
   return (
     <Form.Group controlId="inputFormatting">
       <Form.Label>Event Type Formatting</Form.Label>
@@ -127,17 +131,13 @@ function InputFormatting(props) {
         type="text"
         placeholder="Enter the event type formatting"
         value={props.value}
-        onChange={handleChange}
+        onChange={evt => props.onChange(evt.target.value)}
       ></Form.Control>
     </Form.Group>
   );
 }
 
 function CheckDelete(props) {
-  function handleChange(evt) {
-    props.onChange(evt.target.checked);
-  }
-
   return (
     props.show && (
       <Form.Group controlId="inputDelete">
@@ -146,7 +146,7 @@ function CheckDelete(props) {
           type="checkbox"
           label="Delete this event type!"
           checked={props.value}
-          onChange={handleChange}
+          onChange={evt => props.onChange(evt.target.checked)}
         ></Form.Check>
       </Form.Group>
     )
