@@ -47,7 +47,7 @@ function EventTypeSelector(props) {
         {evtTypes}
       </Form.Control>
       {props.description && (
-        <Form.Text as="small" className="muted">
+        <Form.Text as="small" className="text-muted">
           {props.description}
         </Form.Text>
       )}

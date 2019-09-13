@@ -65,32 +65,30 @@ function Types(props) {
       <Card border="primary">
         <Card.Body>
           <Form>
-            <fieldset>
-              <EventTypeSelector
-                evtTypes={props.evtTypes}
-                value={id}
-                onChange={newType => handleTypeChange(newType)}
-                description="Choose an event type if you want to modify an existing event."
-              />
-              <InputName
-                value={name}
-                onChange={newName => setName(newName)}
-                disabled={deleteType}
-              />
-              <InputFormatting
-                value={formatting}
-                onChange={newFormatting => setFormatting(newFormatting)}
-                disabled={deleteType}
-              />
-              <CheckDelete
-                value={deleteType}
-                onChange={newValue => setDeleteType(newValue)}
-                show={!newType}
-              />
-              <Button variant="primary" onClick={() => handleSubmit()}>
-                Submit
-              </Button>
-            </fieldset>
+            <EventTypeSelector
+              evtTypes={props.evtTypes}
+              value={id}
+              onChange={newType => handleTypeChange(newType)}
+              description="Choose an event type if you want to modify an existing event."
+            />
+            <InputName
+              value={name}
+              onChange={newName => setName(newName)}
+              disabled={deleteType}
+            />
+            <InputFormatting
+              value={formatting}
+              onChange={newFormatting => setFormatting(newFormatting)}
+              disabled={deleteType}
+            />
+            <CheckDelete
+              value={deleteType}
+              onChange={newValue => setDeleteType(newValue)}
+              show={!newType}
+            />
+            <Button variant="primary" onClick={() => handleSubmit()}>
+              Submit
+            </Button>
           </Form>
         </Card.Body>
       </Card>

@@ -29,17 +29,17 @@ function NavigationBar() {
           <Nav.Link as={Link} to="/">
             Home
           </Nav.Link>
-          <Nav.Link as={Link} to="/type-management/">
-            Event Type Management
-          </Nav.Link>
           <Nav.Link as={Link} to="/history/">
             Event History
           </Nav.Link>
+          <Nav.Link as={Link} to="/type-management/">
+            Event Type Management
+          </Nav.Link>
+          <Nav.Link as={Link} to="/settings/">
+            Settings
+          </Nav.Link>
           <Nav.Link as={Link} to="/about/">
             About
-          </Nav.Link>
-          <Nav.Link as={Link} to="/users/">
-            Users
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>

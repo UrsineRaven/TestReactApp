@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
+import useInterval from '../hooks/useInterval';
+import useLocalStorage from '../hooks/useLocalStorage';
 import History from '../pages/History';
 import Home from '../pages/Home';
+import Settings from '../pages/Settings';
 import Types from '../pages/Types';
 import { getLocalIsoDateAndTime } from './Helpers';
 
@@ -32,6 +35,19 @@ const testDataEntries = [
 function DatabaseManagedRoutes() {
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [events, setEvents] = useState(testDataEntries);
+  const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
+
+  useInterval(
+    () => {
+      refreshData();
+    },
+    pollInterval > 0 ? pollInterval * 60000 : null
+  );
+
+  function refreshData() {
+    // TODO: Refresh data from the database here
+    alert('pretend the data was refreshed :)');
+  }
 
   function handleEditType(evt) {
     const index = evtTypes.findIndex(e => e.id === evt.id);
@@ -75,9 +91,15 @@ function DatabaseManagedRoutes() {
           rows={events}
           onNewEvent={handleNewEvent}
           onDeleteEvent={handleDeleteEvent}
+          onRefresh={refreshData}
         />
       )}
       key="home"
+    />,
+    <Route
+      path="/history/"
+      render={() => <History evtTypes={evtTypes} rows={events} />}
+      key="history"
     />,
     <Route
       path="/type-management/"
@@ -85,9 +107,14 @@ function DatabaseManagedRoutes() {
       key="type-management"
     />,
     <Route
-      path="/history/"
-      render={() => <History evtTypes={evtTypes} rows={events} />}
-      key="history"
+      path="/settings/"
+      render={() => (
+        <Settings
+          pollInterval={pollInterval}
+          onChangePollInterval={newVal => setPollInterval(newVal)}
+        />
+      )}
+      key="settings"
     />
   ];
 }

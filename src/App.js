@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import DbRoutes from './components/DatabaseManagedRoutes';
 import NavigationBar from './components/NavigationBar';
 import About from './pages/About';
-import Users from './pages/Users';
 
 // Router
 function AppRouter() {
@@ -15,7 +14,6 @@ function AppRouter() {
 
         {DbRoutes()}
         <Route path="/about/" component={About} />
-        <Route path="/users/" component={Users} />
       </Container>
     </Router>
   );
