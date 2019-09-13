@@ -26,37 +26,64 @@ function Home(props) {
     };
   });
 
-  const tableRows = props.rows
+  let sortedFilteredRows = props.rows
     .filter(row => {
       return row.date === todaysDate;
     })
-    .sort((row1, row2) =>
-      (row2.date + row2.time).localeCompare(row1.date + row1.time)
-    ) // sort descending by date and time
-    .map(row => {
-      const evtName = eventTypes[row.event].name;
-      return (
-        <TableRow
-          time={row.time}
-          event={evtName}
-          formatting={eventTypes[row.event].formatting}
-          onDelete={() =>
-            setModalInfo({
-              deleteId: row.id,
-              text: (
-                <>
-                  {'Are you sure you want to delete '}
-                  <strong>{evtName}</strong>
-                  {' at '}
-                  <strong>{row.time}</strong>?
-                </>
-              )
-            })
-          }
-          key={row.id}
-        />
-      );
-    });
+    .sort(
+      (row1, row2) =>
+        (row2.date + row2.time).localeCompare(row1.date + row1.time) // sort descending by date and time
+    );
+
+  // if there are no rows, insert a placeholder row
+  if (!sortedFilteredRows.length)
+    sortedFilteredRows = [
+      {
+        evtName: 'No Events yet for today',
+        evtFormat:
+          '{ ' +
+          '  "className":"table-active", ' +
+          '  "style": { ' +
+          '    "fontStyle":"italic", ' +
+          '    "textAlign":"center" ' +
+          '  }' +
+          '}',
+        id: '',
+        time: ''
+      }
+    ];
+
+  const tableRows = sortedFilteredRows.map(row => {
+    let evtName, evtFormat;
+    if (row.evtName && row.evtFormat) {
+      evtName = row.evtName;
+      evtFormat = row.evtFormat;
+    } else {
+      evtName = eventTypes[row.event].name;
+      evtFormat = eventTypes[row.event].formatting;
+    }
+    return (
+      <TableRow
+        time={row.time}
+        event={evtName}
+        formatting={evtFormat}
+        onDelete={() =>
+          setModalInfo({
+            deleteId: row.id,
+            text: (
+              <>
+                {'Are you sure you want to delete '}
+                <strong>{evtName}</strong>
+                {' at '}
+                <strong>{row.time}</strong>?
+              </>
+            )
+          })
+        }
+        key={row.id}
+      />
+    );
+  });
 
   return (
     <>
@@ -120,9 +147,11 @@ function TableRow(props) {
       <td className="small-col">{props.time}</td>
       <td className="big-col">{props.event}</td>
       <td className="btn-col">
-        <button className="text-danger symbol" onClick={props.onDelete}>
-          <span>&times;</span>
-        </button>
+        {props.time !== '' && ( // if there's no time, it's probably the placeholder row, so don't render the button
+          <button className="text-danger symbol" onClick={props.onDelete}>
+            <span>&times;</span>
+          </button>
+        )}
       </td>
     </tr>
   );
