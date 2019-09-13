@@ -53,10 +53,12 @@ function DatabaseManagedRoutes() {
     const index = evtTypes.findIndex(e => e.id === evt.id);
     if (index === -1) {
       setEvtTypes(evtTypes.concat([evt]));
+      // TODO: push event type to database
     } else {
       let cp = evtTypes.slice();
       cp.splice(index, 1, evt);
       setEvtTypes(cp);
+      // TODO: update event type in database
     }
   }
 
@@ -69,16 +71,15 @@ function DatabaseManagedRoutes() {
         { date: date, time: timeStr || time, event: id, id: newId }
       ])
     );
+    // TODO: push event to database
   }
 
   function handleDeleteEvent(id) {
-    let resultRows = events.slice();
-    for (var i = 0; i < resultRows.length; i++) {
-      if (resultRows[i].id === id) {
-        resultRows.splice(i, 1);
-      }
-    }
+    const resultRows = events.slice();
+    const index = resultRows.findIndex(r => r.id === id);
+    resultRows.splice(index, 1);
     setEvents(resultRows);
+    // TODO: delete event from database
   }
 
   return [

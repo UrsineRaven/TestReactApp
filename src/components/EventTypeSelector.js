@@ -11,12 +11,13 @@ import Row from 'react-bootstrap/Row';
  * @param {string} [props.defaultLabel="Create New"] - The label to show for the default value (defaults to 'Create New')
  * @param {string} [props.description] - An optional description to display below the field
  * @param {boolean} [props.inline] - Make the form group one line. Defaults to false
+ * @param {boolean} [props.nofilter] - Don't filter out hidden event types
  */
 function EventTypeSelector(props) {
   const defaultLabel = props.defaultLabel || 'Create New';
   let evtTypes = props.evtTypes.map(evt => {
     return (
-      !evt.hidden && (
+      (props.nofilter || !evt.hidden) && (
         <option value={evt.id} key={evt.id}>
           {evt.name}
         </option>
