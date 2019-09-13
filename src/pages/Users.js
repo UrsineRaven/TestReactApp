@@ -1,5 +1,8 @@
 import React from 'react';
+import PageHeading from '../components/PageHeading';
+
 function Users() {
-  return <h2>Users</h2>;
+  return <PageHeading>Users</PageHeading>;
 }
+
 export default Users;

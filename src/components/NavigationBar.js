@@ -1,11 +1,8 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 import { ReactComponent as Logo } from '../resources/logo.svg';
-
-// Bootstrap components
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
 
 function NavigationBar() {
   const [navCollapsed, setNavCollapsed] = useState(true);
