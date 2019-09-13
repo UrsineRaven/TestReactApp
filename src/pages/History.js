@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/EventTypeSelector';
 import { getLocalIsoString } from '../components/Helpers';
+import PageHeading from '../components/PageHeading';
 
 function History(props) {
   const [type, setType] = useState('');
@@ -46,6 +47,7 @@ function History(props) {
 
   return (
     <>
+      <PageHeading>Event History</PageHeading>
       <FilterCard
         eventTypes={props.evtTypes}
         typeValue={type}
@@ -81,7 +83,7 @@ function TableRow(props) {
 
 function FilterCard(props) {
   return (
-    <Card border="primary" className="mt-3">
+    <Card border="primary">
       <Card.Header>Filter Events:</Card.Header>
       <Card.Body>
         <Form>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import EventTypeSelector from '../components/EventTypeSelector';
+import PageHeading from '../components/PageHeading';
 
 function Types(props) {
   const [id, setId] = useState('');
@@ -59,35 +61,39 @@ function Types(props) {
       >
         {alertText}
       </Alert>
-      <Form className="mt-3">
-        <fieldset>
-          <legend>Event Type Management</legend>
-          <EventTypeSelector
-            evtTypes={props.evtTypes}
-            value={id}
-            onChange={newType => handleTypeChange(newType)}
-            description="Choose an event type if you want to modify an existing event."
-          />
-          <InputName
-            value={name}
-            onChange={newName => setName(newName)}
-            disabled={deleteType}
-          />
-          <InputFormatting
-            value={formatting}
-            onChange={newFormatting => setFormatting(newFormatting)}
-            disabled={deleteType}
-          />
-          <CheckDelete
-            value={deleteType}
-            onChange={newValue => setDeleteType(newValue)}
-            show={!newType}
-          />
-          <Button variant="primary" onClick={() => handleSubmit()}>
-            Submit
-          </Button>
-        </fieldset>
-      </Form>
+      <PageHeading>Event Type Management</PageHeading>
+      <Card border="primary">
+        <Card.Body>
+          <Form>
+            <fieldset>
+              <EventTypeSelector
+                evtTypes={props.evtTypes}
+                value={id}
+                onChange={newType => handleTypeChange(newType)}
+                description="Choose an event type if you want to modify an existing event."
+              />
+              <InputName
+                value={name}
+                onChange={newName => setName(newName)}
+                disabled={deleteType}
+              />
+              <InputFormatting
+                value={formatting}
+                onChange={newFormatting => setFormatting(newFormatting)}
+                disabled={deleteType}
+              />
+              <CheckDelete
+                value={deleteType}
+                onChange={newValue => setDeleteType(newValue)}
+                show={!newType}
+              />
+              <Button variant="primary" onClick={() => handleSubmit()}>
+                Submit
+              </Button>
+            </fieldset>
+          </Form>
+        </Card.Body>
+      </Card>
     </>
   );
 }
