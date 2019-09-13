@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
 
 /**
  * Form Selector for Event Types. Adds a default value (empty string) as the first option.
@@ -9,6 +10,7 @@ import Form from 'react-bootstrap/Form';
  * @param {function} props.onChange - The function to run when the value changes
  * @param {string} [props.defaultLabel="Create New"] - The label to show for the default value (defaults to 'Create New')
  * @param {string} [props.description] - An optional description to display below the field
+ * @param {boolean} [props.inline] - Make the form group one line. Defaults to false
  */
 function EventTypeSelector(props) {
   const defaultLabel = props.defaultLabel || 'Create New';
@@ -28,9 +30,19 @@ function EventTypeSelector(props) {
   }
 
   return (
-    <Form.Group controlId="chooseType">
-      <Form.Label>Event Type</Form.Label>
-      <Form.Control as="select" value={props.value} onChange={handleChange}>
+    <Form.Group controlId="chooseType" {...(props.inline && { as: Row })}>
+      <Form.Label {...(props.inline && { column: true, xs: 'auto' })}>
+        Event Type
+      </Form.Label>
+      <Form.Control
+        as="select"
+        value={props.value}
+        onChange={handleChange}
+        {...(props.inline && {
+          className: 'col mx-3',
+          style: { minWidth: '9rem' }
+        })}
+      >
         <option value="">{'--- ' + defaultLabel + ' ---'}</option>
         {evtTypes}
       </Form.Control>
