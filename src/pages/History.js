@@ -1,11 +1,9 @@
-import React from 'react';
-import { useState } from 'react';
-import Table from 'react-bootstrap/Table';
+import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/EventTypeSelector';
 import { getLocalIsoString } from '../components/Helpers';
 
