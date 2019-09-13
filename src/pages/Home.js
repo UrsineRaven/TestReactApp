@@ -63,6 +63,15 @@ function Home(props) {
       <h5 className="mt-3">
         {'Page last updated: '}
         <small className="text-muted">{updateTime}</small>
+        <Button
+          variant="secondary"
+          size="sm"
+          style={{ float: 'right' }}
+          onClick={props.onRefresh}
+          title="Refresh the event list"
+        >
+          Refresh
+        </Button>
       </h5>
       <NewEventCard eventTypes={props.evtTypes} evtClick={props.onNewEvent} />
       <Table striped bordered size="sm" className="mt-2">
