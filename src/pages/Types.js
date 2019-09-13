@@ -1,8 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import Alert from 'react-bootstrap/Alert';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import EventTypeSelector from '../components/EventTypeSelector';
 
 function Types(props) {
   const [id, setId] = useState('');
@@ -62,10 +63,11 @@ function Types(props) {
       <Form className="mt-3">
         <fieldset>
           <legend>Event Type Management</legend>
-          <SelectType
+          <EventTypeSelector
             evtTypes={props.evtTypes}
             value={id}
             onChange={newType => handleTypeChange(newType)}
+            description="Choose an event type if you want to modify an existing event."
           />
           <InputName
             value={name}
@@ -88,36 +90,6 @@ function Types(props) {
         </fieldset>
       </Form>
     </>
-  );
-}
-
-function SelectType(props) {
-  let evtTypes = props.evtTypes.map(evt => {
-    return (
-      !evt.hidden && (
-        <option value={evt.id} key={evt.id}>
-          {evt.name}
-        </option>
-      )
-    );
-  });
-
-  function handleChange(evt) {
-    let type = props.evtTypes.find(t => t.id === evt.target.value);
-    props.onChange(type || {});
-  }
-
-  return (
-    <Form.Group controlId="chooseType">
-      <Form.Label>Event Type</Form.Label>
-      <Form.Control as="select" value={props.value} onChange={handleChange}>
-        <option value="">{'--- Create New ---'}</option>
-        {evtTypes}
-      </Form.Control>
-      <Form.Text as="small" className="muted">
-        {'Choose an event type if you want to modify an existing event.'}
-      </Form.Text>
-    </Form.Group>
   );
 }
 
