@@ -77,14 +77,17 @@ function DatabaseManagedRoutes() {
           onDeleteEvent={handleDeleteEvent}
         />
       )}
+      key="home"
     />,
     <Route
       path="/type-management/"
       render={() => <Types evtTypes={evtTypes} onEditType={handleEditType} />}
+      key="type-management"
     />,
     <Route
       path="/history/"
       render={() => <History evtTypes={evtTypes} rows={events} />}
+      key="history"
     />
   ];
 }

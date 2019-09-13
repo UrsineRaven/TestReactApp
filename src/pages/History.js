@@ -80,8 +80,6 @@ function TableRow(props) {
 }
 
 function FilterCard(props) {
-  const [time, setTime] = useState('');
-
   return (
     <Card border="primary" className="mt-3">
       <Card.Header>Filter Events:</Card.Header>
