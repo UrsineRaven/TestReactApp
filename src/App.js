@@ -1,13 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-
-// Bootstrap components
 import Container from 'react-bootstrap/Container';
-
-// Pages / Components
-import About from './pages/About';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import DbRoutes from './components/DatabaseManagedRoutes';
 import NavigationBar from './components/NavigationBar';
+import About from './pages/About';
 import Users from './pages/Users';
 
 // Router

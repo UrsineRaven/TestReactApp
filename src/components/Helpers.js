@@ -1,6 +1,6 @@
 /**
  * Returns the ISO-formatted string for the local timezone of the specified Date object.
- * @param {Date} date Date object for which to return the local ISO string.
+ * @param {Date} date - Date object for which to return the local ISO string.
  * @returns {string} The ISO-formatted string corresponding to the local time of the specified Date.
  */
 export const getLocalIsoString = function(date) {
@@ -11,7 +11,7 @@ export const getLocalIsoString = function(date) {
 
 /**
  * Returns an array containing the local ISO-formatted date and time.
- * @param {Date} date Date object for which to generate the local ISO strings.
+ * @param {Date} date - Date object for which to generate the local ISO strings.
  * @returns {Array<string>} Array containing the local ISO-formatted date (index 0) and time (index 1).
  */
 export const getLocalIsoDateAndTime = function(date) {
@@ -21,7 +21,7 @@ export const getLocalIsoDateAndTime = function(date) {
 
 /**
  * Returns an array containing the date and time.
- * @param {string} isoString ISO string to split.
+ * @param {string} isoString - ISO string to split.
  * @returns {Array<string>} Array containing the ISO-formatted date (index 0) and time (index 1).
  */
 export const splitIsoString = function(isoString) {

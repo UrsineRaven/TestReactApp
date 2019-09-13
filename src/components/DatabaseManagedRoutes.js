@@ -1,13 +1,9 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
-
-import { getLocalIsoDateAndTime } from './Helpers';
-
-// Pages
 import History from '../pages/History';
 import Home from '../pages/Home';
 import Types from '../pages/Types';
+import { getLocalIsoDateAndTime } from './Helpers';
 
 // Test Data
 const testDataEventTypes = [
