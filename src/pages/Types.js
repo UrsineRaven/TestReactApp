@@ -13,7 +13,6 @@ function Types(props) {
   const [deleteType, setDeleteType] = useState(false);
   const [newType, setNewType] = useState(true);
   const [alertText, setAlertText] = useState('');
-  const [showHidden, setShowHidden] = useState(false);
 
   useEffect(() => {
     if (!id) setId(Math.max(...props.evtTypes.map(t => t.id), 0) + 1);
@@ -71,7 +70,7 @@ function Types(props) {
               value={id}
               onChange={newType => handleTypeChange(newType)}
               description="Choose an event type if you want to modify an existing event."
-              nofilter={showHidden}
+              nofilter={props.showHidden}
             />
             <InputName
               value={name}
@@ -88,19 +87,9 @@ function Types(props) {
               onChange={newValue => setDeleteType(newValue)}
               show={!newType}
             />
-            <span>
-              <Button variant="primary" onClick={() => handleSubmit()}>
-                Submit
-              </Button>
-              <Form.Check // TODO: move this to the settings page
-                className="form-text text-muted"
-                style={{ float: 'right' }}
-                type="checkbox"
-                label="Show deleted event types"
-                checked={showHidden}
-                onChange={evt => setShowHidden(evt.target.checked)}
-              ></Form.Check>
-            </span>
+            <Button variant="primary" onClick={() => handleSubmit()}>
+              Submit
+            </Button>
           </Form>
         </Card.Body>
       </Card>
