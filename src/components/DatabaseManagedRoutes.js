@@ -36,7 +36,18 @@ function DatabaseManagedRoutes() {
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [events, setEvents] = useState(testDataEntries);
   const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
-  const [showHiddenTypes, setShowHiddenTypes] = useState(false);
+  const [showHiddenTypes, setShowHiddenTypes] = useLocalStorage(
+    'show-hidden-types',
+    false
+  );
+  const [allowOfflineLogging, setAllowOfflineLogging] = useLocalStorage(
+    'allow-offline-logging',
+    false
+  );
+
+  // if allow offline logging is true, try to reconnect to the server this often
+  const syncInterval = pollInterval || 5;
+  // TODO: add ability to store changes and sync when next able to
 
   useInterval(
     () => {
@@ -122,6 +133,8 @@ function DatabaseManagedRoutes() {
           onChangePollInterval={newVal => setPollInterval(newVal)}
           showHiddenTypes={showHiddenTypes}
           onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
+          allowOfflineLogging={allowOfflineLogging}
+          onChangeAllowOfflineLogging={newVal => setAllowOfflineLogging(newVal)}
         />
       )}
       key="settings"
