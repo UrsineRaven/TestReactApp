@@ -8,7 +8,7 @@ import Settings from '../pages/Settings';
 import Types from '../pages/Types';
 import { getLocalIsoDateAndTime } from './Helpers';
 
-// Test Data
+// Test Data        TODO: Remove
 const testDataEventTypes = [
   { name: '#1', id: '1' },
   { name: 'test', id: '2' },
@@ -34,7 +34,10 @@ const testDataEntries = [
 
 function DatabaseManagedRoutes() {
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
-  const [events, setEvents] = useState(testDataEntries);
+  const [evts, setEvts] = useState(testDataEntries);
+  const [notConnected, setNotConnected] = useState(false);
+
+  // App Settings
   const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
   const [showHiddenTypes, setShowHiddenTypes] = useLocalStorage(
     'show-hidden-types',
@@ -44,20 +47,41 @@ function DatabaseManagedRoutes() {
     'allow-offline-logging',
     false
   );
+  const [offlineOnly, setOfflineOnly] = useLocalStorage('offline-only', false);
+
+  // TODO: maybe move localChanges stuff to new component/hook
 
   // if allow offline logging is true, try to reconnect to the server this often
   const syncInterval = pollInterval || 5;
   // TODO: add ability to store changes and sync when next able to
 
+  // Refresh data based on poll interval
   useInterval(
     () => {
-      refreshData();
+      syncData();
     },
-    pollInterval > 0 ? pollInterval * 60000 : null
+    !offlineOnly && pollInterval > 0 ? pollInterval * 60000 : null
   );
 
-  function refreshData() {
-    // TODO: Refresh data from the database here
+  // Try to sync local changes when not connected
+  useInterval(
+    () => {
+      syncData();
+    },
+    !offlineOnly && notConnected && allowOfflineLogging
+      ? syncInterval * 60000
+      : null
+  );
+
+  function syncData() {
+    let error = false;
+    // TODO: Sync data with the database here
+    // TODO: pull changes from server (set notConnected accordingly)
+    // TODO: loop through local changes
+    // TODO: push events
+    // TODO: delete events
+    // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
+    setNotConnected(error);
     alert('pretend the data was refreshed :)');
   }
 
@@ -74,15 +98,27 @@ function DatabaseManagedRoutes() {
     }
   }
 
-  function handleNewEvent(id, timeStr) {
-    const newId = Math.max(...events.map(e => e.id)) + 1;
-    const [date, time] = getLocalIsoDateAndTime(new Date());
+  function generateNewEvent(id, timeStr, dateStr) {
+    // get the highest existing event id.   TODO: check if there's a more efficient way
+    const newEvtIds = [];
+    const ids = evts.map(e => e.id).concat(newEvtIds);
+    let max = -1;
+    for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
 
-    setEvents(
-      events.concat([
-        { date: date, time: timeStr || time, event: id, id: newId }
-      ])
-    );
+    const newId = String(Number(max) + 1);
+    const [date, time] = getLocalIsoDateAndTime(new Date());
+    return {
+      date: dateStr || date,
+      time: timeStr || time,
+      event: id,
+      id: newId
+    };
+  }
+
+  function handleNewEvent(id, timeStr) {
+    const newEvt = generateNewEvent(id, timeStr);
+
+    setEvts(evts.concat([newEvt]));
     // TODO: push event to database
   }
 
@@ -90,9 +126,12 @@ function DatabaseManagedRoutes() {
     const resultRows = events.slice();
     const index = resultRows.findIndex(r => r.id === id);
     resultRows.splice(index, 1);
-    setEvents(resultRows);
+    setEvts(resultRows);
     // TODO: delete event from database
   }
+
+  // Apply local changes to data from server
+  let events = evts.slice();
 
   return [
     <Route
@@ -104,7 +143,8 @@ function DatabaseManagedRoutes() {
           rows={events}
           onNewEvent={handleNewEvent}
           onDeleteEvent={handleDeleteEvent}
-          onRefresh={refreshData}
+          offlineOnly={offlineOnly}
+          onRefresh={syncData}
         />
       )}
       key="home"
@@ -135,6 +175,8 @@ function DatabaseManagedRoutes() {
           onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
           allowOfflineLogging={allowOfflineLogging}
           onChangeAllowOfflineLogging={newVal => setAllowOfflineLogging(newVal)}
+          offlineOnly={offlineOnly}
+          onChangeOfflineOnly={newVal => setOfflineOnly(newVal)}
         />
       )}
       key="settings"
