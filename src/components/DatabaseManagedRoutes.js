@@ -36,6 +36,7 @@ function DatabaseManagedRoutes() {
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [events, setEvents] = useState(testDataEntries);
   const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
+  const [showHiddenTypes, setShowHiddenTypes] = useState(false);
 
   useInterval(
     () => {
@@ -104,7 +105,13 @@ function DatabaseManagedRoutes() {
     />,
     <Route
       path="/type-management/"
-      render={() => <Types evtTypes={evtTypes} onEditType={handleEditType} />}
+      render={() => (
+        <Types
+          evtTypes={evtTypes}
+          onEditType={handleEditType}
+          showHidden={showHiddenTypes}
+        />
+      )}
       key="type-management"
     />,
     <Route
@@ -113,6 +120,8 @@ function DatabaseManagedRoutes() {
         <Settings
           pollInterval={pollInterval}
           onChangePollInterval={newVal => setPollInterval(newVal)}
+          showHiddenTypes={showHiddenTypes}
+          onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
         />
       )}
       key="settings"

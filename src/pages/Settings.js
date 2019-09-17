@@ -31,6 +31,22 @@ function Settings(props) {
                 An interval of 0 disables it.
               </Form.Text>
             </Form.Group>
+            <Form.Group controlId="setShowHiddenTyeps">
+              <Form.Label>Show Deleted Types</Form.Label>
+              <Form.Check
+                className="text-muted"
+                type="checkbox"
+                label="Show deleted event types on the type management page"
+                checked={props.showHiddenTypes}
+                onChange={evt =>
+                  props.onChangeShowHiddenTypes(evt.target.checked)
+                }
+              />
+              <Form.Text as="small" className="text-muted">
+                Showing deleted event types on the type management page allows
+                you to restore those event types.
+              </Form.Text>
+            </Form.Group>
           </Form>
         </Card.Body>
       </Card>
