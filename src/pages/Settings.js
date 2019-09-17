@@ -50,9 +50,6 @@ function Settings(props) {
             </Form.Group>
             <Form.Group controlId="setAllowOfflineLogging">
               <Form.Label>Allow Offline Logging</Form.Label>
-              <Form.Text as="small" className="text-danger">
-                Not fully implemented!
-              </Form.Text>
               <Form.Check
                 className="text-muted"
                 type="checkbox"
@@ -73,9 +70,6 @@ function Settings(props) {
             <hr />
             <Form.Group controlId="setOfflineOnly">
               <Form.Label>Offline Only</Form.Label>
-              <Form.Text as="small" className="text-danger">
-                Not fully implemented!
-              </Form.Text>
               <Form.Check
                 className="text-muted"
                 type="checkbox"

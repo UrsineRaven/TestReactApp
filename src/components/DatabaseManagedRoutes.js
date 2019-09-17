@@ -36,6 +36,10 @@ function DatabaseManagedRoutes() {
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [evts, setEvts] = useState(testDataEntries);
   const [notConnected, setNotConnected] = useState(false);
+  const [localChanges, setLocalChanges] = useLocalStorage(
+    'local-changes',
+    null
+  );
 
   // App Settings
   const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
@@ -53,7 +57,7 @@ function DatabaseManagedRoutes() {
 
   // if allow offline logging is true, try to reconnect to the server this often
   const syncInterval = pollInterval || 5;
-  // TODO: add ability to store changes and sync when next able to
+  let exitOfflineOnly = false;
 
   // Refresh data based on poll interval
   useInterval(
@@ -68,21 +72,103 @@ function DatabaseManagedRoutes() {
     () => {
       syncData();
     },
-    !offlineOnly && notConnected && allowOfflineLogging
+    !offlineOnly && notConnected && allowOfflineLogging && localChanges !== null
       ? syncInterval * 60000
       : null
   );
 
+  function updateOfflineOnly(newVal) {
+    if (!newVal) {
+      exitOfflineOnly = true;
+      syncData();
+    }
+    setOfflineOnly(newVal);
+  }
+
   function syncData() {
+    // Sync data with the database here
     let error = false;
-    // TODO: Sync data with the database here
     // TODO: pull changes from server (set notConnected accordingly)
-    // TODO: loop through local changes
-    // TODO: push events
-    // TODO: delete events
-    // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
+    if (!error && localChanges !== null) {
+      const newLocalChanges = Object.assign({}, localChanges);
+      let eventsToDelete = [];
+      let newEventsToPush = [];
+
+      // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event)
+      if (
+        !error &&
+        localChanges.deleteEvents &&
+        localChanges.deleteEvents.length
+      ) {
+        // eslint-disable-next-line no-unused-vars
+        for (let id of localChanges.deleteEvents) {
+          eventsToDelete.push(id);
+        }
+      }
+      deleteEvents(eventsToDelete);
+      newLocalChanges.deleteEvents = eventsToDelete;
+      if (eventsToDelete.length > 0) error = true;
+
+      // handle new events
+      if (!error && localChanges.newEvents && localChanges.newEvents.length) {
+        // eslint-disable-next-line no-unused-vars
+        for (let evt of localChanges.newEvents) {
+          newEventsToPush.push(generateNewEvent(evt.event, evt.time, evt.date));
+        }
+      }
+      pushNewEvents(newEventsToPush);
+      newLocalChanges.newEvents = newEventsToPush;
+      if (newEventsToPush.length > 0) error = true;
+
+      if (!error) {
+        setLocalChanges(null);
+      } else {
+        setLocalChanges(newLocalChanges);
+      }
+      // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
+    }
     setNotConnected(error);
     alert('pretend the data was refreshed :)');
+  }
+
+  function pushNewEvents(newEventsArray) {
+    let successes = [];
+    const array = newEventsArray.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let evt of array) {
+      // TODO: Try to push to database
+      // if succeeds:
+      let index = newEventsArray.indexOf(evt);
+      successes.push(newEventsArray.splice(index, 1));
+    }
+    addNewEventsLocally(successes);
+  }
+
+  function deleteEvents(deleteEventsArray) {
+    let successes = [];
+    const array = deleteEventsArray.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let id of array) {
+      // TODO: Try to delete from database
+      // if succeeds:
+      let index = deleteEventsArray.indexOf(id);
+      successes.push(deleteEventsArray.splice(index, 1));
+    }
+    deleteEventsLocally(successes);
+  }
+
+  function addNewEventsLocally(newEventsArray) {
+    setEvts(evts.concat(newEventsArray));
+  }
+
+  function deleteEventsLocally(deleteEventsArray) {
+    const resultRows = evts.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let id of deleteEventsArray) {
+      const index = resultRows.findIndex(r => r.id === id);
+      resultRows.splice(index, 1);
+    }
+    setEvts(resultRows);
   }
 
   function handleEditType(evt) {
@@ -100,7 +186,13 @@ function DatabaseManagedRoutes() {
 
   function generateNewEvent(id, timeStr, dateStr) {
     // get the highest existing event id.   TODO: check if there's a more efficient way
-    const newEvtIds = [];
+    const newEvtIds =
+      localChanges &&
+      localChanges.newEvents &&
+      localChanges.newEvents.length &&
+      !exitOfflineOnly
+        ? localChanges.newEvents.map(e => e.id)
+        : [];
     const ids = evts.map(e => e.id).concat(newEvtIds);
     let max = -1;
     for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
@@ -118,20 +210,64 @@ function DatabaseManagedRoutes() {
   function handleNewEvent(id, timeStr) {
     const newEvt = generateNewEvent(id, timeStr);
 
-    setEvts(evts.concat([newEvt]));
-    // TODO: push event to database
+    const succeeds = !offlineOnly || exitOfflineOnly; // TODO: push event to database
+    if (succeeds) {
+      addNewEventsLocally([newEvt]);
+    } else {
+      setNotConnected(true);
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+        let newLocalChanges = Object.assign({}, localChanges || {});
+        if (!newLocalChanges.newEvents) newLocalChanges.newEvents = [];
+        newLocalChanges.newEvents.push(newEvt);
+        setLocalChanges(newLocalChanges);
+      }
+    }
+    return succeeds;
   }
 
   function handleDeleteEvent(id) {
-    const resultRows = events.slice();
-    const index = resultRows.findIndex(r => r.id === id);
-    resultRows.splice(index, 1);
-    setEvts(resultRows);
-    // TODO: delete event from database
+    const succeeds = !offlineOnly || exitOfflineOnly; // TODO: delete event from database
+    if (succeeds) {
+      deleteEventsLocally([id]);
+    } else {
+      setNotConnected(true);
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+        let newLocalChanges = Object.assign({}, localChanges || {});
+
+        // make sure the id doesn't correspond to an id in the newEvents changes
+        let index = -2;
+        if (newLocalChanges && newLocalChanges.newEvents) {
+          index = newLocalChanges.newEvents.findIndex(evt => evt.id === id);
+        }
+
+        if (index >= 0) {
+          // event is in localChanges as new event, so we remove it
+          newLocalChanges.newEvents.splice(index, 1);
+        } else {
+          if (!newLocalChanges.deleteEvents) newLocalChanges.deleteEvents = [];
+          newLocalChanges.deleteEvents.push(id);
+        }
+        setLocalChanges(newLocalChanges);
+      }
+    }
+    return succeeds;
   }
 
   // Apply local changes to data from server
   let events = evts.slice();
+  if (localChanges && localChanges.newEvents && localChanges.newEvents.length)
+    events = events.concat(localChanges.newEvents);
+  if (
+    localChanges &&
+    localChanges.deleteEvents &&
+    localChanges.deleteEvents.length
+  ) {
+    // eslint-disable-next-line no-unused-vars
+    for (let id of localChanges.deleteEvents) {
+      let index = events.findIndex(evt => evt.id === id);
+      if (index >= 0) events.splice(index, 1);
+    }
+  }
 
   return [
     <Route
@@ -176,7 +312,7 @@ function DatabaseManagedRoutes() {
           allowOfflineLogging={allowOfflineLogging}
           onChangeAllowOfflineLogging={newVal => setAllowOfflineLogging(newVal)}
           offlineOnly={offlineOnly}
-          onChangeOfflineOnly={newVal => setOfflineOnly(newVal)}
+          onChangeOfflineOnly={newVal => updateOfflineOnly(newVal)}
         />
       )}
       key="settings"
