@@ -101,8 +101,8 @@ function DatabaseManagedRoutes() {
   function handleNewEvent(id, timeStr) {
     const newEvt = generateNewEvent(id, timeStr);
 
-    const succeeds = !offlineOnly || exitOfflineOnly; // TODO: push event to database
-    if (succeeds) {
+    const succeeds = true; // TODO: push event to database
+    if (succeeds && !offlineOnly) {
       addNewEventsLocally([newEvt]);
     } else {
       setNotConnected(true);
@@ -117,8 +117,8 @@ function DatabaseManagedRoutes() {
   }
 
   function handleDeleteEvent(id) {
-    const succeeds = !offlineOnly || exitOfflineOnly; // TODO: delete event from database
-    if (succeeds) {
+    const succeeds = true; // TODO: delete event from database
+    if (succeeds && !offlineOnly) {
       deleteEventsLocally([id]);
     } else {
       setNotConnected(true);
@@ -154,15 +154,13 @@ function DatabaseManagedRoutes() {
   //#endregion
 
   //#region Helpers
-  function generateNewEvent(id, timeStr, dateStr) {
+  function generateNewEvent(id, timeStr, dateStr, otherReservedEventIds = []) {
     // get the highest existing event id.   TODO: check if there's a more efficient way
-    const newEvtIds =
-      localChanges &&
-      localChanges.newEvents &&
-      localChanges.newEvents.length &&
-      !exitOfflineOnly
-        ? localChanges.newEvents.map(e => e.id)
-        : [];
+    const newEvtIds = exitOfflineOnly
+      ? otherReservedEventIds.map(e => e.id)
+      : localChanges && localChanges.newEvents
+      ? localChanges.newEvents.map(e => e.id)
+      : [];
     const ids = evts.map(e => e.id).concat(newEvtIds);
     let max = -1;
     for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
@@ -250,7 +248,9 @@ function DatabaseManagedRoutes() {
       if (!error && localChanges.newEvents) {
         // eslint-disable-next-line no-unused-vars
         for (let evt of localChanges.newEvents) {
-          newEventsToPush.push(generateNewEvent(evt.event, evt.time, evt.date));
+          newEventsToPush.push(
+            generateNewEvent(evt.event, evt.time, evt.date, newEventsToPush)
+          );
         }
       }
       bulkAddEvents(newEventsToPush);
