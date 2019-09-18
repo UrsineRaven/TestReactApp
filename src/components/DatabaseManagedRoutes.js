@@ -113,7 +113,6 @@ function DatabaseManagedRoutes() {
         setLocalChanges(newLocalChanges);
       }
     }
-    return succeeds;
   }
 
   function handleDeleteEvent(id) {
@@ -141,7 +140,6 @@ function DatabaseManagedRoutes() {
         setLocalChanges(newLocalChanges);
       }
     }
-    return succeeds;
   }
 
   function handleSetOfflineOnly(newVal) {
