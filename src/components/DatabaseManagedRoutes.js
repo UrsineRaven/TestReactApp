@@ -57,7 +57,10 @@ function DatabaseManagedRoutes() {
 
   // if allow offline logging is true, try to reconnect to the server this often
   const syncInterval = pollInterval || 5;
+
+  // instance variables (reset every render)
   let exitOfflineOnly = false;
+  let eventChangeQueue;
 
   // Refresh data based on poll interval
   useInterval(
@@ -93,6 +96,7 @@ function DatabaseManagedRoutes() {
       const newLocalChanges = Object.assign({}, localChanges);
       let eventsToDelete = [];
       let newEventsToPush = [];
+      eventChangeQueue = evts.slice(); // TODO: initialize eventChangeQueue to the server response outside of this if
 
       // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event)
       if (
@@ -128,6 +132,7 @@ function DatabaseManagedRoutes() {
       // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
     }
     setNotConnected(error);
+    setEvts(eventChangeQueue);
     alert('pretend the data was refreshed :)');
   }
 
@@ -136,12 +141,13 @@ function DatabaseManagedRoutes() {
     const array = newEventsArray.slice();
     // eslint-disable-next-line no-unused-vars
     for (let evt of array) {
+      // TODO: maybe add events in bulk and respond with failures
       // TODO: Try to push to database
       // if succeeds:
       let index = newEventsArray.indexOf(evt);
-      successes.push(newEventsArray.splice(index, 1));
+      successes.push(newEventsArray.splice(index, 1)[0]);
     }
-    addNewEventsLocally(successes);
+    addNewEventsLocally(successes, true);
   }
 
   function deleteEvents(deleteEventsArray) {
@@ -149,26 +155,35 @@ function DatabaseManagedRoutes() {
     const array = deleteEventsArray.slice();
     // eslint-disable-next-line no-unused-vars
     for (let id of array) {
+      // TODO: maybe delete events in bulk and respond with failures
       // TODO: Try to delete from database
       // if succeeds:
       let index = deleteEventsArray.indexOf(id);
-      successes.push(deleteEventsArray.splice(index, 1));
+      successes.push(deleteEventsArray.splice(index, 1)[0]);
     }
-    deleteEventsLocally(successes);
+    deleteEventsLocally(successes, true);
   }
 
-  function addNewEventsLocally(newEventsArray) {
-    setEvts(evts.concat(newEventsArray));
+  function addNewEventsLocally(newEventsArray, isBulkChange) {
+    if (!isBulkChange) {
+      setEvts(evts.concat(newEventsArray));
+    } else {
+      eventChangeQueue = eventChangeQueue.concat(newEventsArray);
+    }
   }
 
-  function deleteEventsLocally(deleteEventsArray) {
+  function deleteEventsLocally(deleteEventsArray, isBulkChange) {
     const resultRows = evts.slice();
     // eslint-disable-next-line no-unused-vars
     for (let id of deleteEventsArray) {
       const index = resultRows.findIndex(r => r.id === id);
       resultRows.splice(index, 1);
     }
-    setEvts(resultRows);
+    if (!isBulkChange) {
+      setEvts(resultRows);
+    } else {
+      eventChangeQueue = resultRows;
+    }
   }
 
   function handleEditType(evt) {
