@@ -33,6 +33,7 @@ const testDataEntries = [
 ];
 
 function DatabaseManagedRoutes() {
+  //#region State Variables
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [evts, setEvts] = useState(testDataEntries);
   const [notConnected, setNotConnected] = useState(false);
@@ -40,8 +41,9 @@ function DatabaseManagedRoutes() {
     'local-changes',
     null
   );
+  //#endregion
 
-  // App Settings
+  //#region App Settings Variables
   const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
   const [showHiddenTypes, setShowHiddenTypes] = useLocalStorage(
     'show-hidden-types',
@@ -52,16 +54,17 @@ function DatabaseManagedRoutes() {
     false
   );
   const [offlineOnly, setOfflineOnly] = useLocalStorage('offline-only', false);
+  //#endregion
 
-  // TODO: maybe move localChanges stuff to new component/hook
+  // TODO: maybe move localChanges stuff to new component/hook; This component is getting complex
 
-  // if allow offline logging is true, try to reconnect to the server this often
-  const syncInterval = pollInterval || 5;
-
-  // instance variables (reset every render)
+  //#region instance variables (reset every render)
+  const syncInterval = pollInterval || 5; // if allow offline logging is true, try to reconnect to the server this often
   let exitOfflineOnly = false;
   let eventChangeQueue;
+  //#endregion
 
+  //#region Intervals
   // Refresh data based on poll interval
   useInterval(
     () => {
@@ -79,113 +82,9 @@ function DatabaseManagedRoutes() {
       ? syncInterval * 60000
       : null
   );
+  //#endregion
 
-  function updateOfflineOnly(newVal) {
-    if (!newVal) {
-      exitOfflineOnly = true;
-      syncData();
-    }
-    setOfflineOnly(newVal);
-  }
-
-  function syncData() {
-    // Sync data with the database here
-    let error = false;
-    // TODO: pull changes from server (set notConnected accordingly)
-    if (!error && localChanges !== null) {
-      const newLocalChanges = Object.assign({}, localChanges);
-      let eventsToDelete = [];
-      let newEventsToPush = [];
-      eventChangeQueue = evts.slice(); // TODO: initialize eventChangeQueue to the server response outside of this if
-
-      // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event)
-      if (
-        !error &&
-        localChanges.deleteEvents &&
-        localChanges.deleteEvents.length
-      ) {
-        // eslint-disable-next-line no-unused-vars
-        for (let id of localChanges.deleteEvents) {
-          eventsToDelete.push(id);
-        }
-      }
-      deleteEvents(eventsToDelete);
-      newLocalChanges.deleteEvents = eventsToDelete;
-      if (eventsToDelete.length > 0) error = true;
-
-      // handle new events
-      if (!error && localChanges.newEvents && localChanges.newEvents.length) {
-        // eslint-disable-next-line no-unused-vars
-        for (let evt of localChanges.newEvents) {
-          newEventsToPush.push(generateNewEvent(evt.event, evt.time, evt.date));
-        }
-      }
-      pushNewEvents(newEventsToPush);
-      newLocalChanges.newEvents = newEventsToPush;
-      if (newEventsToPush.length > 0) error = true;
-
-      if (!error) {
-        setLocalChanges(null);
-      } else {
-        setLocalChanges(newLocalChanges);
-      }
-      // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
-    }
-    setNotConnected(error);
-    setEvts(eventChangeQueue);
-    alert('pretend the data was refreshed :)');
-  }
-
-  function pushNewEvents(newEventsArray) {
-    let successes = [];
-    const array = newEventsArray.slice();
-    // eslint-disable-next-line no-unused-vars
-    for (let evt of array) {
-      // TODO: maybe add events in bulk and respond with failures
-      // TODO: Try to push to database
-      // if succeeds:
-      let index = newEventsArray.indexOf(evt);
-      successes.push(newEventsArray.splice(index, 1)[0]);
-    }
-    addNewEventsLocally(successes, true);
-  }
-
-  function deleteEvents(deleteEventsArray) {
-    let successes = [];
-    const array = deleteEventsArray.slice();
-    // eslint-disable-next-line no-unused-vars
-    for (let id of array) {
-      // TODO: maybe delete events in bulk and respond with failures
-      // TODO: Try to delete from database
-      // if succeeds:
-      let index = deleteEventsArray.indexOf(id);
-      successes.push(deleteEventsArray.splice(index, 1)[0]);
-    }
-    deleteEventsLocally(successes, true);
-  }
-
-  function addNewEventsLocally(newEventsArray, isBulkChange) {
-    if (!isBulkChange) {
-      setEvts(evts.concat(newEventsArray));
-    } else {
-      eventChangeQueue = eventChangeQueue.concat(newEventsArray);
-    }
-  }
-
-  function deleteEventsLocally(deleteEventsArray, isBulkChange) {
-    const resultRows = evts.slice();
-    // eslint-disable-next-line no-unused-vars
-    for (let id of deleteEventsArray) {
-      const index = resultRows.findIndex(r => r.id === id);
-      resultRows.splice(index, 1);
-    }
-    if (!isBulkChange) {
-      setEvts(resultRows);
-    } else {
-      eventChangeQueue = resultRows;
-    }
-  }
-
+  //#region Handlers
   function handleEditType(evt) {
     const index = evtTypes.findIndex(e => e.id === evt.id);
     if (index === -1) {
@@ -197,29 +96,6 @@ function DatabaseManagedRoutes() {
       setEvtTypes(cp);
       // TODO: update event type in database
     }
-  }
-
-  function generateNewEvent(id, timeStr, dateStr) {
-    // get the highest existing event id.   TODO: check if there's a more efficient way
-    const newEvtIds =
-      localChanges &&
-      localChanges.newEvents &&
-      localChanges.newEvents.length &&
-      !exitOfflineOnly
-        ? localChanges.newEvents.map(e => e.id)
-        : [];
-    const ids = evts.map(e => e.id).concat(newEvtIds);
-    let max = -1;
-    for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
-
-    const newId = String(Number(max) + 1);
-    const [date, time] = getLocalIsoDateAndTime(new Date());
-    return {
-      date: dateStr || date,
-      time: timeStr || time,
-      event: id,
-      id: newId
-    };
   }
 
   function handleNewEvent(id, timeStr) {
@@ -266,6 +142,132 @@ function DatabaseManagedRoutes() {
       }
     }
     return succeeds;
+  }
+
+  function handleSetOfflineOnly(newVal) {
+    if (!newVal) {
+      exitOfflineOnly = true;
+      syncData();
+    }
+    setOfflineOnly(newVal);
+  }
+  //#endregion
+
+  //#region Helpers
+  function generateNewEvent(id, timeStr, dateStr) {
+    // get the highest existing event id.   TODO: check if there's a more efficient way
+    const newEvtIds =
+      localChanges &&
+      localChanges.newEvents &&
+      localChanges.newEvents.length &&
+      !exitOfflineOnly
+        ? localChanges.newEvents.map(e => e.id)
+        : [];
+    const ids = evts.map(e => e.id).concat(newEvtIds);
+    let max = -1;
+    for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
+
+    const newId = String(Number(max) + 1);
+    const [date, time] = getLocalIsoDateAndTime(new Date());
+    return {
+      date: dateStr || date,
+      time: timeStr || time,
+      event: id,
+      id: newId
+    };
+  }
+
+  function addNewEventsLocally(newEventsArray, isBulkChange) {
+    if (!isBulkChange) {
+      setEvts(evts.concat(newEventsArray));
+    } else {
+      eventChangeQueue = eventChangeQueue.concat(newEventsArray);
+    }
+  }
+
+  function deleteEventsLocally(deleteEventsArray, isBulkChange) {
+    const resultRows = evts.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let id of deleteEventsArray) {
+      const index = resultRows.findIndex(r => r.id === id);
+      resultRows.splice(index, 1);
+    }
+    if (!isBulkChange) {
+      setEvts(resultRows);
+    } else {
+      eventChangeQueue = resultRows;
+    }
+  }
+
+  function bulkAddEvents(newEventsArray) {
+    let successes = [];
+    const array = newEventsArray.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let evt of array) {
+      // TODO: maybe add events in bulk and respond with failures
+      // TODO: Try to push to database
+      // if succeeds:
+      let index = newEventsArray.indexOf(evt);
+      successes.push(newEventsArray.splice(index, 1)[0]);
+    }
+    addNewEventsLocally(successes, true);
+  }
+
+  function bulkDeleteEvents(deleteEventsArray) {
+    let successes = [];
+    const array = deleteEventsArray.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let id of array) {
+      // TODO: maybe delete events in bulk and respond with failures
+      // TODO: Try to delete from database
+      // if succeeds:
+      let index = deleteEventsArray.indexOf(id);
+      successes.push(deleteEventsArray.splice(index, 1)[0]);
+    }
+    deleteEventsLocally(successes, true);
+  }
+  //#endregion
+
+  function syncData() {
+    let error = false;
+    eventChangeQueue = evts.slice();
+    // TODO: pull changes from server (set notConnected accordingly)
+    //if (!error) eventChangeQueue = results; // TODO: actually use database results
+    if (!error && localChanges !== null) {
+      const newLocalChanges = Object.assign({}, localChanges);
+      let eventsToDelete = [];
+      let newEventsToPush = [];
+
+      // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event)
+      if (!error && localChanges.deleteEvents) {
+        eventsToDelete = localChanges.deleteEvents.slice();
+      }
+      bulkDeleteEvents(eventsToDelete);
+      newLocalChanges.deleteEvents = eventsToDelete;
+      if (eventsToDelete.length > 0) error = true;
+
+      // handle new events
+      if (!error && localChanges.newEvents) {
+        // eslint-disable-next-line no-unused-vars
+        for (let evt of localChanges.newEvents) {
+          newEventsToPush.push(generateNewEvent(evt.event, evt.time, evt.date));
+        }
+      }
+      bulkAddEvents(newEventsToPush);
+      newLocalChanges.newEvents = newEventsToPush;
+      if (newEventsToPush.length > 0) error = true;
+
+      // Handle error condition
+      if (!error) {
+        setLocalChanges(null);
+      } else {
+        setLocalChanges(newLocalChanges);
+      }
+      // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
+    }
+    setNotConnected(error);
+    setEvts(eventChangeQueue);
+    alert('pretend the data was refreshed :)');
   }
 
   // Apply local changes to data from server
@@ -327,7 +329,7 @@ function DatabaseManagedRoutes() {
           allowOfflineLogging={allowOfflineLogging}
           onChangeAllowOfflineLogging={newVal => setAllowOfflineLogging(newVal)}
           offlineOnly={offlineOnly}
-          onChangeOfflineOnly={newVal => updateOfflineOnly(newVal)}
+          onChangeOfflineOnly={newVal => handleSetOfflineOnly(newVal)}
         />
       )}
       key="settings"
