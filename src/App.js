@@ -12,7 +12,7 @@ function AppRouter() {
       <Container>
         <NavigationBar />
 
-        {DbRoutes()}
+        <DbRoutes />
         <Route path="/about/" component={About} />
       </Container>
     </Router>
