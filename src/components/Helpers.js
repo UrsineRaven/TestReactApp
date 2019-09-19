@@ -29,3 +29,15 @@ export const splitIsoString = function(isoString) {
   const timeSplit = dateSplit[1].split('.');
   return [dateSplit[0], timeSplit[0]];
 };
+
+/** One less than the number of milliseconds in a day */
+export const millisecondsInDay = 86399999;
+
+/**
+ * Return the number of milliseconds of the timezone offset for the provided date.
+ * @param {Date} date - Date for which to get the offset.
+ * @returns {number} Number of milliseconds of the timezone offset.
+ */
+export const getLocalTimezoneOffset = function(date) {
+  return date.getTimezoneOffset() * 60000;
+};
