@@ -61,6 +61,7 @@ function DatabaseManagedRoutes() {
   //#region instance variables (reset every render)
   const syncInterval = pollInterval || 5; // if allow offline logging is true, try to reconnect to the server this often
   let exitOfflineOnly = false;
+  let eventTypeChangeQueue;
   let eventChangeQueue;
   //#endregion
 
@@ -85,16 +86,34 @@ function DatabaseManagedRoutes() {
   //#endregion
 
   //#region Handlers
-  function handleEditType(evt) {
-    const index = evtTypes.findIndex(e => e.id === evt.id);
-    if (index === -1) {
-      setEvtTypes(evtTypes.concat([evt]));
-      // TODO: push event type to database
+  function handleEditType(evtType) {
+    const index = evtTypes.findIndex(e => e.id === evtType.id);
+    let newType = index === -1;
+    if (newType) {
+      // TODO: push event type to database (Put)
     } else {
-      let cp = evtTypes.slice();
-      cp.splice(index, 1, evt);
-      setEvtTypes(cp);
-      // TODO: update event type in database
+      // TODO: update event type in database (Post)
+    }
+
+    const succeeds = true; // TODO: set this based off database request response
+    if (succeeds && !offlineOnly) {
+      updateEventTypesLocally([evtType]);
+    } else {
+      setNotConnected(true);
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+        let newLocalChanges = Object.assign({}, localChanges || {});
+        if (!newLocalChanges.eventTypes) newLocalChanges.eventTypes = [];
+
+        // Remove event type with same ID in local changes
+        const idx = newLocalChanges.eventTypes.findIndex(
+          e => e.id === evtType.id
+        );
+        if (idx !== -1) newLocalChanges.eventTypes.splice(index, 1);
+
+        // Add new/modified event type to local changes
+        newLocalChanges.eventTypes.push(evtType);
+        setLocalChanges(newLocalChanges);
+      }
     }
   }
 
@@ -173,6 +192,24 @@ function DatabaseManagedRoutes() {
     };
   }
 
+  function updateEventTypesLocally(updatedEventTypeArray, isBulkChange) {
+    let eventTypes = evtTypes.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let eType of updatedEventTypeArray) {
+      const index = eventTypes.findIndex(t => t.id === eType.id);
+      if (index >= 0) {
+        eventTypes.splice(index, 1, eType);
+      } else {
+        eventTypes.push(eType);
+      }
+    }
+    if (!isBulkChange) {
+      setEvtTypes(eventTypes);
+    } else {
+      eventTypeChangeQueue = eventTypes;
+    }
+  }
+
   function addNewEventsLocally(newEventsArray, isBulkChange) {
     if (!isBulkChange) {
       setEvts(evts.concat(newEventsArray));
@@ -193,6 +230,29 @@ function DatabaseManagedRoutes() {
     } else {
       eventChangeQueue = resultRows;
     }
+  }
+
+  function bulkUpdateEventTypes(updatedEventTypeArray) {
+    // TODO: figure out how to prevent id collisions with changes in the database (probably need to track last synced time so that we can see if the type was added after the last time we synced)
+    // TODO: handle conflicts (event types change on both ends... probably just have the latest change win out)
+    let successes = [];
+    const array = updatedEventTypeArray.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let evtType of array) {
+      // TODO: maybe update event types in bulk and respond with failures
+      const index = evtTypes.findIndex(e => e.id === evtType.id);
+      if (index === -1) {
+        // TODO: push event type to database (Put)
+      } else {
+        // TODO: update event type in database (Post)
+      }
+      let success = true; // TODO: actually set success state based off database request response
+      if (success) {
+        const idx = updatedEventTypeArray.indexOf(evtType);
+        successes.push(updatedEventTypeArray.splice(idx, 1)[0]);
+      }
+    }
+    updateEventTypesLocally(successes, true);
   }
 
   function bulkAddEvents(newEventsArray) {
@@ -226,13 +286,23 @@ function DatabaseManagedRoutes() {
 
   function syncData() {
     let error = false;
+    eventTypeChangeQueue = evtTypes.slice();
     eventChangeQueue = evts.slice();
     // TODO: pull changes from server (set notConnected accordingly)
     //if (!error) eventChangeQueue = results; // TODO: actually use database results
     if (!error && localChanges !== null) {
       const newLocalChanges = Object.assign({}, localChanges);
+      let eventTypeChanges = [];
       let eventsToDelete = [];
       let newEventsToPush = [];
+
+      // handle new/modified event types
+      if (!error && localChanges.eventTypes) {
+        eventTypeChanges = localChanges.eventTypes.slice();
+        bulkUpdateEventTypes(eventTypeChanges);
+        newLocalChanges.eventTypes = eventTypeChanges;
+      }
+      if (eventTypeChanges.length > 0) error = true;
 
       // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event) (probably need to track last synced time so that we can see if the type was added after the last time we synced)
       if (!error && localChanges.deleteEvents) {
@@ -261,9 +331,10 @@ function DatabaseManagedRoutes() {
       } else {
         setLocalChanges(newLocalChanges);
       }
-      // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
+      // TODO: change names and descriptions on settings page since we now allow evtType changes while offline (instead of just logging)
     }
     setNotConnected(error);
+    setEvtTypes(eventTypeChangeQueue);
     setEvts(eventChangeQueue);
     alert('pretend the data was refreshed :)');
   }
@@ -280,6 +351,17 @@ function DatabaseManagedRoutes() {
       for (let id of localChanges.deleteEvents) {
         const index = events.findIndex(evt => evt.id === id);
         if (index >= 0) events.splice(index, 1);
+      }
+    }
+    if (localChanges.eventTypes) {
+      // eslint-disable-next-line no-unused-vars
+      for (let eType of localChanges.eventTypes) {
+        const index = eventTypes.findIndex(t => t.id === eType.id);
+        if (index >= 0) {
+          eventTypes.splice(index, 1, eType);
+        } else {
+          eventTypes.push(eType);
+        }
       }
     }
   }
