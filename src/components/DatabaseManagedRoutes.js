@@ -167,7 +167,7 @@ function DatabaseManagedRoutes() {
     const [date, time] = getLocalIsoDateAndTime(new Date());
     return {
       date: dateStr || date,
-      time: timeStr || time,
+      time: timeStr || time, // TODO: Convert to UTC time (since it logs in whatever timezone the device is in instead of the server time). Will need to convert back to Local Time before render. Update README after fixing this.
       event: id,
       id: newId
     };
@@ -203,7 +203,7 @@ function DatabaseManagedRoutes() {
       // TODO: maybe add events in bulk and respond with failures
       // TODO: Try to push to database
       // if succeeds:
-      let index = newEventsArray.indexOf(evt);
+      const index = newEventsArray.indexOf(evt);
       successes.push(newEventsArray.splice(index, 1)[0]);
     }
     addNewEventsLocally(successes, true);
@@ -217,7 +217,7 @@ function DatabaseManagedRoutes() {
       // TODO: maybe delete events in bulk and respond with failures
       // TODO: Try to delete from database
       // if succeeds:
-      let index = deleteEventsArray.indexOf(id);
+      const index = deleteEventsArray.indexOf(id);
       successes.push(deleteEventsArray.splice(index, 1)[0]);
     }
     deleteEventsLocally(successes, true);
@@ -234,12 +234,12 @@ function DatabaseManagedRoutes() {
       let eventsToDelete = [];
       let newEventsToPush = [];
 
-      // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event)
+      // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event) (probably need to track last synced time so that we can see if the type was added after the last time we synced)
       if (!error && localChanges.deleteEvents) {
         eventsToDelete = localChanges.deleteEvents.slice();
+        bulkDeleteEvents(eventsToDelete);
+        newLocalChanges.deleteEvents = eventsToDelete;
       }
-      bulkDeleteEvents(eventsToDelete);
-      newLocalChanges.deleteEvents = eventsToDelete;
       if (eventsToDelete.length > 0) error = true;
 
       // handle new events
@@ -250,9 +250,9 @@ function DatabaseManagedRoutes() {
             generateNewEvent(evt.event, evt.time, evt.date, newEventsToPush)
           );
         }
+        bulkAddEvents(newEventsToPush);
+        newLocalChanges.newEvents = newEventsToPush;
       }
-      bulkAddEvents(newEventsToPush);
-      newLocalChanges.newEvents = newEventsToPush;
       if (newEventsToPush.length > 0) error = true;
 
       // Handle error condition
@@ -268,19 +268,19 @@ function DatabaseManagedRoutes() {
     alert('pretend the data was refreshed :)');
   }
 
-  // Apply local changes to data from server
   let events = evts.slice();
-  if (localChanges && localChanges.newEvents && localChanges.newEvents.length)
-    events = events.concat(localChanges.newEvents);
-  if (
-    localChanges &&
-    localChanges.deleteEvents &&
-    localChanges.deleteEvents.length
-  ) {
-    // eslint-disable-next-line no-unused-vars
-    for (let id of localChanges.deleteEvents) {
-      let index = events.findIndex(evt => evt.id === id);
-      if (index >= 0) events.splice(index, 1);
+  let eventTypes = evtTypes.slice();
+  // Apply local changes to data from server
+  if (localChanges) {
+    if (localChanges.newEvents) {
+      events = events.concat(localChanges.newEvents);
+    }
+    if (localChanges.deleteEvents) {
+      // eslint-disable-next-line no-unused-vars
+      for (let id of localChanges.deleteEvents) {
+        const index = events.findIndex(evt => evt.id === id);
+        if (index >= 0) events.splice(index, 1);
+      }
     }
   }
 
@@ -290,7 +290,7 @@ function DatabaseManagedRoutes() {
       exact
       render={() => (
         <Home
-          evtTypes={evtTypes}
+          evtTypes={eventTypes}
           rows={events}
           onNewEvent={handleNewEvent}
           onDeleteEvent={handleDeleteEvent}
@@ -302,14 +302,14 @@ function DatabaseManagedRoutes() {
     />,
     <Route
       path="/history/"
-      render={() => <History evtTypes={evtTypes} rows={events} />}
+      render={() => <History evtTypes={eventTypes} rows={events} />}
       key="history"
     />,
     <Route
       path="/type-management/"
       render={() => (
         <Types
-          evtTypes={evtTypes}
+          evtTypes={eventTypes}
           onEditType={handleEditType}
           showHidden={showHiddenTypes}
         />
