@@ -1,3 +1,7 @@
+# Loggin Web App
+## Notes:
+* always logs to database in the timezone that you're currently in (not the timezone of the server)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
