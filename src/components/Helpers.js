@@ -41,3 +41,32 @@ export const millisecondsInDay = 86399999;
 export const getLocalTimezoneOffset = function(date) {
   return date.getTimezoneOffset() * 60000;
 };
+
+/**
+ * Get the datetimes for the beginning of today (local time) and end of today (local time).
+ * @returns {Array<number>} Array containing the datetimes (in milliseconds) of the beginning of today (index 0) and end of today (index 1) for the local timezone.
+ */
+export const getTodaysStartAndEndDatetimes = function() {
+  const todaysDate = new Date(getLocalIsoString(new Date()).split('T')[0]); // Get beginning of today UTC
+  const timezoneOffset = getLocalTimezoneOffset(todaysDate);
+  const dayStart = todaysDate.getTime() + timezoneOffset;
+  const dayEnd = dayStart + millisecondsInDay;
+  return [dayStart, dayEnd];
+};
+
+/**
+ * Get the datetimes for the beginning of today (local time) and end of today (local time).
+ * @param {string} startDate - String containing start date formatted as yyyy-mm-dd
+ * @param {string} endDate - String containing end date formatted as yyyy-mm-dd
+ * @returns {Array<number>} Array containing the datetimes (in milliseconds) of the beginning of startDate (index 0) and end of endDate (index 1) for the local timezone.
+ */
+export const getStartAndEndDatetimes = function(startDate, endDate) {
+  const timezoneOffset = getLocalTimezoneOffset(new Date());
+  const startDatetime = startDate
+    ? new Date(startDate).getTime() + timezoneOffset
+    : null;
+  const endDatetime = endDate
+    ? new Date(endDate).getTime() + timezoneOffset + millisecondsInDay
+    : null;
+  return [startDatetime, endDatetime];
+};

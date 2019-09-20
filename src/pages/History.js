@@ -6,10 +6,9 @@ import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/EventTypeSelector';
 import {
-  getLocalIsoString,
   getLocalIsoDateAndTime,
-  getLocalTimezoneOffset,
-  millisecondsInDay
+  getLocalIsoString,
+  getStartAndEndDatetimes
 } from '../components/Helpers';
 import PageHeading from '../components/PageHeading';
 
@@ -28,18 +27,15 @@ function History(props) {
     };
   });
 
-  const timezoneOffset = getLocalTimezoneOffset(new Date());
-  const startDateTime = startDate
-    ? new Date(startDate).getTime() + timezoneOffset
-    : null;
-  const endDateTime = endDate
-    ? new Date(endDate).getTime() + timezoneOffset + millisecondsInDay
-    : null;
+  const [startDatetime, endDatetime] = getStartAndEndDatetimes(
+    startDate,
+    endDate
+  );
   const tableRows = props.rows
     .filter(row => {
       const evtType = type ? row.event === type : true;
-      const evtStartDate = startDateTime ? row.datetime >= startDateTime : true;
-      const evtEndDate = endDateTime ? row.datetime <= endDateTime : true;
+      const evtStartDate = startDatetime ? row.datetime >= startDatetime : true;
+      const evtEndDate = endDatetime ? row.datetime <= endDatetime : true;
       return evtType && evtStartDate && evtEndDate;
     })
     .sort((row1, row2) => row2.datetime - row1.datetime) // sort descending by date and time
