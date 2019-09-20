@@ -64,7 +64,7 @@ function DatabaseManagedRoutes() {
 
   //#region instance variables (reset every render)
   const syncInterval = pollInterval || 5; // if allow offline changes is true, try to reconnect to the server this often
-  let exitOfflineOnly = false;
+  let exitingOfflineOnly = false;
   let eventTypeChangeQueue;
   let eventChangeQueue;
   //#endregion
@@ -104,20 +104,7 @@ function DatabaseManagedRoutes() {
       updateEventTypesLocally([evtType]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
-        let newLocalChanges = Object.assign({}, localChanges || {});
-        if (!newLocalChanges.eventTypes) newLocalChanges.eventTypes = [];
-
-        // Remove event type with same ID in local changes
-        const idx = newLocalChanges.eventTypes.findIndex(
-          e => e.id === evtType.id
-        );
-        if (idx !== -1) newLocalChanges.eventTypes.splice(index, 1);
-
-        // Add new/modified event type to local changes
-        newLocalChanges.eventTypes.push(evtType);
-        setLocalChanges(newLocalChanges);
-      }
+      if (localChangesAllowed()) trackEventTypesLocally(evtType);
     }
   }
 
@@ -129,12 +116,7 @@ function DatabaseManagedRoutes() {
       addNewEventsLocally([newEvt]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
-        let newLocalChanges = Object.assign({}, localChanges || {});
-        if (!newLocalChanges.newEvents) newLocalChanges.newEvents = [];
-        newLocalChanges.newEvents.push(newEvt);
-        setLocalChanges(newLocalChanges);
-      }
+      if (localChangesAllowed()) trackNewEventLocally(newEvt);
     }
   }
 
@@ -144,30 +126,13 @@ function DatabaseManagedRoutes() {
       deleteEventsLocally([id]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
-        let newLocalChanges = Object.assign({}, localChanges || {});
-
-        // make sure the id doesn't correspond to an id in the newEvents changes
-        let index = -2;
-        if (newLocalChanges && newLocalChanges.newEvents) {
-          index = newLocalChanges.newEvents.findIndex(evt => evt.id === id);
-        }
-
-        if (index >= 0) {
-          // event is in localChanges as new event, so we remove it
-          newLocalChanges.newEvents.splice(index, 1);
-        } else {
-          if (!newLocalChanges.deleteEvents) newLocalChanges.deleteEvents = [];
-          newLocalChanges.deleteEvents.push(id);
-        }
-        setLocalChanges(newLocalChanges);
-      }
+      if (localChangesAllowed()) trackDeletedEventLocally(id);
     }
   }
 
   function handleSetOfflineOnly(newVal) {
     if (!newVal) {
-      exitOfflineOnly = true;
+      exitingOfflineOnly = true;
       syncData();
     }
     setOfflineOnly(newVal);
@@ -182,7 +147,8 @@ function DatabaseManagedRoutes() {
     otherReservedEventIds = []
   ) {
     // get the highest existing event id.   TODO: check if there's a more efficient way
-    const newEvtIds = exitOfflineOnly
+    // TODO: extract localChanges logic to a separate function
+    const newEvtIds = exitingOfflineOnly
       ? otherReservedEventIds.map(e => e.id)
       : localChanges && localChanges.newEvents
       ? localChanges.newEvents.map(e => e.id)
@@ -212,11 +178,29 @@ function DatabaseManagedRoutes() {
     reservedEventTypeIds,
     otherReservedEventTypeIds = []
   ) {
+    // TODO: make this function useful (may need to pass less parameters or something)
     // get the highest existing event id.   TODO: check if there's a more efficient way
     const ids = reservedEventTypeIds.concat(otherReservedEventTypeIds);
     let max = -1;
     for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
     return String(Number(max) + 1);
+  }
+
+  function localChangesAllowed() {
+    return !exitingOfflineOnly && (offlineOnly || allowOfflineChanges);
+  }
+
+  function trackEventTypesLocally(evtType) {
+    let newLocalChanges = Object.assign({}, localChanges || {});
+    if (!newLocalChanges.eventTypes) newLocalChanges.eventTypes = [];
+
+    // Remove event type with same ID in local changes
+    const idx = newLocalChanges.eventTypes.findIndex(e => e.id === evtType.id);
+    if (idx !== -1) newLocalChanges.eventTypes.splice(idx, 1);
+
+    // Add new/modified event type to local changes
+    newLocalChanges.eventTypes.push(evtType);
+    setLocalChanges(newLocalChanges);
   }
 
   function updateEventTypesLocally(updatedEventTypeArray, isBulkChange) {
@@ -237,12 +221,38 @@ function DatabaseManagedRoutes() {
     }
   }
 
+  function trackNewEventLocally(newEvt) {
+    let newLocalChanges = Object.assign({}, localChanges || {});
+    if (!newLocalChanges.newEvents) newLocalChanges.newEvents = [];
+    newLocalChanges.newEvents.push(newEvt);
+    setLocalChanges(newLocalChanges);
+  }
+
   function addNewEventsLocally(newEventsArray, isBulkChange) {
     if (!isBulkChange) {
       setEvts(evts.concat(newEventsArray));
     } else {
       eventChangeQueue = eventChangeQueue.concat(newEventsArray);
     }
+  }
+
+  function trackDeletedEventLocally(id) {
+    let newLocalChanges = Object.assign({}, localChanges || {});
+
+    // make sure the id doesn't correspond to an id in the newEvents changes
+    let index = -2;
+    if (newLocalChanges && newLocalChanges.newEvents) {
+      index = newLocalChanges.newEvents.findIndex(evt => evt.id === id);
+    }
+
+    if (index >= 0) {
+      // event is in localChanges as new event, so we remove it
+      newLocalChanges.newEvents.splice(index, 1);
+    } else {
+      if (!newLocalChanges.deleteEvents) newLocalChanges.deleteEvents = [];
+      newLocalChanges.deleteEvents.push(id);
+    }
+    setLocalChanges(newLocalChanges);
   }
 
   function deleteEventsLocally(deleteEventsArray, isBulkChange) {
@@ -334,6 +344,56 @@ function DatabaseManagedRoutes() {
     }
     deleteEventsLocally(successes, true);
   }
+
+  function tryPushLocalChanges() {
+    const newLocalChanges = Object.assign({}, localChanges);
+    let error = false;
+    let eventTypeChanges = [];
+    let eventsToDelete = [];
+    let newEventsToPush = [];
+
+    // handle new/modified event types
+    if (!error && localChanges.eventTypes) {
+      eventTypeChanges = localChanges.eventTypes.slice();
+      bulkUpdateEventTypes(eventTypeChanges);
+      newLocalChanges.eventTypes = eventTypeChanges;
+    }
+    if (eventTypeChanges.length > 0) error = true;
+
+    // handle deletes
+    if (!error && localChanges.deleteEvents) {
+      eventsToDelete = localChanges.deleteEvents.slice();
+      bulkDeleteEvents(eventsToDelete);
+      newLocalChanges.deleteEvents = eventsToDelete;
+    }
+    if (eventsToDelete.length > 0) error = true;
+
+    // handle new events
+    if (!error && localChanges.newEvents) {
+      // eslint-disable-next-line no-unused-vars
+      for (let evt of localChanges.newEvents) {
+        newEventsToPush.push(
+          generateNewEvent(
+            evt.event,
+            null,
+            evt.datetime,
+            newEventsToPush.concat(eventChangeQueue)
+          )
+        );
+      }
+      bulkAddEvents(newEventsToPush);
+      newLocalChanges.newEvents = newEventsToPush;
+    }
+    if (newEventsToPush.length > 0) error = true;
+
+    // Handle error condition
+    if (!error) {
+      setLocalChanges(null);
+    } else {
+      setLocalChanges(newLocalChanges);
+    }
+    return error;
+  }
   //#endregion
 
   function syncData() {
@@ -347,51 +407,7 @@ function DatabaseManagedRoutes() {
       setLastSync(new Date().getTime());
     }
     if (!error && localChanges !== null) {
-      const newLocalChanges = Object.assign({}, localChanges);
-      let eventTypeChanges = [];
-      let eventsToDelete = [];
-      let newEventsToPush = [];
-
-      // handle new/modified event types
-      if (!error && localChanges.eventTypes) {
-        eventTypeChanges = localChanges.eventTypes.slice();
-        bulkUpdateEventTypes(eventTypeChanges);
-        newLocalChanges.eventTypes = eventTypeChanges;
-      }
-      if (eventTypeChanges.length > 0) error = true;
-
-      // handle deletes
-      if (!error && localChanges.deleteEvents) {
-        eventsToDelete = localChanges.deleteEvents.slice();
-        bulkDeleteEvents(eventsToDelete);
-        newLocalChanges.deleteEvents = eventsToDelete;
-      }
-      if (eventsToDelete.length > 0) error = true;
-
-      // handle new events
-      if (!error && localChanges.newEvents) {
-        // eslint-disable-next-line no-unused-vars
-        for (let evt of localChanges.newEvents) {
-          newEventsToPush.push(
-            generateNewEvent(
-              evt.event,
-              null,
-              evt.datetime,
-              newEventsToPush.concat(eventChangeQueue)
-            )
-          );
-        }
-        bulkAddEvents(newEventsToPush);
-        newLocalChanges.newEvents = newEventsToPush;
-      }
-      if (newEventsToPush.length > 0) error = true;
-
-      // Handle error condition
-      if (!error) {
-        setLocalChanges(null);
-      } else {
-        setLocalChanges(newLocalChanges);
-      }
+      error = tryPushLocalChanges();
     }
     setNotConnected(error); // TODO: Show alert
     setEvtTypes(eventTypeChangeQueue);

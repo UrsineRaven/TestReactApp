@@ -15,7 +15,7 @@ function Types(props) {
   const [alertText, setAlertText] = useState('');
 
   useEffect(() => {
-    if (!id) setId(Math.max(...props.evtTypes.map(t => t.id), 0) + 1);
+    if (!id) setId(String(Math.max(...props.evtTypes.map(t => t.id), 0) + 1));
   }, [id, props.evtTypes]);
 
   function handleTypeChange(type) {
