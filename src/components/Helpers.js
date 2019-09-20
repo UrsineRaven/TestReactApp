@@ -55,7 +55,7 @@ export const getTodaysStartAndEndDatetimes = function() {
 };
 
 /**
- * Get the datetimes for the beginning of today (local time) and end of today (local time).
+ * Get the datetimes for the beginning of startDate (local time) and end of endDate (local time).
  * @param {string} startDate - String containing start date formatted as yyyy-mm-dd
  * @param {string} endDate - String containing end date formatted as yyyy-mm-dd
  * @returns {Array<number>} Array containing the datetimes (in milliseconds) of the beginning of startDate (index 0) and end of endDate (index 1) for the local timezone.
