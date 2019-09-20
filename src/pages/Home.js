@@ -6,7 +6,10 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
-import { getLocalIsoString } from '../components/Helpers';
+import {
+  getLocalIsoDateAndTime,
+  getTodaysStartAndEndDatetimes
+} from '../components/Helpers';
 import './Home.css';
 
 function Home(props) {
@@ -17,7 +20,6 @@ function Home(props) {
     setUpdateTime(new Date().toLocaleString());
   }, [props.rows, props.evtTypes]);
 
-  const todaysDate = getLocalIsoString(new Date()).split('T')[0];
   const eventTypes = {};
   props.evtTypes.forEach(type => {
     eventTypes[type.id] = {
@@ -26,13 +28,13 @@ function Home(props) {
     };
   });
 
+  const [dayStart, dayEnd] = getTodaysStartAndEndDatetimes();
   let sortedFilteredRows = props.rows
     .filter(row => {
-      return row.date === todaysDate;
+      return dayStart <= row.datetime && row.datetime <= dayEnd;
     })
     .sort(
-      (row1, row2) =>
-        (row2.date + row2.time).localeCompare(row1.date + row1.time) // sort descending by date and time
+      (row1, row2) => row2.datetime - row1.datetime // sort descending by date and time
     );
 
   // if there are no rows, insert a placeholder row
@@ -49,12 +51,12 @@ function Home(props) {
           '  }' +
           '}',
         id: '',
-        time: ''
+        datetime: ''
       }
     ];
 
   const tableRows = sortedFilteredRows.map(row => {
-    let evtName, evtFormat;
+    let evtName, evtFormat, evtTime;
     if (row.evtName && row.evtFormat) {
       evtName = row.evtName;
       evtFormat = row.evtFormat;
@@ -62,9 +64,12 @@ function Home(props) {
       evtName = eventTypes[row.event].name;
       evtFormat = eventTypes[row.event].formatting;
     }
+    evtTime = row.datetime
+      ? getLocalIsoDateAndTime(new Date(row.datetime))[1]
+      : '';
     return (
       <TableRow
-        time={row.time}
+        time={evtTime}
         event={evtName}
         formatting={evtFormat}
         onDelete={() =>
@@ -75,7 +80,7 @@ function Home(props) {
                 {'Are you sure you want to delete '}
                 <strong>{evtName}</strong>
                 {' at '}
-                <strong>{row.time}</strong>?
+                <strong>{evtTime}</strong>?
               </>
             )
           })

@@ -5,7 +5,11 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/EventTypeSelector';
-import { getLocalIsoString } from '../components/Helpers';
+import {
+  getLocalIsoDateAndTime,
+  getLocalIsoString,
+  getStartAndEndDatetimes
+} from '../components/Helpers';
 import PageHeading from '../components/PageHeading';
 
 function History(props) {
@@ -23,21 +27,24 @@ function History(props) {
     };
   });
 
+  const [startDatetime, endDatetime] = getStartAndEndDatetimes(
+    startDate,
+    endDate
+  );
   const tableRows = props.rows
     .filter(row => {
       const evtType = type ? row.event === type : true;
-      const evtStartDate = startDate ? row.date >= startDate : true;
-      const evtEndDate = endDate ? row.date <= endDate : true;
+      const evtStartDate = startDatetime ? row.datetime >= startDatetime : true;
+      const evtEndDate = endDatetime ? row.datetime <= endDatetime : true;
       return evtType && evtStartDate && evtEndDate;
     })
-    .sort((row1, row2) =>
-      (row2.date + row2.time).localeCompare(row1.date + row1.time)
-    ) // sort descending by date and time
+    .sort((row1, row2) => row2.datetime - row1.datetime) // sort descending by date and time
     .map(row => {
+      const [date, time] = getLocalIsoDateAndTime(new Date(row.datetime));
       return (
         <TableRow
-          date={row.date}
-          time={row.time}
+          date={date}
+          time={time}
           event={eventTypes[row.event].name}
           formatting={eventTypes[row.event].formatting}
           key={row.id}
