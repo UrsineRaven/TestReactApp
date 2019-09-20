@@ -53,8 +53,8 @@ function DatabaseManagedRoutes() {
     'show-hidden-types',
     false
   );
-  const [allowOfflineLogging, setAllowOfflineLogging] = useLocalStorage(
-    'allow-offline-logging',
+  const [allowOfflineChanges, setAllowOfflineChanges] = useLocalStorage(
+    'allow-offline-changes',
     false
   );
   const [offlineOnly, setOfflineOnly] = useLocalStorage('offline-only', false);
@@ -63,7 +63,7 @@ function DatabaseManagedRoutes() {
   // TODO: maybe move localChanges stuff to new component/hook; This component is getting complex
 
   //#region instance variables (reset every render)
-  const syncInterval = pollInterval || 5; // if allow offline logging is true, try to reconnect to the server this often
+  const syncInterval = pollInterval || 5; // if allow offline changes is true, try to reconnect to the server this often
   let exitOfflineOnly = false;
   let eventTypeChangeQueue;
   let eventChangeQueue;
@@ -83,7 +83,7 @@ function DatabaseManagedRoutes() {
     () => {
       syncData();
     },
-    !offlineOnly && notConnected && allowOfflineLogging && localChanges !== null
+    !offlineOnly && notConnected && allowOfflineChanges && localChanges !== null
       ? syncInterval * 60000
       : null
   );
@@ -104,7 +104,7 @@ function DatabaseManagedRoutes() {
       updateEventTypesLocally([evtType]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
         let newLocalChanges = Object.assign({}, localChanges || {});
         if (!newLocalChanges.eventTypes) newLocalChanges.eventTypes = [];
 
@@ -129,7 +129,7 @@ function DatabaseManagedRoutes() {
       addNewEventsLocally([newEvt]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
         let newLocalChanges = Object.assign({}, localChanges || {});
         if (!newLocalChanges.newEvents) newLocalChanges.newEvents = [];
         newLocalChanges.newEvents.push(newEvt);
@@ -144,7 +144,7 @@ function DatabaseManagedRoutes() {
       deleteEventsLocally([id]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
         let newLocalChanges = Object.assign({}, localChanges || {});
 
         // make sure the id doesn't correspond to an id in the newEvents changes
@@ -392,7 +392,6 @@ function DatabaseManagedRoutes() {
       } else {
         setLocalChanges(newLocalChanges);
       }
-      // TODO: change names and descriptions on settings page since we now allow evtType changes while offline (instead of just logging)
     }
     setNotConnected(error); // TODO: Show alert
     setEvtTypes(eventTypeChangeQueue);
@@ -467,8 +466,8 @@ function DatabaseManagedRoutes() {
           onChangePollInterval={newVal => setPollInterval(newVal)}
           showHiddenTypes={showHiddenTypes}
           onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
-          allowOfflineLogging={allowOfflineLogging}
-          onChangeAllowOfflineLogging={newVal => setAllowOfflineLogging(newVal)}
+          allowOfflineChanges={allowOfflineChanges}
+          onChangeAllowOfflineChanges={newVal => setAllowOfflineChanges(newVal)}
           offlineOnly={offlineOnly}
           onChangeOfflineOnly={newVal => handleSetOfflineOnly(newVal)}
         />
