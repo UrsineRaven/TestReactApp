@@ -7,10 +7,8 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import {
-  getLocalIsoString,
   getLocalIsoDateAndTime,
-  getLocalTimezoneOffset,
-  millisecondsInDay
+  getTodaysStartAndEndDatetimes
 } from '../components/Helpers';
 import './Home.css';
 
@@ -30,10 +28,7 @@ function Home(props) {
     };
   });
 
-  const todaysDate = new Date(getLocalIsoString(new Date()).split('T')[0]);
-  const timezoneOffset = getLocalTimezoneOffset(todaysDate);
-  const dayStart = todaysDate.getTime() + timezoneOffset;
-  const dayEnd = dayStart + millisecondsInDay;
+  const [dayStart, dayEnd] = getTodaysStartAndEndDatetimes();
   let sortedFilteredRows = props.rows
     .filter(row => {
       return dayStart <= row.datetime && row.datetime <= dayEnd;
