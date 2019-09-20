@@ -48,23 +48,24 @@ function Settings(props) {
                 you to restore those event types.
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId="setAllowOfflineLogging">
-              <Form.Label>Allow Offline Logging</Form.Label>
+            <Form.Group controlId="setAllowOfflineChanges">
+              <Form.Label>Allow Offline Changes</Form.Label>
               <Form.Check
                 className="text-muted"
                 type="checkbox"
-                label="Enable adding events when unable to access server"
-                checked={props.allowOfflineLogging}
+                label="Enable adding events and managing event types when unable to access server"
+                checked={props.allowOfflineChanges}
                 onChange={evt =>
-                  props.onChangeAllowOfflineLogging(evt.target.checked)
+                  props.onChangeAllowOfflineChanges(evt.target.checked)
                 }
                 disabled={props.offlineOnly}
               />
               <Form.Text as="small" className="text-muted">
-                Allowing offline logging enables you to log events even when
-                your device cannot access the server. You're device will sync
-                with the server when it next has access. If the polling interval
-                is disabled, it will try to access the server every 5 minutes.
+                Allowing offline changes enables you to log events and manage
+                event types even when your device cannot access the server.
+                You're device will sync with the server when it next has access.
+                If the polling interval is disabled, it will try to access the
+                server every 5 minutes.
               </Form.Text>
             </Form.Group>
             <hr />

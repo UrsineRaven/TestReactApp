@@ -8,34 +8,38 @@ import Settings from '../pages/Settings';
 import Types from '../pages/Types';
 import { getLocalIsoDateAndTime } from './Helpers';
 
-// Test Data        TODO: Remove
+//#region Test Data        TODO: Remove
 const testDataEventTypes = [
-  { name: '#1', id: '1' },
-  { name: 'test', id: '2' },
-  { name: 'meal', id: '3' },
+  { name: '#1', id: '1', lastModified: 1568223239995 },
+  { name: 'test', id: '2', lastModified: 1568223239996 },
+  { name: 'meal', id: '3', lastModified: 1568223239997 },
   {
     name: 'Example',
     id: '4',
-    formatting: '{"className":"table-warning", "style":{"fontStyle": "italic"}}'
+    formatting:
+      '{"className":"table-warning", "style":{"fontStyle": "italic"}}',
+    lastModified: 1568223239998
   },
-  { name: 'hidden-example', id: '5', hidden: true }
+  { name: 'hidden-example', id: '5', hidden: true, lastModified: 1568223239999 }
 ];
 
 const testDataEntries = [
-  { date: '2019-09-11', time: '12:34', event: '1', id: '123' },
-  { date: '2019-09-11', time: '16:30', event: '2', id: '235' },
-  { date: '2019-09-11', time: '17:24', event: '3', id: '332' },
-  { date: '2019-09-11', time: '14:19:06', event: '4', id: '331' },
-  { date: '2019-09-12', time: '12:34', event: '4', id: '400' },
-  { date: '2019-09-12', time: '16:30', event: '3', id: '404' },
-  { date: '2019-09-12', time: '17:24', event: '2', id: '408' },
-  { date: '2019-09-12', time: '14:19:06', event: '1', id: '402' }
+  { datetime: 1568223240000, event: '1', id: '123' },
+  { datetime: 1568237400000, event: '2', id: '235' },
+  { datetime: 1568240640000, event: '3', id: '332' },
+  { datetime: 1568229546000, event: '4', id: '331' },
+  { datetime: 1568309640000, event: '4', id: '400' },
+  { datetime: 1568323800000, event: '3', id: '404' },
+  { datetime: 1568327040000, event: '2', id: '408' },
+  { datetime: 1568315946000, event: '1', id: '402' }
 ];
+//#endregion
 
 function DatabaseManagedRoutes() {
   //#region State Variables
   const [evtTypes, setEvtTypes] = useState(testDataEventTypes);
   const [evts, setEvts] = useState(testDataEntries);
+  const [lastSync, setLastSync] = useState();
   const [notConnected, setNotConnected] = useState(false);
   const [localChanges, setLocalChanges] = useLocalStorage(
     'local-changes',
@@ -49,8 +53,8 @@ function DatabaseManagedRoutes() {
     'show-hidden-types',
     false
   );
-  const [allowOfflineLogging, setAllowOfflineLogging] = useLocalStorage(
-    'allow-offline-logging',
+  const [allowOfflineChanges, setAllowOfflineChanges] = useLocalStorage(
+    'allow-offline-changes',
     false
   );
   const [offlineOnly, setOfflineOnly] = useLocalStorage('offline-only', false);
@@ -59,8 +63,9 @@ function DatabaseManagedRoutes() {
   // TODO: maybe move localChanges stuff to new component/hook; This component is getting complex
 
   //#region instance variables (reset every render)
-  const syncInterval = pollInterval || 5; // if allow offline logging is true, try to reconnect to the server this often
+  const syncInterval = pollInterval || 5; // if allow offline changes is true, try to reconnect to the server this often
   let exitOfflineOnly = false;
+  let eventTypeChangeQueue;
   let eventChangeQueue;
   //#endregion
 
@@ -78,23 +83,41 @@ function DatabaseManagedRoutes() {
     () => {
       syncData();
     },
-    !offlineOnly && notConnected && allowOfflineLogging && localChanges !== null
+    !offlineOnly && notConnected && allowOfflineChanges && localChanges !== null
       ? syncInterval * 60000
       : null
   );
   //#endregion
 
   //#region Handlers
-  function handleEditType(evt) {
-    const index = evtTypes.findIndex(e => e.id === evt.id);
-    if (index === -1) {
-      setEvtTypes(evtTypes.concat([evt]));
-      // TODO: push event type to database
+  function handleEditType(evtType) {
+    const index = evtTypes.findIndex(e => e.id === evtType.id);
+    let newType = index === -1;
+    if (newType) {
+      // TODO: push event type to database (Put)
     } else {
-      let cp = evtTypes.slice();
-      cp.splice(index, 1, evt);
-      setEvtTypes(cp);
-      // TODO: update event type in database
+      // TODO: update event type in database (Post)
+    }
+
+    const succeeds = true; // TODO: set this based off database request response
+    if (succeeds && !offlineOnly) {
+      updateEventTypesLocally([evtType]);
+    } else {
+      setNotConnected(true);
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
+        let newLocalChanges = Object.assign({}, localChanges || {});
+        if (!newLocalChanges.eventTypes) newLocalChanges.eventTypes = [];
+
+        // Remove event type with same ID in local changes
+        const idx = newLocalChanges.eventTypes.findIndex(
+          e => e.id === evtType.id
+        );
+        if (idx !== -1) newLocalChanges.eventTypes.splice(index, 1);
+
+        // Add new/modified event type to local changes
+        newLocalChanges.eventTypes.push(evtType);
+        setLocalChanges(newLocalChanges);
+      }
     }
   }
 
@@ -106,7 +129,7 @@ function DatabaseManagedRoutes() {
       addNewEventsLocally([newEvt]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
         let newLocalChanges = Object.assign({}, localChanges || {});
         if (!newLocalChanges.newEvents) newLocalChanges.newEvents = [];
         newLocalChanges.newEvents.push(newEvt);
@@ -121,7 +144,7 @@ function DatabaseManagedRoutes() {
       deleteEventsLocally([id]);
     } else {
       setNotConnected(true);
-      if (!exitOfflineOnly && (offlineOnly || allowOfflineLogging)) {
+      if (!exitOfflineOnly && (offlineOnly || allowOfflineChanges)) {
         let newLocalChanges = Object.assign({}, localChanges || {});
 
         // make sure the id doesn't correspond to an id in the newEvents changes
@@ -152,7 +175,12 @@ function DatabaseManagedRoutes() {
   //#endregion
 
   //#region Helpers
-  function generateNewEvent(id, timeStr, dateStr, otherReservedEventIds = []) {
+  function generateNewEvent(
+    id,
+    timeStr = null,
+    dateTime,
+    otherReservedEventIds = []
+  ) {
     // get the highest existing event id.   TODO: check if there's a more efficient way
     const newEvtIds = exitOfflineOnly
       ? otherReservedEventIds.map(e => e.id)
@@ -164,13 +192,49 @@ function DatabaseManagedRoutes() {
     for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
 
     const newId = String(Number(max) + 1);
-    const [date, time] = getLocalIsoDateAndTime(new Date());
+    if (!dateTime) {
+      const [date, time] = getLocalIsoDateAndTime(new Date());
+      if (timeStr) {
+        dateTime = new Date(date + 'T' + timeStr).getTime();
+      } else {
+        dateTime = new Date(date + 'T' + time).getTime();
+      }
+    }
+
     return {
-      date: dateStr || date,
-      time: timeStr || time, // TODO: Convert to UTC time (since it logs in whatever timezone the device is in instead of the server time). Will need to convert back to Local Time before render. Update README after fixing this.
+      datetime: dateTime,
       event: id,
       id: newId
     };
+  }
+
+  function generateNewEventTypeId(
+    reservedEventTypeIds,
+    otherReservedEventTypeIds = []
+  ) {
+    // get the highest existing event id.   TODO: check if there's a more efficient way
+    const ids = reservedEventTypeIds.concat(otherReservedEventTypeIds);
+    let max = -1;
+    for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
+    return String(Number(max) + 1);
+  }
+
+  function updateEventTypesLocally(updatedEventTypeArray, isBulkChange) {
+    let eventTypes = evtTypes.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let eType of updatedEventTypeArray) {
+      const index = eventTypes.findIndex(t => t.id === eType.id);
+      if (index >= 0) {
+        eventTypes.splice(index, 1, eType);
+      } else {
+        eventTypes.push(eType);
+      }
+    }
+    if (!isBulkChange) {
+      setEvtTypes(eventTypes);
+    } else {
+      eventTypeChangeQueue = eventTypes;
+    }
   }
 
   function addNewEventsLocally(newEventsArray, isBulkChange) {
@@ -195,6 +259,45 @@ function DatabaseManagedRoutes() {
     }
   }
 
+  function bulkUpdateEventTypes(updatedEventTypeArray) {
+    let successes = [];
+    const array = updatedEventTypeArray.slice();
+    // eslint-disable-next-line no-unused-vars
+    for (let evtType of array) {
+      // TODO: maybe update event types in bulk and respond with failures
+      const origId = evtType.id;
+      const index = evtTypes.findIndex(e => e.id === evtType.id);
+      const newType = index === -1;
+      // Handle id conflicts
+      const i = eventTypeChangeQueue.find(t => t.id === evtType.id);
+      if (i) {
+        // there's an id conflict
+        if (newType) {
+          evtType.id = generateNewEventTypeId(
+            eventTypeChangeQueue.map(t => t.id),
+            updatedEventTypeArray.map(t => t.id)
+          );
+        } else if (i.lastModified > evtType.lastModified) {
+          const index = updatedEventTypeArray.indexOf(evtType);
+          updatedEventTypeArray.splice(index, 1);
+          continue;
+        }
+      }
+
+      if (newType) {
+        // TODO: push event type to database (Put)
+      } else {
+        // TODO: update event type in database (Post)
+      }
+      let success = true; // TODO: actually set success state based off database request response
+      if (success) {
+        const idx = updatedEventTypeArray.findIndex(t => t.id === origId);
+        successes.push(updatedEventTypeArray.splice(idx, 1)[0]);
+      }
+    }
+    updateEventTypesLocally(successes, true);
+  }
+
   function bulkAddEvents(newEventsArray) {
     let successes = [];
     const array = newEventsArray.slice();
@@ -214,6 +317,15 @@ function DatabaseManagedRoutes() {
     const array = deleteEventsArray.slice();
     // eslint-disable-next-line no-unused-vars
     for (let id of array) {
+      // skip delete if eventType has been updated since last sync
+      const i = eventChangeQueue.findIndex(
+        e => e.id === id && e.lastModified > lastSync
+      );
+      if (i !== -1) {
+        const index = deleteEventsArray.indexOf(id);
+        deleteEventsArray.splice(index, 1);
+        continue;
+      }
       // TODO: maybe delete events in bulk and respond with failures
       // TODO: Try to delete from database
       // if succeeds:
@@ -226,15 +338,29 @@ function DatabaseManagedRoutes() {
 
   function syncData() {
     let error = false;
+    eventTypeChangeQueue = evtTypes.slice();
     eventChangeQueue = evts.slice();
-    // TODO: pull changes from server (set notConnected accordingly)
-    //if (!error) eventChangeQueue = results; // TODO: actually use database results
+    // TODO: pull changes from server (set error accordingly)
+    if (!error) {
+      //eventTypeChangeQueue = results; // TODO: actually use database results
+      //eventChangeQueue = results; // TODO: actually use database results
+      setLastSync(new Date().getTime());
+    }
     if (!error && localChanges !== null) {
       const newLocalChanges = Object.assign({}, localChanges);
+      let eventTypeChanges = [];
       let eventsToDelete = [];
       let newEventsToPush = [];
 
-      // handle deletes    TODO: come up with way to ensure that a new event on the server doesn't have the id (e.g. someone deletes last event then adds new event) (probably need to track last synced time so that we can see if the type was added after the last time we synced)
+      // handle new/modified event types
+      if (!error && localChanges.eventTypes) {
+        eventTypeChanges = localChanges.eventTypes.slice();
+        bulkUpdateEventTypes(eventTypeChanges);
+        newLocalChanges.eventTypes = eventTypeChanges;
+      }
+      if (eventTypeChanges.length > 0) error = true;
+
+      // handle deletes
       if (!error && localChanges.deleteEvents) {
         eventsToDelete = localChanges.deleteEvents.slice();
         bulkDeleteEvents(eventsToDelete);
@@ -247,7 +373,12 @@ function DatabaseManagedRoutes() {
         // eslint-disable-next-line no-unused-vars
         for (let evt of localChanges.newEvents) {
           newEventsToPush.push(
-            generateNewEvent(evt.event, evt.time, evt.date, newEventsToPush)
+            generateNewEvent(
+              evt.event,
+              null,
+              evt.datetime,
+              newEventsToPush.concat(eventChangeQueue)
+            )
           );
         }
         bulkAddEvents(newEventsToPush);
@@ -261,9 +392,9 @@ function DatabaseManagedRoutes() {
       } else {
         setLocalChanges(newLocalChanges);
       }
-      // TODO: support updating event types when offline (will need to change names and descriptions on settings page)
     }
-    setNotConnected(error);
+    setNotConnected(error); // TODO: Show alert
+    setEvtTypes(eventTypeChangeQueue);
     setEvts(eventChangeQueue);
     alert('pretend the data was refreshed :)');
   }
@@ -280,6 +411,17 @@ function DatabaseManagedRoutes() {
       for (let id of localChanges.deleteEvents) {
         const index = events.findIndex(evt => evt.id === id);
         if (index >= 0) events.splice(index, 1);
+      }
+    }
+    if (localChanges.eventTypes) {
+      // eslint-disable-next-line no-unused-vars
+      for (let eType of localChanges.eventTypes) {
+        const index = eventTypes.findIndex(t => t.id === eType.id);
+        if (index >= 0) {
+          eventTypes.splice(index, 1, eType);
+        } else {
+          eventTypes.push(eType);
+        }
       }
     }
   }
@@ -324,8 +466,8 @@ function DatabaseManagedRoutes() {
           onChangePollInterval={newVal => setPollInterval(newVal)}
           showHiddenTypes={showHiddenTypes}
           onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
-          allowOfflineLogging={allowOfflineLogging}
-          onChangeAllowOfflineLogging={newVal => setAllowOfflineLogging(newVal)}
+          allowOfflineChanges={allowOfflineChanges}
+          onChangeAllowOfflineChanges={newVal => setAllowOfflineChanges(newVal)}
           offlineOnly={offlineOnly}
           onChangeOfflineOnly={newVal => handleSetOfflineOnly(newVal)}
         />
