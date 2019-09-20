@@ -70,3 +70,72 @@ export const getStartAndEndDatetimes = function(startDate, endDate) {
     : null;
   return [startDatetime, endDatetime];
 };
+
+/* Source: https://stackoverflow.com/a/6117889
+ * ===========================================
+ * For a given date, get the ISO week number
+ *
+ * Based on information at:
+ *
+ *    http://www.merlyn.demon.co.uk/weekcalc.htm#WNR
+ *
+ * Algorithm is to find nearest thursday, it's year
+ * is the year of the week number. Then get weeks
+ * between that date and the first day of that year.
+ *
+ * Note that dates in one year can be weeks of previous
+ * or next year, overlap is up to 3 days.
+ *
+ * e.g. 2014/12/29 is Monday in week  1 of 2015
+ *      2012/1/1   is Sunday in week 52 of 2011
+ */
+/**
+ * Get the ISO week number and year for a given date. A week is defined as starting on
+ * Monday and belongs to whichever year the Thursday resides in.\
+ * Source: https://stackoverflow.com/a/6117889
+ * @param {Date} d - Date to get week number of.
+ * @returns {Array<number>} Array with the week's year (index 0) and week number (index 1) of the provided date
+ */
+export const getIsoWeekNumber = function(d) {
+  // Copy date so don't modify original
+  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  // Set to nearest Thursday: current date + 4 - current day number
+  // Make Sunday's day number 7
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  // Get first day of year
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  // Calculate full weeks to nearest Thursday
+  var weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+  // Return array of year and week number
+  return [d.getUTCFullYear(), weekNo];
+};
+
+/**
+ * Get the week number and year for a given date. A week is defined as starting on
+ * Sunday and belongs to whichever year the Wednesday resides in.\
+ * Based on: https://stackoverflow.com/a/6117889
+ * @param {string} dateString - String containing date for which to calculate the week number formatted as yyyy-mm-dd
+ * @returns {Array<number>} Array with the week's year (index 0) and week number (index 1) of the provided date
+ */
+export const getWeekNumber = function(dateString) {
+  let d = new Date(dateString);
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() + 1)); // +4 since we're targeting Wednesday, and +1 to make days 1-indexed
+  const year = d.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(year, 0, 1));
+  const weekNo = Math.ceil((d - yearStart) / (millisecondsInDay + 1) / 7);
+  return [year, weekNo];
+};
+
+/**
+ * Get the dates corresponding to the beginning and end of the week that the dateString belongs to.
+ * @param {string} dateString - String containing date for which to get the dates of the beginning and end of its week. Formatted as yyy-mm-dd.
+ * @returns {Array<Date>} Array containing the date for the beginning of the week (index 0) and the end of the week (index 1)
+ */
+export const getWeekStartAndEnd = function(dateString) {
+  let start = new Date(dateString);
+  start.setUTCDate(start.getUTCDate() - start.getUTCDay());
+  start = new Date(start.getTime() + getLocalTimezoneOffset(start));
+  let end = new Date(start.getTime());
+  end.setUTCDate(end.getUTCDate() + 6);
+  return [start, end];
+};
