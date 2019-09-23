@@ -147,13 +147,17 @@ function DatabaseManagedRoutes() {
     otherReservedEventIds = []
   ) {
     // get the highest existing event id.   TODO: check if there's a more efficient way
-    // TODO: extract localChanges logic to a separate function
-    const newEvtIds = exitingOfflineOnly
-      ? otherReservedEventIds.map(e => e.id)
-      : localChanges && localChanges.newEvents
-      ? localChanges.newEvents.map(e => e.id)
-      : [];
-    const ids = evts.map(e => e.id).concat(newEvtIds);
+    // TODO: maybe extract localChanges logic to a separate function
+    let ids;
+    if (exitingOfflineOnly) {
+      ids = eventChangeQueue.map(e => e.id).concat(otherReservedEventIds);
+    } else {
+      const newEvtIds =
+        localChanges && localChanges.newEvents
+          ? localChanges.newEvents.map(e => e.id)
+          : [];
+      ids = evts.map(e => e.id).concat(newEvtIds);
+    }
     let max = -1;
     for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
 
@@ -172,18 +176,6 @@ function DatabaseManagedRoutes() {
       event: id,
       id: newId
     };
-  }
-
-  function generateNewEventTypeId(
-    reservedEventTypeIds,
-    otherReservedEventTypeIds = []
-  ) {
-    // TODO: make this function useful (may need to pass less parameters or something)
-    // get the highest existing event id.   TODO: check if there's a more efficient way
-    const ids = reservedEventTypeIds.concat(otherReservedEventTypeIds);
-    let max = -1;
-    for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
-    return String(Number(max) + 1);
   }
 
   function localChangesAllowed() {
@@ -281,12 +273,15 @@ function DatabaseManagedRoutes() {
       // Handle id conflicts
       const i = eventTypeChangeQueue.find(t => t.id === evtType.id);
       if (i) {
-        // there's an id conflict
         if (newType) {
-          evtType.id = generateNewEventTypeId(
-            eventTypeChangeQueue.map(t => t.id),
-            updatedEventTypeArray.map(t => t.id)
-          );
+          // get the highest existing event id.   TODO: check if there's a more efficient way
+          const ids = eventTypeChangeQueue
+            .map(t => t.id)
+            .concat(updatedEventTypeArray.map(t => t.id));
+          let max = -1;
+          for (let i of ids) if (i > max) max = i; // eslint-disable-line no-unused-vars
+
+          evtType.id = String(Number(max) + 1);
         } else if (i.lastModified > evtType.lastModified) {
           const index = updatedEventTypeArray.indexOf(evtType);
           updatedEventTypeArray.splice(index, 1);
@@ -377,7 +372,7 @@ function DatabaseManagedRoutes() {
             evt.event,
             null,
             evt.datetime,
-            newEventsToPush.concat(eventChangeQueue)
+            newEventsToPush.map(e => e.id)
           )
         );
       }
