@@ -44,7 +44,7 @@ function EventTypeSelector(props) {
           style: { minWidth: '9rem' }
         })}
       >
-        <option value="">{'--- ' + defaultLabel + ' ---'}</option>
+        <option value="">{`--- ${defaultLabel} ---`}</option>
         {evtTypes}
       </Form.Control>
       {props.description && (

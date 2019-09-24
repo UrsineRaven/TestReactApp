@@ -83,8 +83,7 @@ function History(props) {
             currentGroup = weekYear;
             const [begin, end] = getWeekStartAndEnd(day);
             processedRows.splice(index, 0, {
-              group:
-                'Week of: ' + begin.toDateString() + ' - ' + end.toDateString()
+              group: `Week of: ${begin.toDateString()} - ${end.toDateString()}`
             });
           }
           break;
