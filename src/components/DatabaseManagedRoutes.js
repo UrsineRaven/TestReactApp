@@ -60,6 +60,7 @@ function DatabaseManagedRoutes() {
   const [offlineOnly, setOfflineOnly] = useLocalStorage('offline-only', false);
   //#endregion
 
+  // TODO: add more robust/helpful (logging) error handling
   // TODO: maybe move localChanges stuff to new component/hook; This component is getting complex
 
   //#region instance variables (reset every render)
@@ -90,16 +91,43 @@ function DatabaseManagedRoutes() {
   //#endregion
 
   //#region Handlers
-  function handleEditType(evtType) {
-    const index = evtTypes.findIndex(e => e.id === evtType.id);
-    let newType = index === -1;
-    if (newType) {
-      // TODO: push event type to database (Put)
-    } else {
-      // TODO: update event type in database (Post)
-    }
+  async function handleEditType(evtType) {
+    let succeeds = true;
+    // TODO: uncomment
+    // const index = evtTypes.findIndex(e => e.id === evtType.id);
+    // let newType = index === -1;
+    // if (newType) {
+    //   try {
+    //     const url = '/event-types';
+    //     const options = {
+    //       method: 'POST',
+    //       body: JSON.stringify(evtType),
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       }
+    //     }
+    //     const typeResponse = await fetch(url, options);
+    //     if (!typeResponse.ok) succeeds = false;
+    //   } catch {
+    //     succeeds = false;
+    //   }
+    // } else {
+    //   try {
+    //     const url = `/event-types/${evtType.id}`;
+    //     const options = {
+    //       method: 'PUT',
+    //       body: JSON.stringify(evtType),
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       }
+    //     }
+    //     const typeResponse = await fetch(url, options);
+    //     if (!typeResponse.ok) succeeds = false;
+    //   } catch {
+    //     succeeds = false;
+    //   }
+    // }
 
-    const succeeds = true; // TODO: set this based off database request response
     if (succeeds && !offlineOnly) {
       updateEventTypesLocally([evtType]);
     } else {
@@ -108,10 +136,25 @@ function DatabaseManagedRoutes() {
     }
   }
 
-  function handleNewEvent(id, timeStr) {
+  async function handleNewEvent(id, timeStr) {
+    let succeeds = true;
     const newEvt = generateNewEvent(id, timeStr);
+    // TODO: uncomment
+    // try {
+    //   const url = '/events';
+    //   const options = {
+    //     method: 'POST',
+    //     body: JSON.stringify(newEvt),
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     }
+    //   };
+    //   const typeResponse = await fetch(url, options);
+    //   if (!typeResponse.ok) succeeds = false;
+    // } catch {
+    //   succeeds = false;
+    // }
 
-    const succeeds = true; // TODO: push event to database
     if (succeeds && !offlineOnly) {
       addNewEventsLocally([newEvt]);
     } else {
@@ -120,8 +163,20 @@ function DatabaseManagedRoutes() {
     }
   }
 
-  function handleDeleteEvent(id) {
-    const succeeds = true; // TODO: delete event from database
+  async function handleDeleteEvent(id) {
+    let succeeds = true;
+    // TODO: uncomment
+    // try {
+    //   const url = `/events/${id}`;
+    //   const options = {
+    //     method: 'DELETE'
+    //   };
+    //   const typeResponse = await fetch(url, options);
+    //   if (!typeResponse.ok) succeeds = false;
+    // } catch {
+    //   succeeds = false;
+    // }
+
     if (succeeds && !offlineOnly) {
       deleteEventsLocally([id]);
     } else {
@@ -391,16 +446,27 @@ function DatabaseManagedRoutes() {
   }
   //#endregion
 
-  function syncData() {
+  async function syncData() {
     let error = false;
     eventTypeChangeQueue = evtTypes.slice();
     eventChangeQueue = evts.slice();
-    // TODO: pull changes from server (set error accordingly)
-    if (!error) {
-      //eventTypeChangeQueue = results; // TODO: actually use database results
-      //eventChangeQueue = results; // TODO: actually use database results
+
+    // TODO: uncomment
+    try {
+      // let responseTypes, responseEvts;
+      // const typeResponse = await fetch('/event-types');
+      // if (typeResponse.ok) responseTypes = await typeResponse.json();
+      // else throw new Error('non-success response');
+      // const evtResponse = await fetch('/events');
+      // if (evtResponse.ok) responseEvts = await evtResponse.json();
+      // else throw new Error('non-success response');
+      // eventTypeChangeQueue = responseTypes;
+      // eventChangeQueue = responseEvts;
       setLastSync(new Date().getTime());
+    } catch {
+      error = true;
     }
+
     if (!error && localChanges !== null) {
       error = tryPushLocalChanges();
     }
