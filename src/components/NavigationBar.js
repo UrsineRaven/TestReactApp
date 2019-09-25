@@ -17,7 +17,6 @@ function NavigationBar() {
   return (
     <Navbar expand="lg" bg="primary" variant="dark" expanded={!navCollapsed}>
       <Navbar.Brand href="/">
-        {' '}
         {/* TODO: determine if I want to change this to a Link instead (so that it doesn't reload the app) */}
         <Logo className="d-inline-block align-top logo" />
         {' TestApp'}
