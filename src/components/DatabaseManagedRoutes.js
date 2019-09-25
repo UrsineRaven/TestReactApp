@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import useInterval from '../hooks/useInterval';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -68,6 +68,15 @@ function DatabaseManagedRoutes() {
   let exitingOfflineOnly = false;
   let eventTypeChangeQueue;
   let eventChangeQueue;
+  //#endregion
+
+  //#region Effects
+  // Fetch data for initial load
+  useEffect(() => {
+    if (!lastSync) {
+      syncData();
+    }
+  });
   //#endregion
 
   //#region Intervals
