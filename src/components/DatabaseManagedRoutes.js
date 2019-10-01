@@ -514,7 +514,7 @@ function DatabaseManagedRoutes() {
   }
 
   return [
-    <RulesEngineAlerts></RulesEngineAlerts>,
+    <RulesEngineAlerts key="rules-engine-alerts" />,
     <Route
       path="/"
       exact

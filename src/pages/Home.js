@@ -10,8 +10,10 @@ import {
   getLocalIsoDateAndTime,
   getTodaysStartAndEndDatetimes
 } from '../components/Helpers';
-import './Home.css';
 import PageHeading from '../components/PageHeading';
+import TableRow from '../components/TableRow';
+import '../styles/Modal.css';
+import '../styles/Table.css';
 
 function Home(props) {
   const [updateTime, setUpdateTime] = useState(new Date().toLocaleString());
@@ -70,6 +72,7 @@ function Home(props) {
       : '';
     return (
       <TableRow
+        noDate
         time={evtTime}
         event={evtName}
         formatting={evtFormat}
@@ -147,22 +150,6 @@ function Home(props) {
         </Modal.Footer>
       </Modal>
     </>
-  );
-}
-
-function TableRow(props) {
-  return (
-    <tr {...(props.formatting && JSON.parse(props.formatting))}>
-      <td className="small-col">{props.time}</td>
-      <td className="big-col">{props.event}</td>
-      <td className="btn-col">
-        {props.time !== '' && ( // if there's no time, it's probably the placeholder row, so don't render the button
-          <button className="text-danger symbol" onClick={props.onDelete}>
-            <span>&times;</span>
-          </button>
-        )}
-      </td>
-    </tr>
   );
 }
 
