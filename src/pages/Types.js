@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
@@ -51,17 +50,18 @@ function Types(props) {
     setNewType(true);
   }
 
+  const alerts = [
+    {
+      type: 'success',
+      dismissible: true,
+      onClose: () => setAlertText(''),
+      text: alertText
+    }
+  ];
+
   return (
     <>
-      <Alert
-        show={!!alertText}
-        variant="success"
-        dismissible
-        onClose={() => setAlertText('')}
-      >
-        {alertText}
-      </Alert>
-      <PageHeading>Event Type Management</PageHeading>
+      <PageHeading alerts={alerts}>Event Type Management</PageHeading>
       <Card border="primary">
         <Card.Body>
           <Form>

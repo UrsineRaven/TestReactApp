@@ -7,6 +7,7 @@ import Home from '../pages/Home';
 import Settings from '../pages/Settings';
 import Types from '../pages/Types';
 import { getLocalIsoDateAndTime } from './Helpers';
+import RulesEngineAlerts from './RulesEngineAlerts';
 
 //#region Test Data        TODO: Remove
 const testDataEventTypes = [
@@ -513,6 +514,7 @@ function DatabaseManagedRoutes() {
   }
 
   return [
+    <RulesEngineAlerts></RulesEngineAlerts>,
     <Route
       path="/"
       exact

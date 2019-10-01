@@ -11,6 +11,7 @@ import {
   getTodaysStartAndEndDatetimes
 } from '../components/Helpers';
 import './Home.css';
+import PageHeading from '../components/PageHeading';
 
 function Home(props) {
   const [updateTime, setUpdateTime] = useState(new Date().toLocaleString());
@@ -92,6 +93,7 @@ function Home(props) {
 
   return (
     <>
+      <PageHeading></PageHeading>
       <h5 className="mt-3">
         {'Page last updated: '}
         <small className="text-muted">{updateTime}</small>
