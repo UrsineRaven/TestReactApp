@@ -293,16 +293,16 @@ export const cssColors = [
   },
   {
     category: 'Purples',
-    name: 'Fuchsia',
-    colorString: 'fuchsia',
+    name: 'Magenta',
+    colorString: 'magenta',
     textColor: 'white',
     hex: 'FF00FF',
     rgb: { r: 255, g: 0, b: 255 }
   },
   {
     category: 'Purples',
-    name: 'Magenta',
-    colorString: 'Magenta',
+    name: 'Fuchsia',
+    colorString: 'fuchsia',
     textColor: 'white',
     hex: 'FF00FF',
     rgb: { r: 255, g: 0, b: 255 }
@@ -589,16 +589,16 @@ export const cssColors = [
   },
   {
     category: 'Blues/Cyans',
-    name: 'Aqua',
-    colorString: 'aqua',
+    name: 'Cyan',
+    colorString: 'cyan',
     textColor: 'black',
     hex: '00FFFF',
     rgb: { r: 0, g: 255, b: 255 }
   },
   {
     category: 'Blues/Cyans',
-    name: 'Cyan',
-    colorString: 'cyan',
+    name: 'Aqua',
+    colorString: 'aqua',
     textColor: 'black',
     hex: '00FFFF',
     rgb: { r: 0, g: 255, b: 255 }
@@ -1061,7 +1061,7 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'LightGray',
+    name: 'LightGrey',
     colorString: 'LightGrey',
     textColor: 'black',
     hex: 'D3D3D3',
@@ -1069,7 +1069,7 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'LightGrey',
+    name: 'LightGray',
     colorString: 'LightGrey',
     textColor: 'black',
     hex: 'D3D3D3',
@@ -1085,14 +1085,6 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'DarkGray',
-    colorString: 'darkgray',
-    textColor: 'black',
-    hex: 'A9A9A9',
-    rgb: { r: 169, g: 169, b: 169 }
-  },
-  {
-    category: 'Greys',
     name: 'DarkGrey',
     colorString: 'darkgrey',
     textColor: 'black',
@@ -1101,11 +1093,11 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'Gray',
-    colorString: 'gray',
+    name: 'DarkGray',
+    colorString: 'darkgray',
     textColor: 'black',
-    hex: '808080',
-    rgb: { r: 128, g: 128, b: 128 }
+    hex: 'A9A9A9',
+    rgb: { r: 169, g: 169, b: 169 }
   },
   {
     category: 'Greys',
@@ -1117,11 +1109,11 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'DimGray',
-    colorString: 'dimgray',
-    textColor: 'white',
-    hex: '696969',
-    rgb: { r: 105, g: 105, b: 105 }
+    name: 'Gray',
+    colorString: 'gray',
+    textColor: 'black',
+    hex: '808080',
+    rgb: { r: 128, g: 128, b: 128 }
   },
   {
     category: 'Greys',
@@ -1133,11 +1125,11 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'LightSlateGray',
-    colorString: 'lightslategray',
+    name: 'DimGray',
+    colorString: 'dimgray',
     textColor: 'white',
-    hex: '778899',
-    rgb: { r: 119, g: 136, b: 153 }
+    hex: '696969',
+    rgb: { r: 105, g: 105, b: 105 }
   },
   {
     category: 'Greys',
@@ -1149,11 +1141,11 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'SlateGray',
-    colorString: 'slategray',
+    name: 'LightSlateGray',
+    colorString: 'lightslategray',
     textColor: 'white',
-    hex: '708090',
-    rgb: { r: 112, g: 128, b: 144 }
+    hex: '778899',
+    rgb: { r: 119, g: 136, b: 153 }
   },
   {
     category: 'Greys',
@@ -1165,16 +1157,24 @@ export const cssColors = [
   },
   {
     category: 'Greys',
-    name: 'DarkSlateGray',
-    colorString: 'darkslategray',
+    name: 'SlateGray',
+    colorString: 'slategray',
+    textColor: 'white',
+    hex: '708090',
+    rgb: { r: 112, g: 128, b: 144 }
+  },
+  {
+    category: 'Greys',
+    name: 'DarkSlateGrey',
+    colorString: 'darkslategrey',
     textColor: 'white',
     hex: '2F4F4F',
     rgb: { r: 47, g: 79, b: 79 }
   },
   {
     category: 'Greys',
-    name: 'DarkSlateGrey',
-    colorString: 'darkslategrey',
+    name: 'DarkSlateGray',
+    colorString: 'darkslategray',
     textColor: 'white',
     hex: '2F4F4F',
     rgb: { r: 47, g: 79, b: 79 }
