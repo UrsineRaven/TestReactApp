@@ -6,7 +6,7 @@ import '../styles/Modal.css';
 import '../styles/RowFormattingWizard.css';
 import '../styles/Table.css';
 import TableRow from './TableRow';
-import { getLocalIsoDateAndTime } from './Helpers';
+import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';

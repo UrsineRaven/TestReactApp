@@ -9,7 +9,7 @@ import Table from 'react-bootstrap/Table';
 import {
   getLocalIsoDateAndTime,
   getTodaysStartAndEndDatetimes
-} from '../components/Helpers';
+} from '../helpers/TimeHelpers';
 import PageHeading from '../components/PageHeading';
 import TableRow from '../components/TableRow';
 import '../styles/Modal.css';
