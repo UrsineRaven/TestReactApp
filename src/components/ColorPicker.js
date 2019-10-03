@@ -3,12 +3,15 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { cssColors } from '../helpers/CssColors';
 import Form from 'react-bootstrap/Form';
+import CssColorSelect from './CssColorSelect';
 
 /**
- *
+ * A color picker that allows you to choose one of the CSS-defined colors or a custom one.
  * @param {Object} props - properties object for the Color Picker
- * @param {string} value -
- * @param {} onChange -
+ * @param {string} props.value - value of the color picker
+ * @param {(colorValue:string) => void} props.onChange - function to call when a color is chosen (saved)
+ * @param {string} props.className - value to add to the className property of the rendered component
+ * @param {Object} props.style - style object to apply to the rendered component
  */
 function ColorPicker(props) {
   const defaultName = ' --- No Change ---';
@@ -39,7 +42,8 @@ function ColorPicker(props) {
   }
 
   function handleReset() {
-    reset();
+    if (originalColor.current !== colorValue) reset();
+    else setColor('');
   }
 
   function reset() {
@@ -47,12 +51,11 @@ function ColorPicker(props) {
   }
 
   function setColor(val) {
+    // TODO: make cssColors a class and move this to it and name it findName
     let value = val.toLowerCase();
     if (value.startsWith('#')) value = value.substring(1);
     const index = cssColors.findIndex(color => {
-      return (
-        color.backgroundColor === value || color.hex.toLowerCase() === value
-      );
+      return color.colorString === value || color.hex.toLowerCase() === value;
     });
     if (index !== -1) setColorName(cssColors[index].name);
     else setColorName(val.toUpperCase() || defaultName);
@@ -72,7 +75,7 @@ function ColorPicker(props) {
   return (
     <div
       className={props.className + ' control-column'}
-      style={Object.assign({ flexDirection: 'column' }, props.style || {})}
+      style={{ flexDirection: 'column', ...props.style }}
     >
       <Modal.Dialog
         style={{ display: showPicker ? 'block' : 'none' }}
@@ -84,7 +87,15 @@ function ColorPicker(props) {
         <div style={{ height: '1em', backgroundColor: colorValue }} />
         <Modal.Body>
           <Form className="mt-3">
-            {/* TODO: Custom CSS Color Picker w/ search */}
+            {' '}
+            {/* TODO: figure out if the form element is necessary if this is used outside a form... */}
+            <Form.Group controlId="inputDefinedColor">
+              <Form.Label>Choose a pre-defined color</Form.Label>
+              <CssColorSelect
+                value={colorValue}
+                onChange={newVal => setColor(newVal)}
+              />
+            </Form.Group>
             <Form.Group controlId="inputCustomColor">
               <Form.Label>Or choose a custom color</Form.Label>
               <Form.Control
