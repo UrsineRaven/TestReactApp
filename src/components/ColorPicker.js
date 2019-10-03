@@ -69,7 +69,7 @@ function ColorPicker(props) {
       return color.colorString === value;
     });
     if (index !== -1) return '#' + cssColors[index].hex.toLowerCase();
-    return '';
+    return '#000000';
   }
 
   return (

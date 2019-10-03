@@ -62,7 +62,7 @@ export const cssColors = [
   {
     category: 'Reds',
     name: 'FireBrick',
-    colorString: 'fireBrick',
+    colorString: 'firebrick',
     textColor: 'white',
     hex: 'B22222',
     rgb: { r: 178, g: 34, b: 34 }
@@ -870,7 +870,7 @@ export const cssColors = [
   {
     category: 'Browns',
     name: 'Peru',
-    colorString: 'Peru',
+    colorString: 'peru',
     textColor: 'white',
     hex: 'CD853F',
     rgb: { r: 205, g: 133, b: 63 }
@@ -1062,7 +1062,7 @@ export const cssColors = [
   {
     category: 'Greys',
     name: 'LightGrey',
-    colorString: 'LightGrey',
+    colorString: 'lightgrey',
     textColor: 'black',
     hex: 'D3D3D3',
     rgb: { r: 211, g: 211, b: 211 }
@@ -1070,7 +1070,7 @@ export const cssColors = [
   {
     category: 'Greys',
     name: 'LightGray',
-    colorString: 'LightGrey',
+    colorString: 'lightgrey',
     textColor: 'black',
     hex: 'D3D3D3',
     rgb: { r: 211, g: 211, b: 211 }

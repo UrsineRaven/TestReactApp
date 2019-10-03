@@ -1,0 +1,94 @@
+.css-animation-select {
+  position: relative;
+}
+
+.css-animation-select .dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  list-style: none;
+  border: 1px solid dodgerblue;
+  /* cursor: pointer; */
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  max-height: 20rem;
+  overflow: hidden;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.css-animation-select.show-list .dropdown {
+  display: block;
+}
+
+.css-animation-select .arrow {
+  position: absolute;
+  top: 0.25em;
+  right: 0.5rem;
+  cursor: default;
+}
+
+.css-animation-select.show-list .arrow {
+  top: 0.5em;
+}
+
+.css-animation-select .entry {
+  padding: 0.375rem 0.75rem;
+}
+
+.css-animation-select .entry:hover {
+  border: 1px dashed;
+  font-weight: bold;
+}
+
+@keyframes background-important {
+  from {
+    background-color: red;
+  }
+  to {
+    background-color: yellow;
+  }
+}
+@keyframes background-progress {
+  /* from {background: repeating-linear-gradient(45deg, lightgrey, darkgrey 10%, lightgrey 20%);}
+  to {background: repeating-linear-gradient(45deg, darkgrey, lightgrey 10%, darkgrey 20%);} */
+  0% {
+    background: repeating-linear-gradient(
+      135deg,
+      lightgrey,
+      darkgrey 1%,
+      lightgrey 2%
+    );
+    background-size: 800%;
+    background-position: 400% 100%;
+  }
+  50% {
+    background: repeating-linear-gradient(
+      135deg,
+      lightgrey,
+      darkgrey 1%,
+      lightgrey 2%
+    );
+    background-size: 800%;
+    background-position: 0% 100%;
+  }
+  100% {
+    background: repeating-linear-gradient(
+      135deg,
+      lightgrey,
+      darkgrey 1%,
+      lightgrey 2%
+    );
+    background-size: 800%;
+    background-position: -400% 100%;
+  }
+}
+
+.ani-important {
+  animation: background-important 0.5s linear 0s infinite alternate both;
+}
+
+.ani-loading {
+  animation: background-progress 200s linear 0s infinite normal both;
+}

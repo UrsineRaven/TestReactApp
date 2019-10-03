@@ -12,6 +12,7 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import ColorPicker from './ColorPicker';
+import AnimationSelect, { animations } from './AnimationSelect';
 
 function RowFormattingWizard(props) {
   const [showWizard, setShowWizard] = useState(false);
@@ -21,7 +22,7 @@ function RowFormattingWizard(props) {
   const steps = [
     'Choose Class',
     'Choose Font Style',
-    'Choose Font Overrides',
+    'Choose Row Style',
     'Finish'
   ];
 
@@ -102,6 +103,12 @@ function RowFormattingWizard(props) {
             formatting={formatting}
             setFormatting={setFormatting}
           />
+          <ChooseRowStyle
+            curStep={curStep}
+            steps={steps}
+            formatting={formatting}
+            setFormatting={setFormatting}
+          />
         </Modal.Body>
         <Modal.Footer className="row justify-content-around">
           {curStep > 0 && (
@@ -163,9 +170,18 @@ function ChooseClass(props) {
   ];
 
   function handleClassChange(newVal) {
+    // TODO: fix this and the one on the class selection page
     let formatting = Object.assign({}, props.formatting);
-    formatting.className = newVal;
-    if (newVal === '') delete formatting.className;
+    let classes =
+      (formatting.className && formatting.className.split(' ')) || [];
+    classes.forEach(cls => {
+      let index = rowClasses.findIndex(rc => 'table-' + rc === cls);
+      if (index !== -1) classes.splice(index, 1);
+    });
+    classes.push(newVal);
+    const value = classes.join(' ');
+    formatting.className = value;
+    if (value === '') delete formatting.className;
     props.setFormatting(formatting);
     setClassName(newVal);
   }
@@ -207,6 +223,7 @@ function ChooseClass(props) {
   );
 }
 
+// TODO: move these wizard pages to their own files
 function ChooseFontStyle(props) {
   const [fontStyle, setFontStyle] = useState(
     (props.formatting.style && props.formatting.style.fontStyle === 'italic') ||
@@ -289,7 +306,6 @@ function ChooseFontStyle(props) {
   }
 
   function handleColorChange(newVal) {
-    // TODO: implement all this
     let formatting = Object.assign({}, props.formatting);
     if (!formatting.style) formatting.style = {};
     formatting.style.color = newVal;
@@ -433,9 +449,126 @@ function ChooseFontStyle(props) {
   );
 }
 
-// Choose class
-// Choose font style (checkbox for override size/color)
-// Choose row style (background color, text-align, animation?)
-// Choose font size (optional color override)
+function ChooseRowStyle(props) {
+  // Choose row style (background color, text-align, animation?)
+  const [className, setClassName] = useState(getAnimationClass());
+  const [backColor, setBackColor] = useState(
+    (props.formatting.style && props.formatting.style.backgroundColor) || ''
+  );
+  const [textAlign, setTextAlign] = useState(props.formatting.textAlign || '');
+
+  const stepName = 'Choose Row Style';
+  const stepDescription = 'Select any changes you want to make to the row.';
+  const alignments = [
+    { name: 'Default', value: 'initial' },
+    { name: 'Left', value: 'left' },
+    { name: 'Center', value: 'center' },
+    { name: 'Right', value: 'right' },
+    { name: 'Justify', value: 'justify' }
+  ];
+
+  function handleColorChange(newVal) {
+    let formatting = Object.assign({}, props.formatting);
+    if (!formatting.style) formatting.style = {};
+    formatting.style.backgroundColor = newVal;
+    if (newVal === '') delete formatting.style.backgroundColor;
+    if (isObjectEmpty(formatting.style)) delete formatting.style;
+    props.setFormatting(formatting);
+    setBackColor(newVal);
+  }
+
+  function handleAlignChange(newVal) {
+    let formatting = Object.assign({}, props.formatting);
+    if (!formatting.style) formatting.style = {};
+    formatting.style.textAlign = newVal;
+    if (newVal === '') delete formatting.style.textAlign;
+    if (isObjectEmpty(formatting.style)) delete formatting.style;
+    props.setFormatting(formatting);
+    setTextAlign(newVal);
+  }
+
+  function handleClassChange(newVal) {
+    let formatting = Object.assign({}, props.formatting);
+    let classes =
+      (formatting.className && formatting.className.split(' ')) || [];
+    classes.forEach(cls => {
+      let index = animations.findIndex(a => a.className === cls);
+      if (index !== -1) classes.splice(index, 1);
+    });
+    classes.push(newVal);
+    const value = classes.join(' ');
+    formatting.className = value;
+    if (value === '') delete formatting.className;
+    props.setFormatting(formatting);
+    setClassName(newVal);
+  }
+
+  function getAnimationClass() {
+    let classes =
+      (props.formatting.className && props.formatting.className.split(' ')) ||
+      [];
+    classes.forEach(cls => {
+      let index = animations.findIndex(a => a.className === cls);
+      if (index !== -1) return cls;
+    });
+    return '';
+  }
+
+  const alignOptions = alignments.map(a => {
+    return (
+      <option key={a.name} value={a.value}>
+        {a.name}
+      </option>
+    );
+  });
+
+  return (
+    props.steps[props.curStep] === stepName && (
+      <>
+        <h5>{stepName}</h5>
+        <span className="form-text">{stepDescription}</span>
+        <Form className="mt-3">
+          <Form.Group as={Row} controlId="inputBackgroundColor">
+            <Form.Label column xs="auto">
+              Font Color
+            </Form.Label>
+            <ColorPicker
+              value={backColor}
+              onChange={val => handleColorChange(val)}
+              className="col mx-3"
+              style={{ minWidth: '9rem' }}
+            />
+          </Form.Group>
+          <Form.Group as={Row} controlId="inputTextAlign">
+            <Form.Label column xs="auto">
+              Text Alignment
+            </Form.Label>
+            <Form.Control
+              as="select"
+              value={textAlign}
+              onChange={evt => handleAlignChange(evt.target.value)}
+              className="col mx-3"
+              style={{ minWidth: '9rem' }}
+            >
+              <option value="">{'--- No change ---'}</option>
+              {alignOptions}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group as={Row} controlId="inputAnimation">
+            <Form.Label column xs="auto">
+              Animation
+            </Form.Label>
+            <AnimationSelect
+              value={className}
+              onChange={val => handleClassChange(val)}
+              className="col mx-3"
+              style={{ minWidth: '9rem' }}
+            />
+          </Form.Group>
+        </Form>
+      </>
+    )
+  );
+}
 
 export default RowFormattingWizard;
