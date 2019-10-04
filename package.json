@@ -12,6 +12,10 @@
     "react-scripts": "3.1.1"
   },
   "lint-staged": {
+    "src/**/*.{js,jsx,tx,tsx}": [
+      "organize-imports-cli",
+      "git add"
+    ],
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
       "git add"
@@ -47,6 +51,7 @@
     "eslint-plugin-react-hooks": "^2.0.1",
     "husky": "^3.0.5",
     "lint-staged": "^9.2.5",
+    "organize-imports-cli": "^0.4.0",
     "prettier": "^1.18.2"
   }
 }

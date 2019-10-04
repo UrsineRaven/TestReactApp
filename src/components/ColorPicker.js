@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import { cssColors } from '../helpers/CssColors';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
+import CssColors from '../helpers/CssColors';
+import '../styles/ColorPicker.css';
+import '../styles/Modal.css';
 import CssColorSelect from './CssColorSelect';
 
 /**
@@ -51,25 +53,14 @@ function ColorPicker(props) {
   }
 
   function setColor(val) {
-    // TODO: make cssColors a class and move this to it and name it findName
-    let value = val.toLowerCase();
-    if (value.startsWith('#')) value = value.substring(1);
-    const index = cssColors.findIndex(color => {
-      return color.colorString === value || color.hex.toLowerCase() === value;
-    });
-    if (index !== -1) setColorName(cssColors[index].name);
-    else setColorName(val.toUpperCase() || defaultName);
+    setColorName(CssColors.findName(val) || val.toUpperCase() || defaultName);
     setColorValue(val);
   }
 
   function getHexColor(val) {
-    let value = val.toLowerCase();
     if (val.startsWith('#')) return val;
-    const index = cssColors.findIndex(color => {
-      return color.colorString === value;
-    });
-    if (index !== -1) return '#' + cssColors[index].hex.toLowerCase();
-    return '#000000';
+    const color = CssColors.findColor(val);
+    return color ? color.hex.toLowerCase() : '#000000';
   }
 
   return (
@@ -86,25 +77,21 @@ function ColorPicker(props) {
         </Modal.Header>
         <div style={{ height: '1em', backgroundColor: colorValue }} />
         <Modal.Body>
-          <Form className="mt-3">
-            {' '}
-            {/* TODO: figure out if the form element is necessary if this is used outside a form... */}
-            <Form.Group controlId="inputDefinedColor">
-              <Form.Label>Choose a pre-defined color</Form.Label>
-              <CssColorSelect
-                value={colorValue}
-                onChange={newVal => setColor(newVal)}
-              />
-            </Form.Group>
-            <Form.Group controlId="inputCustomColor">
-              <Form.Label>Or choose a custom color</Form.Label>
-              <Form.Control
-                type="color"
-                value={getHexColor(colorValue)}
-                onChange={evt => setColor(evt.target.value)}
-              />
-            </Form.Group>
-          </Form>
+          <Form.Group controlId="inputDefinedColor">
+            <Form.Label>Choose a pre-defined color</Form.Label>
+            <CssColorSelect
+              value={colorValue}
+              onChange={newVal => setColor(newVal)}
+            />
+          </Form.Group>
+          <Form.Group controlId="inputCustomColor">
+            <Form.Label>Or choose a custom color</Form.Label>
+            <Form.Control
+              type="color"
+              value={getHexColor(colorValue)}
+              onChange={evt => setColor(evt.target.value)}
+            />
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer className="row justify-content-around">
           <Button

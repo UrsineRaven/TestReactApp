@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Table from 'react-bootstrap/Table';
+import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
 import '../styles/Modal.css';
 import '../styles/RowFormattingWizard.css';
 import '../styles/Table.css';
 import TableRow from './TableRow';
-import { isObjectEmpty } from '../helpers/MiscHelpers';
-import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
-import Table from 'react-bootstrap/Table';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import ColorPicker from './ColorPicker';
-import AnimationSelect, { animations } from './AnimationSelect';
+import ChooseClass from './WizardPages/ChooseClass';
+import ChooseFontStyle from './WizardPages/ChooseFontStyle';
+import ChooseRowStyle from './WizardPages/ChooseRowStyle';
+import FinishPage from './WizardPages/FinishPage';
 
 function RowFormattingWizard(props) {
   const [showWizard, setShowWizard] = useState(false);
@@ -26,6 +25,7 @@ function RowFormattingWizard(props) {
     'Finish'
   ];
 
+  // Handlers
   function handleWizardBtn() {
     resetWizard();
     setShowWizard(prev => !prev);
@@ -41,8 +41,7 @@ function RowFormattingWizard(props) {
     handleDismiss();
   }
 
-  // Handlers
-
+  // Helpers
   function parse(formattingString) {
     const obj = JSON.parse(formattingString || '{}');
     return obj;
@@ -53,6 +52,7 @@ function RowFormattingWizard(props) {
     setFormatting(parse(props.formatting));
   }
 
+  // JSX generation
   const breadcrumbs = steps.map((name, index) => {
     return (
       index <= curStep && (
@@ -108,12 +108,7 @@ function RowFormattingWizard(props) {
             formatting={formatting}
             setFormatting={setFormatting}
           />
-          <FinishPage
-            curStep={curStep}
-            steps={steps}
-            formatting={formatting}
-            setFormatting={setFormatting}
-          />
+          <FinishPage curStep={curStep} steps={steps} />
         </Modal.Body>
         <Modal.Footer className="row justify-content-around">
           {curStep > 0 && (
@@ -153,452 +148,6 @@ function RowFormattingWizard(props) {
         #
       </Button>
     </>
-  );
-}
-
-function ChooseClass(props) {
-  const stepName = 'Choose Class';
-  const stepDescription =
-    'Choosing a class allows you to set a starting point for your formatting.';
-  const classPrefix = 'table-';
-  const rowClasses = [
-    'active',
-    'danger',
-    'dark',
-    'info',
-    'light',
-    'primary',
-    'secondary',
-    'success',
-    'warning'
-  ];
-
-  const [className, setClassName] = useState(getRowClass());
-
-  function handleClassChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    let classes =
-      (formatting.className && formatting.className.split(' ')) || [];
-    classes.forEach((cls, idx) => {
-      let index = rowClasses.findIndex(rc => classPrefix + rc === cls);
-      if (index !== -1) classes.splice(idx, 1);
-    });
-    classes.push(newVal);
-    const value = classes.join(' ');
-    formatting.className = value;
-    if (value === '') delete formatting.className;
-    props.setFormatting(formatting);
-    setClassName(newVal);
-  }
-
-  function getRowClass() {
-    let classes =
-      (props.formatting.className && props.formatting.className.split(' ')) ||
-      [];
-    for (let i = 0; i < classes.length; i++) {
-      let index = rowClasses.findIndex(rc => classPrefix + rc === classes[i]);
-      if (index !== -1) return classes[i];
-    }
-    return '';
-  }
-
-  const classOptions = rowClasses.map(name => {
-    const title = name.charAt(0).toUpperCase() + name.substring(1);
-    const value = classPrefix + name;
-    return (
-      <option key={value} value={value}>
-        {title}
-      </option>
-    );
-  });
-
-  return (
-    props.steps[props.curStep] === stepName && (
-      <>
-        <h5>{stepName}</h5>
-        <span className="form-text">{stepDescription}</span>
-        <Form className="mt-3">
-          <Form.Group as={Row} controlId="inputClass">
-            <Form.Label column xs="auto">
-              Class
-            </Form.Label>
-            <Form.Control
-              as="select"
-              value={className}
-              onChange={evt => handleClassChange(evt.target.value)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            >
-              <option value="">{'--- None ---'}</option>
-              {classOptions}
-            </Form.Control>
-          </Form.Group>
-        </Form>
-      </>
-    )
-  );
-}
-
-// TODO: move these wizard pages to their own files
-function ChooseFontStyle(props) {
-  const stepName = 'Choose Font Style';
-  const stepDescription = 'Select any changes you want to make to the font.';
-  const weights = [
-    { name: 'Normal', value: 'normal' },
-    { name: 'Bold', value: 'bold' },
-    { name: 'Really Bold', value: '900' }
-  ];
-  const sizes = [
-    { name: 'Normal', value: 'inherit' },
-    { name: 'Smaller', value: '0.75em' },
-    { name: 'Larger', value: '1.25em' },
-    { name: 'Much Larger', value: '1.5em' }
-  ];
-  const decorations = [
-    { name: 'Underline', value: 'underline' },
-    { name: 'Strike-Through', value: 'line-through' }
-  ];
-
-  const [fontStyle, setFontStyle] = useState(
-    (props.formatting.style && props.formatting.style.fontStyle === 'italic') ||
-      ''
-  );
-  const [fontDecoration, setFontDecoration] = useState(
-    (props.formatting.style && props.formatting.style.textDecoration) || ''
-  );
-  const [fontWeight, setFontWeight] = useState(
-    (props.formatting.style && props.formatting.style.fontWeight) || ''
-  );
-  const [fontColor, setFontColor] = useState(
-    (props.formatting.style && props.formatting.style.color) || ''
-  );
-  const [fontVariant, setFontVariant] = useState(
-    (props.formatting.style &&
-      props.formatting.style.fontVariant === 'small-caps') ||
-      ''
-  );
-  const [fontSize, setFontSize] = useState(
-    (props.formatting.style && props.formatting.style.fontSize) || ''
-  );
-
-  function handleStyleChange(newVal) {
-    const style = newVal ? 'italic' : '';
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.fontStyle = style;
-    if (style === '') delete formatting.style.fontStyle;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setFontStyle(newVal);
-  }
-
-  function handleDecorationChange(changedDecoration, newVal) {
-    let decoration = fontDecoration;
-    const index = decoration.indexOf(changedDecoration);
-    if (index === -1 && newVal) {
-      if (changedDecoration === 'underline')
-        decoration = changedDecoration + ' ' + decoration;
-      else decoration = decoration + ' ' + changedDecoration;
-    } else if (index !== -1 && !newVal) {
-      decoration = decoration.replace(changedDecoration, '').trim();
-    }
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.textDecorationLine = decoration;
-    if (decoration === '') delete formatting.style.textDecorationLine;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setFontDecoration(decoration);
-  }
-
-  function handleWeightChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.fontWeight = newVal;
-    if (newVal === '') delete formatting.style.fontWeight;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setFontWeight(newVal);
-  }
-
-  function handleColorChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.color = newVal;
-    if (newVal === '') delete formatting.style.color;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setFontColor(newVal);
-  }
-
-  function handleVariantChange(newVal) {
-    const variant = newVal ? 'small-caps' : '';
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.fontVariant = variant;
-    if (variant === '') delete formatting.style.fontVariant;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setFontVariant(newVal);
-  }
-
-  function handleSizeChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.fontSize = newVal;
-    if (newVal === '') delete formatting.style.fontSize;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setFontSize(newVal);
-  }
-
-  const decorationOptions = decorations.map(d => {
-    return (
-      <Form.Group as={Row} controlId={'inputDecoration' + d.name} key={d.name}>
-        <Form.Label column xs="auto">
-          {d.name}
-        </Form.Label>
-        <Form.Check
-          type="checkbox"
-          label="Example Text"
-          className={'col mx-3 check-label-' + d.value}
-          checked={fontDecoration.indexOf(d.value) !== -1}
-          onChange={evt => handleDecorationChange(d.value, evt.target.checked)}
-        />
-      </Form.Group>
-    );
-  });
-
-  const weightOptions = weights.map(w => {
-    return (
-      <option key={w.name} value={w.value}>
-        {w.name}
-      </option>
-    );
-  });
-
-  const sizeOptions = sizes.map(s => {
-    return (
-      <option key={s.name} value={s.value}>
-        {s.name}
-      </option>
-    );
-  });
-
-  return (
-    props.steps[props.curStep] === stepName && (
-      <>
-        <h5>{stepName}</h5>
-        <span className="form-text">{stepDescription}</span>
-        <Form className="mt-3">
-          <Form.Group as={Row} controlId="inputStyle">
-            <Form.Label column xs="auto">
-              Italic
-            </Form.Label>
-            <Form.Check
-              type="checkbox"
-              label="Example Text"
-              className="col mx-3"
-              style={{ fontStyle: 'italic' }}
-              checked={fontStyle}
-              onChange={evt => handleStyleChange(evt.target.checked)}
-            />
-          </Form.Group>
-          {decorationOptions}
-          <Form.Group as={Row} controlId="inputFontWeight">
-            <Form.Label column xs="auto">
-              Font Weight
-            </Form.Label>
-            <Form.Control
-              as="select"
-              value={fontWeight}
-              onChange={evt => handleWeightChange(evt.target.value)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            >
-              <option value="">{'--- No change ---'}</option>
-              {weightOptions}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputVariant">
-            <Form.Label column xs="auto">
-              Small Caps
-            </Form.Label>
-            <Form.Check
-              type="checkbox"
-              label="Example Text"
-              className="col mx-3"
-              style={{ fontVariant: 'small-caps' }}
-              checked={fontVariant}
-              onChange={evt => handleVariantChange(evt.target.checked)}
-            />
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputFontSize">
-            <Form.Label column xs="auto">
-              Font Size
-            </Form.Label>
-            <Form.Control
-              as="select"
-              value={fontSize}
-              onChange={evt => handleSizeChange(evt.target.value)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            >
-              <option value="">{'--- No change ---'}</option>
-              {sizeOptions}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputFontColor">
-            <Form.Label column xs="auto">
-              Font Color
-            </Form.Label>
-            <ColorPicker
-              value={fontColor}
-              onChange={val => handleColorChange(val)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            />
-          </Form.Group>
-        </Form>
-      </>
-    )
-  );
-}
-
-function ChooseRowStyle(props) {
-  const stepName = 'Choose Row Style';
-  const stepDescription = 'Select any changes you want to make to the row.';
-  const alignments = [
-    { name: 'Default', value: 'initial' },
-    { name: 'Left', value: 'left' },
-    { name: 'Center', value: 'center' },
-    { name: 'Right', value: 'right' },
-    { name: 'Justify', value: 'justify' }
-  ];
-
-  const [className, setClassName] = useState(getAnimationClass());
-  const [backColor, setBackColor] = useState(
-    (props.formatting.style && props.formatting.style.backgroundColor) || ''
-  );
-  const [textAlign, setTextAlign] = useState(props.formatting.textAlign || '');
-
-  function handleColorChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.backgroundColor = newVal;
-    if (newVal === '') delete formatting.style.backgroundColor;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setBackColor(newVal);
-  }
-
-  function handleAlignChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    if (!formatting.style) formatting.style = {};
-    formatting.style.textAlign = newVal;
-    if (newVal === '') delete formatting.style.textAlign;
-    if (isObjectEmpty(formatting.style)) delete formatting.style;
-    props.setFormatting(formatting);
-    setTextAlign(newVal);
-  }
-
-  function handleClassChange(newVal) {
-    let formatting = Object.assign({}, props.formatting);
-    let classes =
-      (formatting.className && formatting.className.split(' ')) || [];
-    for (let i = 0; i < classes.length; i++) {
-      let index = animations.findIndex(a => a.className === classes[i]);
-      if (index !== -1) {
-        classes.splice(i, 1);
-        break;
-      }
-    }
-    classes.push(newVal);
-    const value = classes.join(' ');
-    formatting.className = value;
-    if (value === '') delete formatting.className;
-    props.setFormatting(formatting);
-    setClassName(newVal);
-  }
-
-  function getAnimationClass() {
-    let classes =
-      (props.formatting.className && props.formatting.className.split(' ')) ||
-      [];
-    for (let i = 0; i < classes.length; i++) {
-      let index = animations.findIndex(a => a.className === classes[i]);
-      if (index !== -1) return classes[i];
-    }
-    return '';
-  }
-
-  const alignOptions = alignments.map(a => {
-    return (
-      <option key={a.name} value={a.value}>
-        {a.name}
-      </option>
-    );
-  });
-
-  return (
-    props.steps[props.curStep] === stepName && (
-      <>
-        <h5>{stepName}</h5>
-        <span className="form-text">{stepDescription}</span>
-        <Form className="mt-3">
-          <Form.Group as={Row} controlId="inputBackgroundColor">
-            <Form.Label column xs="auto">
-              Background Color
-            </Form.Label>
-            <ColorPicker
-              value={backColor}
-              onChange={val => handleColorChange(val)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            />
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputTextAlign">
-            <Form.Label column xs="auto">
-              Text Alignment
-            </Form.Label>
-            <Form.Control
-              as="select"
-              value={textAlign}
-              onChange={evt => handleAlignChange(evt.target.value)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            >
-              <option value="">{'--- No change ---'}</option>
-              {alignOptions}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputAnimation">
-            <Form.Label column xs="auto">
-              Animation
-            </Form.Label>
-            <AnimationSelect
-              value={className}
-              onChange={val => handleClassChange(val)}
-              className="col mx-3"
-              style={{ minWidth: '9rem' }}
-            />
-          </Form.Group>
-        </Form>
-      </>
-    )
-  );
-}
-
-function FinishPage(props) {
-  const stepName = 'Finish';
-  const stepDescription = 'Click Save to apply your formatting changes.';
-  return (
-    props.steps[props.curStep] === stepName && (
-      <>
-        <h5>{stepName}</h5>
-        <span className="form-text">{stepDescription}</span>
-      </>
-    )
   );
 }
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { cssColors } from '../helpers/CssColors';
+import React, { useEffect, useState } from 'react';
+import CssColors, { cssColors } from '../helpers/CssColors';
 import '../styles/CssColorSelect.css';
 
 /**
@@ -14,16 +14,7 @@ function CssColorSelect(props) {
   const [showList, setShowList] = useState(false);
 
   useEffect(() => {
-    // TODO: use cssColors class findName function
-    let newValue = props.value.toLowerCase();
-    if (newValue.startsWith('#')) newValue = newValue.substring(1);
-    const index = cssColors.findIndex(color => {
-      return (
-        color.colorString === newValue || color.hex.toLowerCase() === newValue
-      );
-    });
-    if (index !== -1) setFilterText(cssColors[index].name);
-    else setFilterText('');
+    setFilterText(CssColors.findName(props.value));
   }, [props.value]);
 
   function handleSelect(color) {
@@ -35,32 +26,19 @@ function CssColorSelect(props) {
 
   function handleBlur(evt) {
     // TODO: allow entering hex values
-    // Set value if text is valid
-    let value = evt.target.value.toLowerCase();
-    if (value.startsWith('#')) value = value.substring(1);
-    //  handle empty string
+    let value = evt.target.value;
+
+    // Handle empty string
     if (!value) {
       handleSelect({ colorString: '' });
       setInputFocus(false);
       return;
     }
-    //  check if value is valid
-    const index = cssColors.findIndex(color => {
-      return color.colorString === value || color.hex.toLowerCase() === value;
-    });
-    if (index !== -1) handleSelect(cssColors[index]);
-    else {
-      // TODO: use cssColors class findName function
-      let newValue = props.value.toLowerCase();
-      if (newValue.startsWith('#')) newValue = newValue.substring(1);
-      const index = cssColors.findIndex(color => {
-        return (
-          color.colorString === newValue || color.hex.toLowerCase() === newValue
-        );
-      });
-      if (index !== -1) setFilterText(cssColors[index].name);
-      else setFilterText('');
-    }
+
+    // Set value if valid, otherwise reset filterText
+    const color = CssColors.findColor(value);
+    if (color) handleSelect(color);
+    else setFilterText(CssColors.findName(props.value));
 
     setShowList(false);
     setInputFocus(false);

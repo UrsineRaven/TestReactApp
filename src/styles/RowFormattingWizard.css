@@ -1,33 +1,6 @@
-.modal-w {
-  width: 95%;
-  max-width: none !important;
-}
-
-@media only screen and (min-width: 600px) {
-  .modal-w {
-    width: 80%;
-  }
-}
-
-.modal-w .inline-modal {
-  width: initial;
-}
-
-.inline-modal {
-  margin: 0 0 0.5rem;
-}
-
-.control-column {
-  padding: 0;
-}
-
 .modal-breadcrumb > .breadcrumb {
   margin-bottom: 2px !important;
   padding: 0.25rem 1rem;
-}
-
-.modal-footer > button {
-  margin: 0.25rem !important;
 }
 
 .example-row {
@@ -35,14 +8,6 @@
   width: initial;
 }
 
-.no-xform-upper {
-  text-transform: initial;
-}
-
-.check-label-underline > label {
-  text-decoration-line: underline;
-}
-
-.check-label-line-through > label {
-  text-decoration-line: line-through;
+.honor-row-bg > td {
+  background: initial !important;
 }

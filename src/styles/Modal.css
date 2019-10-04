@@ -1,3 +1,14 @@
+.modal-w {
+  width: 95%;
+  max-width: none !important;
+}
+
+@media only screen and (min-width: 600px) {
+  .modal-w {
+    width: 80%;
+  }
+}
+
 .modal-footer.row {
   margin: 0;
 }

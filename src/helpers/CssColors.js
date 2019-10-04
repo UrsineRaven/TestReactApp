@@ -1,3 +1,33 @@
+class CssColors {
+  /**
+   * Returns the name of any CSS-defined colors matching colorValue.
+   * @param {string} colorValue - the value of the color to search for. It can be the color name or a hex code (starting with #).
+   * @returns {string} The name of the color matching colorValue, or empty string if there is no match.
+   */
+  static findName(colorValue) {
+    let value = colorValue.toLowerCase();
+    const index = cssColors.findIndex(color => {
+      return color.colorString === value || color.hex.toLowerCase() === value;
+    });
+    if (index !== -1) return cssColors[index].name;
+    else return '';
+  }
+
+  /**
+   * Returns the color object of any CSS-defined colors matching colorValue.
+   * @param {string} colorValue - the value of the color to search for. It can be the color name or a hex code (starting with #).
+   * @returns The color object matching colorValue, or null if there is no match.
+   */
+  static findColor(colorValue) {
+    let value = colorValue.toLowerCase();
+    const index = cssColors.findIndex(color => {
+      return color.colorString === value || color.hex.toLowerCase() === value;
+    });
+    if (index !== -1) return cssColors[index];
+    else return null;
+  }
+}
+
 /**
  * An array of all CSS-defined colors.  \
  * Source: I did a regex replace on the html source of https://www.quackit.com/css/css_color_codes.cfm
@@ -8,7 +38,7 @@ export const cssColors = [
     name: 'IndianRed',
     colorString: 'indianred',
     textColor: 'white',
-    hex: 'CD5C5C',
+    hex: '#CD5C5C',
     rgb: { r: 205, g: 92, b: 92 }
   },
   {
@@ -16,7 +46,7 @@ export const cssColors = [
     name: 'LightCoral',
     colorString: 'lightcoral',
     textColor: 'black',
-    hex: 'F08080',
+    hex: '#F08080',
     rgb: { r: 240, g: 128, b: 128 }
   },
   {
@@ -24,7 +54,7 @@ export const cssColors = [
     name: 'Salmon',
     colorString: 'salmon',
     textColor: 'black',
-    hex: 'FA8072',
+    hex: '#FA8072',
     rgb: { r: 250, g: 128, b: 114 }
   },
   {
@@ -32,7 +62,7 @@ export const cssColors = [
     name: 'DarkSalmon',
     colorString: 'darksalmon',
     textColor: 'black',
-    hex: 'E9967A',
+    hex: '#E9967A',
     rgb: { r: 233, g: 150, b: 122 }
   },
   {
@@ -40,7 +70,7 @@ export const cssColors = [
     name: 'LightSalmon',
     colorString: 'lightsalmon',
     textColor: 'black',
-    hex: 'FFA07A',
+    hex: '#FFA07A',
     rgb: { r: 255, g: 160, b: 122 }
   },
   {
@@ -48,7 +78,7 @@ export const cssColors = [
     name: 'Crimson',
     colorString: 'crimson',
     textColor: 'white',
-    hex: 'DC143C',
+    hex: '#DC143C',
     rgb: { r: 220, g: 20, b: 60 }
   },
   {
@@ -56,7 +86,7 @@ export const cssColors = [
     name: 'Red',
     colorString: 'red',
     textColor: 'white',
-    hex: 'FF0000',
+    hex: '#FF0000',
     rgb: { r: 255, g: 0, b: 0 }
   },
   {
@@ -64,7 +94,7 @@ export const cssColors = [
     name: 'FireBrick',
     colorString: 'firebrick',
     textColor: 'white',
-    hex: 'B22222',
+    hex: '#B22222',
     rgb: { r: 178, g: 34, b: 34 }
   },
   {
@@ -72,7 +102,7 @@ export const cssColors = [
     name: 'DarkRed',
     colorString: 'darkred',
     textColor: 'white',
-    hex: '8B0000',
+    hex: '#8B0000',
     rgb: { r: 139, g: 0, b: 0 }
   },
   {
@@ -80,7 +110,7 @@ export const cssColors = [
     name: 'Pink',
     colorString: 'pink',
     textColor: 'black',
-    hex: 'FFC0CB',
+    hex: '#FFC0CB',
     rgb: { r: 255, g: 192, b: 203 }
   },
   {
@@ -88,7 +118,7 @@ export const cssColors = [
     name: 'LightPink',
     colorString: 'lightpink',
     textColor: 'black',
-    hex: 'FFB6C1',
+    hex: '#FFB6C1',
     rgb: { r: 255, g: 182, b: 193 }
   },
   {
@@ -96,7 +126,7 @@ export const cssColors = [
     name: 'HotPink',
     colorString: 'hotpink',
     textColor: 'white',
-    hex: 'FF69B4',
+    hex: '#FF69B4',
     rgb: { r: 255, g: 105, b: 180 }
   },
   {
@@ -104,7 +134,7 @@ export const cssColors = [
     name: 'DeepPink',
     colorString: 'deeppink',
     textColor: 'white',
-    hex: 'FF1493',
+    hex: '#FF1493',
     rgb: { r: 255, g: 20, b: 147 }
   },
   {
@@ -112,7 +142,7 @@ export const cssColors = [
     name: 'MediumVioletRed',
     colorString: 'mediumvioletred',
     textColor: 'white',
-    hex: 'C71585',
+    hex: '#C71585',
     rgb: { r: 199, g: 21, b: 133 }
   },
   {
@@ -120,7 +150,7 @@ export const cssColors = [
     name: 'PaleVioletRed',
     colorString: 'palevioletred',
     textColor: 'white',
-    hex: 'DB7093',
+    hex: '#DB7093',
     rgb: { r: 219, g: 112, b: 147 }
   },
   {
@@ -128,7 +158,7 @@ export const cssColors = [
     name: 'Coral',
     colorString: 'coral',
     textColor: 'white',
-    hex: 'FF7F50',
+    hex: '#FF7F50',
     rgb: { r: 255, g: 127, b: 80 }
   },
   {
@@ -136,7 +166,7 @@ export const cssColors = [
     name: 'Tomato',
     colorString: 'tomato',
     textColor: 'white',
-    hex: 'FF6347',
+    hex: '#FF6347',
     rgb: { r: 255, g: 99, b: 71 }
   },
   {
@@ -144,7 +174,7 @@ export const cssColors = [
     name: 'OrangeRed',
     colorString: 'orangered',
     textColor: 'white',
-    hex: 'FF4500',
+    hex: '#FF4500',
     rgb: { r: 255, g: 69, b: 0 }
   },
   {
@@ -152,7 +182,7 @@ export const cssColors = [
     name: 'DarkOrange',
     colorString: 'darkorange',
     textColor: 'white',
-    hex: 'FF8C00',
+    hex: '#FF8C00',
     rgb: { r: 255, g: 140, b: 0 }
   },
   {
@@ -160,7 +190,7 @@ export const cssColors = [
     name: 'Orange',
     colorString: 'orange',
     textColor: 'white',
-    hex: 'FFA500',
+    hex: '#FFA500',
     rgb: { r: 255, g: 165, b: 0 }
   },
   {
@@ -168,7 +198,7 @@ export const cssColors = [
     name: 'Gold',
     colorString: 'gold',
     textColor: 'black',
-    hex: 'FFD700',
+    hex: '#FFD700',
     rgb: { r: 255, g: 215, b: 0 }
   },
   {
@@ -176,7 +206,7 @@ export const cssColors = [
     name: 'Yellow',
     colorString: 'yellow',
     textColor: 'black',
-    hex: 'FFFF00',
+    hex: '#FFFF00',
     rgb: { r: 255, g: 255, b: 0 }
   },
   {
@@ -184,7 +214,7 @@ export const cssColors = [
     name: 'LightYellow',
     colorString: 'lightyellow',
     textColor: 'black',
-    hex: 'FFFFE0',
+    hex: '#FFFFE0',
     rgb: { r: 255, g: 255, b: 224 }
   },
   {
@@ -192,7 +222,7 @@ export const cssColors = [
     name: 'LemonChiffon',
     colorString: 'lemonchiffon',
     textColor: 'black',
-    hex: 'FFFACD',
+    hex: '#FFFACD',
     rgb: { r: 255, g: 250, b: 205 }
   },
   {
@@ -200,7 +230,7 @@ export const cssColors = [
     name: 'LightGoldenrodYellow',
     colorString: 'lightgoldenrodyellow',
     textColor: 'black',
-    hex: 'FAFAD2',
+    hex: '#FAFAD2',
     rgb: { r: 250, g: 250, b: 210 }
   },
   {
@@ -208,7 +238,7 @@ export const cssColors = [
     name: 'PapayaWhip',
     colorString: 'papayawhip',
     textColor: 'black',
-    hex: 'FFEFD5',
+    hex: '#FFEFD5',
     rgb: { r: 255, g: 239, b: 213 }
   },
   {
@@ -216,7 +246,7 @@ export const cssColors = [
     name: 'Moccasin',
     colorString: 'moccasin',
     textColor: 'black',
-    hex: 'FFE4B5',
+    hex: '#FFE4B5',
     rgb: { r: 255, g: 228, b: 181 }
   },
   {
@@ -224,7 +254,7 @@ export const cssColors = [
     name: 'PeachPuff',
     colorString: 'peachpuff',
     textColor: 'black',
-    hex: 'FFDAB9',
+    hex: '#FFDAB9',
     rgb: { r: 255, g: 218, b: 185 }
   },
   {
@@ -232,7 +262,7 @@ export const cssColors = [
     name: 'PaleGoldenrod',
     colorString: 'palegoldenrod',
     textColor: 'black',
-    hex: 'EEE8AA',
+    hex: '#EEE8AA',
     rgb: { r: 238, g: 232, b: 170 }
   },
   {
@@ -240,7 +270,7 @@ export const cssColors = [
     name: 'Khaki',
     colorString: 'khaki',
     textColor: 'black',
-    hex: 'F0E68C',
+    hex: '#F0E68C',
     rgb: { r: 240, g: 230, b: 140 }
   },
   {
@@ -248,7 +278,7 @@ export const cssColors = [
     name: 'DarkKhaki',
     colorString: 'darkkhaki',
     textColor: 'white',
-    hex: 'BDB76B',
+    hex: '#BDB76B',
     rgb: { r: 189, g: 183, b: 107 }
   },
   {
@@ -256,7 +286,7 @@ export const cssColors = [
     name: 'Lavender',
     colorString: 'lavender',
     textColor: 'black',
-    hex: 'E6E6FA',
+    hex: '#E6E6FA',
     rgb: { r: 230, g: 230, b: 250 }
   },
   {
@@ -264,7 +294,7 @@ export const cssColors = [
     name: 'Thistle',
     colorString: 'thistle',
     textColor: 'white',
-    hex: 'D8BFD8',
+    hex: '#D8BFD8',
     rgb: { r: 216, g: 191, b: 216 }
   },
   {
@@ -272,7 +302,7 @@ export const cssColors = [
     name: 'Plum',
     colorString: 'plum',
     textColor: 'white',
-    hex: 'DDA0DD',
+    hex: '#DDA0DD',
     rgb: { r: 221, g: 160, b: 221 }
   },
   {
@@ -280,7 +310,7 @@ export const cssColors = [
     name: 'Violet',
     colorString: 'violet',
     textColor: 'white',
-    hex: 'EE82EE',
+    hex: '#EE82EE',
     rgb: { r: 238, g: 130, b: 238 }
   },
   {
@@ -288,7 +318,7 @@ export const cssColors = [
     name: 'Orchid',
     colorString: 'orchid',
     textColor: 'white',
-    hex: 'DA70D6',
+    hex: '#DA70D6',
     rgb: { r: 218, g: 112, b: 214 }
   },
   {
@@ -296,7 +326,7 @@ export const cssColors = [
     name: 'Magenta',
     colorString: 'magenta',
     textColor: 'white',
-    hex: 'FF00FF',
+    hex: '#FF00FF',
     rgb: { r: 255, g: 0, b: 255 }
   },
   {
@@ -304,7 +334,7 @@ export const cssColors = [
     name: 'Fuchsia',
     colorString: 'fuchsia',
     textColor: 'white',
-    hex: 'FF00FF',
+    hex: '#FF00FF',
     rgb: { r: 255, g: 0, b: 255 }
   },
   {
@@ -312,7 +342,7 @@ export const cssColors = [
     name: 'MediumOrchid',
     colorString: 'mediumorchid',
     textColor: 'white',
-    hex: 'BA55D3',
+    hex: '#BA55D3',
     rgb: { r: 186, g: 85, b: 211 }
   },
   {
@@ -320,7 +350,7 @@ export const cssColors = [
     name: 'MediumPurple',
     colorString: 'mediumpurple',
     textColor: 'white',
-    hex: '9370DB',
+    hex: '#9370DB',
     rgb: { r: 147, g: 112, b: 219 }
   },
   {
@@ -328,7 +358,7 @@ export const cssColors = [
     name: 'BlueViolet',
     colorString: 'blueviolet',
     textColor: 'white',
-    hex: '8A2BE2',
+    hex: '#8A2BE2',
     rgb: { r: 138, g: 43, b: 226 }
   },
   {
@@ -336,7 +366,7 @@ export const cssColors = [
     name: 'DarkViolet',
     colorString: 'darkviolet',
     textColor: 'white',
-    hex: '9400D3',
+    hex: '#9400D3',
     rgb: { r: 148, g: 0, b: 211 }
   },
   {
@@ -344,7 +374,7 @@ export const cssColors = [
     name: 'DarkOrchid',
     colorString: 'darkorchid',
     textColor: 'white',
-    hex: '9932CC',
+    hex: '#9932CC',
     rgb: { r: 153, g: 50, b: 204 }
   },
   {
@@ -352,7 +382,7 @@ export const cssColors = [
     name: 'DarkMagenta',
     colorString: 'darkmagenta',
     textColor: 'white',
-    hex: '8B008B',
+    hex: '#8B008B',
     rgb: { r: 139, g: 0, b: 139 }
   },
   {
@@ -360,7 +390,7 @@ export const cssColors = [
     name: 'Purple',
     colorString: 'purple',
     textColor: 'white',
-    hex: '800080',
+    hex: '#800080',
     rgb: { r: 128, g: 0, b: 128 }
   },
   {
@@ -368,7 +398,7 @@ export const cssColors = [
     name: 'RebeccaPurple',
     colorString: 'rebeccapurple',
     textColor: 'white',
-    hex: '663399',
+    hex: '#663399',
     rgb: { r: 102, g: 51, b: 153 }
   },
   {
@@ -376,7 +406,7 @@ export const cssColors = [
     name: 'Indigo',
     colorString: 'indigo',
     textColor: 'white',
-    hex: '4B0082',
+    hex: '#4B0082',
     rgb: { r: 75, g: 0, b: 130 }
   },
   {
@@ -384,7 +414,7 @@ export const cssColors = [
     name: 'MediumSlateBlue',
     colorString: 'mediumslateblue',
     textColor: 'white',
-    hex: '7B68EE',
+    hex: '#7B68EE',
     rgb: { r: 123, g: 104, b: 238 }
   },
   {
@@ -392,7 +422,7 @@ export const cssColors = [
     name: 'SlateBlue',
     colorString: 'slateblue',
     textColor: 'white',
-    hex: '6A5ACD',
+    hex: '#6A5ACD',
     rgb: { r: 106, g: 90, b: 205 }
   },
   {
@@ -400,7 +430,7 @@ export const cssColors = [
     name: 'DarkSlateBlue',
     colorString: 'darkslateblue',
     textColor: 'white',
-    hex: '483D8B',
+    hex: '#483D8B',
     rgb: { r: 72, g: 61, b: 139 }
   },
   {
@@ -408,7 +438,7 @@ export const cssColors = [
     name: 'GreenYellow',
     colorString: 'greenyellow',
     textColor: 'black',
-    hex: 'ADFF2F',
+    hex: '#ADFF2F',
     rgb: { r: 173, g: 255, b: 47 }
   },
   {
@@ -416,7 +446,7 @@ export const cssColors = [
     name: 'Chartreuse',
     colorString: 'chartreuse',
     textColor: 'black',
-    hex: '7FFF00',
+    hex: '#7FFF00',
     rgb: { r: 127, g: 255, b: 0 }
   },
   {
@@ -424,7 +454,7 @@ export const cssColors = [
     name: 'LawnGreen',
     colorString: 'lawngreen',
     textColor: 'black',
-    hex: '7CFC00',
+    hex: '#7CFC00',
     rgb: { r: 124, g: 252, b: 0 }
   },
   {
@@ -432,7 +462,7 @@ export const cssColors = [
     name: 'Lime',
     colorString: 'lime',
     textColor: 'black',
-    hex: '00FF00',
+    hex: '#00FF00',
     rgb: { r: 0, g: 255, b: 0 }
   },
   {
@@ -440,7 +470,7 @@ export const cssColors = [
     name: 'LimeGreen',
     colorString: 'limegreen',
     textColor: 'black',
-    hex: '32CD32',
+    hex: '#32CD32',
     rgb: { r: 50, g: 205, b: 50 }
   },
   {
@@ -448,7 +478,7 @@ export const cssColors = [
     name: 'PaleGreen',
     colorString: 'palegreen',
     textColor: 'black',
-    hex: '98FB98',
+    hex: '#98FB98',
     rgb: { r: 152, g: 251, b: 152 }
   },
   {
@@ -456,7 +486,7 @@ export const cssColors = [
     name: 'LightGreen',
     colorString: 'lightgreen',
     textColor: 'black',
-    hex: '90EE90',
+    hex: '#90EE90',
     rgb: { r: 144, g: 238, b: 144 }
   },
   {
@@ -464,7 +494,7 @@ export const cssColors = [
     name: 'MediumSpringGreen',
     colorString: 'mediumspringgreen',
     textColor: 'black',
-    hex: '00FA9A',
+    hex: '#00FA9A',
     rgb: { r: 0, g: 250, b: 154 }
   },
   {
@@ -472,7 +502,7 @@ export const cssColors = [
     name: 'SpringGreen',
     colorString: 'springgreen',
     textColor: 'black',
-    hex: '00FF7F',
+    hex: '#00FF7F',
     rgb: { r: 0, g: 255, b: 127 }
   },
   {
@@ -480,7 +510,7 @@ export const cssColors = [
     name: 'MediumSeaGreen',
     colorString: 'mediumseagreen',
     textColor: 'white',
-    hex: '3CB371',
+    hex: '#3CB371',
     rgb: { r: 60, g: 179, b: 113 }
   },
   {
@@ -488,7 +518,7 @@ export const cssColors = [
     name: 'SeaGreen',
     colorString: 'seagreen',
     textColor: 'white',
-    hex: '2E8B57',
+    hex: '#2E8B57',
     rgb: { r: 46, g: 139, b: 87 }
   },
   {
@@ -496,7 +526,7 @@ export const cssColors = [
     name: 'ForestGreen',
     colorString: 'forestgreen',
     textColor: 'white',
-    hex: '228B22',
+    hex: '#228B22',
     rgb: { r: 34, g: 139, b: 34 }
   },
   {
@@ -504,7 +534,7 @@ export const cssColors = [
     name: 'Green',
     colorString: 'green',
     textColor: 'white',
-    hex: '008000',
+    hex: '#008000',
     rgb: { r: 0, g: 128, b: 0 }
   },
   {
@@ -512,7 +542,7 @@ export const cssColors = [
     name: 'DarkGreen',
     colorString: 'darkgreen',
     textColor: 'white',
-    hex: '006400',
+    hex: '#006400',
     rgb: { r: 0, g: 100, b: 0 }
   },
   {
@@ -520,7 +550,7 @@ export const cssColors = [
     name: 'YellowGreen',
     colorString: 'yellowgreen',
     textColor: 'white',
-    hex: '9ACD32',
+    hex: '#9ACD32',
     rgb: { r: 154, g: 205, b: 50 }
   },
   {
@@ -528,7 +558,7 @@ export const cssColors = [
     name: 'OliveDrab',
     colorString: 'olivedrab',
     textColor: 'white',
-    hex: '6B8E23',
+    hex: '#6B8E23',
     rgb: { r: 107, g: 142, b: 35 }
   },
   {
@@ -536,7 +566,7 @@ export const cssColors = [
     name: 'Olive',
     colorString: 'olive',
     textColor: 'white',
-    hex: '808000',
+    hex: '#808000',
     rgb: { r: 128, g: 128, b: 0 }
   },
   {
@@ -544,7 +574,7 @@ export const cssColors = [
     name: 'DarkOliveGreen',
     colorString: 'darkolivegreen',
     textColor: 'white',
-    hex: '556B2F',
+    hex: '#556B2F',
     rgb: { r: 85, g: 107, b: 47 }
   },
   {
@@ -552,7 +582,7 @@ export const cssColors = [
     name: 'MediumAquamarine',
     colorString: 'mediumaquamarine',
     textColor: 'black',
-    hex: '66CDAA',
+    hex: '#66CDAA',
     rgb: { r: 102, g: 205, b: 170 }
   },
   {
@@ -560,7 +590,7 @@ export const cssColors = [
     name: 'DarkSeaGreen',
     colorString: 'darkseagreen',
     textColor: 'white',
-    hex: '8FBC8F',
+    hex: '#8FBC8F',
     rgb: { r: 143, g: 188, b: 143 }
   },
   {
@@ -568,7 +598,7 @@ export const cssColors = [
     name: 'LightSeaGreen',
     colorString: 'lightseagreen',
     textColor: 'white',
-    hex: '20B2AA',
+    hex: '#20B2AA',
     rgb: { r: 32, g: 178, b: 170 }
   },
   {
@@ -576,7 +606,7 @@ export const cssColors = [
     name: 'DarkCyan',
     colorString: 'darkcyan',
     textColor: 'white',
-    hex: '008B8B',
+    hex: '#008B8B',
     rgb: { r: 0, g: 139, b: 139 }
   },
   {
@@ -584,7 +614,7 @@ export const cssColors = [
     name: 'Teal',
     colorString: 'teal',
     textColor: 'white',
-    hex: '008080',
+    hex: '#008080',
     rgb: { r: 0, g: 128, b: 128 }
   },
   {
@@ -592,7 +622,7 @@ export const cssColors = [
     name: 'Cyan',
     colorString: 'cyan',
     textColor: 'black',
-    hex: '00FFFF',
+    hex: '#00FFFF',
     rgb: { r: 0, g: 255, b: 255 }
   },
   {
@@ -600,7 +630,7 @@ export const cssColors = [
     name: 'Aqua',
     colorString: 'aqua',
     textColor: 'black',
-    hex: '00FFFF',
+    hex: '#00FFFF',
     rgb: { r: 0, g: 255, b: 255 }
   },
   {
@@ -608,7 +638,7 @@ export const cssColors = [
     name: 'LightCyan',
     colorString: 'lightcyan',
     textColor: 'black',
-    hex: 'E0FFFF',
+    hex: '#E0FFFF',
     rgb: { r: 224, g: 255, b: 255 }
   },
   {
@@ -616,7 +646,7 @@ export const cssColors = [
     name: 'PaleTurquoise',
     colorString: 'paleturquoise',
     textColor: 'black',
-    hex: 'AFEEEE',
+    hex: '#AFEEEE',
     rgb: { r: 175, g: 238, b: 238 }
   },
   {
@@ -624,7 +654,7 @@ export const cssColors = [
     name: 'Aquamarine',
     colorString: 'aquamarine',
     textColor: 'black',
-    hex: '7FFFD4',
+    hex: '#7FFFD4',
     rgb: { r: 127, g: 255, b: 212 }
   },
   {
@@ -632,7 +662,7 @@ export const cssColors = [
     name: 'Turquoise',
     colorString: 'turquoise',
     textColor: 'black',
-    hex: '40E0D0',
+    hex: '#40E0D0',
     rgb: { r: 64, g: 224, b: 208 }
   },
   {
@@ -640,7 +670,7 @@ export const cssColors = [
     name: 'MediumTurquoise',
     colorString: 'mediumturquoise',
     textColor: 'white',
-    hex: '48D1CC',
+    hex: '#48D1CC',
     rgb: { r: 72, g: 209, b: 204 }
   },
   {
@@ -648,7 +678,7 @@ export const cssColors = [
     name: 'DarkTurquoise',
     colorString: 'darkturquoise',
     textColor: 'white',
-    hex: '00CED1',
+    hex: '#00CED1',
     rgb: { r: 0, g: 206, b: 209 }
   },
   {
@@ -656,7 +686,7 @@ export const cssColors = [
     name: 'CadetBlue',
     colorString: 'cadetblue',
     textColor: 'white',
-    hex: '5F9EA0',
+    hex: '#5F9EA0',
     rgb: { r: 95, g: 158, b: 160 }
   },
   {
@@ -664,7 +694,7 @@ export const cssColors = [
     name: 'SteelBlue',
     colorString: 'steelblue',
     textColor: 'white',
-    hex: '4682B4',
+    hex: '#4682B4',
     rgb: { r: 70, g: 130, b: 180 }
   },
   {
@@ -672,7 +702,7 @@ export const cssColors = [
     name: 'LightSteelBlue',
     colorString: 'lightsteelblue',
     textColor: 'black',
-    hex: 'B0C4DE',
+    hex: '#B0C4DE',
     rgb: { r: 176, g: 196, b: 222 }
   },
   {
@@ -680,7 +710,7 @@ export const cssColors = [
     name: 'PowderBlue',
     colorString: 'powderblue',
     textColor: 'black',
-    hex: 'B0E0E6',
+    hex: '#B0E0E6',
     rgb: { r: 176, g: 224, b: 230 }
   },
   {
@@ -688,7 +718,7 @@ export const cssColors = [
     name: 'LightBlue',
     colorString: 'lightblue',
     textColor: 'black',
-    hex: 'ADD8E6',
+    hex: '#ADD8E6',
     rgb: { r: 173, g: 216, b: 230 }
   },
   {
@@ -696,7 +726,7 @@ export const cssColors = [
     name: 'SkyBlue',
     colorString: 'skyblue',
     textColor: 'black',
-    hex: '87CEEB',
+    hex: '#87CEEB',
     rgb: { r: 135, g: 206, b: 235 }
   },
   {
@@ -704,7 +734,7 @@ export const cssColors = [
     name: 'LightSkyBlue',
     colorString: 'lightskyblue',
     textColor: 'black',
-    hex: '87CEFA',
+    hex: '#87CEFA',
     rgb: { r: 135, g: 206, b: 250 }
   },
   {
@@ -712,7 +742,7 @@ export const cssColors = [
     name: 'DeepSkyBlue',
     colorString: 'deepskyblue',
     textColor: 'white',
-    hex: '00BFFF',
+    hex: '#00BFFF',
     rgb: { r: 0, g: 191, b: 255 }
   },
   {
@@ -720,7 +750,7 @@ export const cssColors = [
     name: 'DodgerBlue',
     colorString: 'dodgerblue',
     textColor: 'white',
-    hex: '1E90FF',
+    hex: '#1E90FF',
     rgb: { r: 30, g: 144, b: 255 }
   },
   {
@@ -728,7 +758,7 @@ export const cssColors = [
     name: 'CornflowerBlue',
     colorString: 'cornflowerblue',
     textColor: 'white',
-    hex: '6495ED',
+    hex: '#6495ED',
     rgb: { r: 100, g: 149, b: 237 }
   },
   {
@@ -736,7 +766,7 @@ export const cssColors = [
     name: 'RoyalBlue',
     colorString: 'royalblue',
     textColor: 'white',
-    hex: '4169E1',
+    hex: '#4169E1',
     rgb: { r: 65, g: 105, b: 225 }
   },
   {
@@ -744,7 +774,7 @@ export const cssColors = [
     name: 'Blue',
     colorString: 'blue',
     textColor: 'white',
-    hex: '0000FF',
+    hex: '#0000FF',
     rgb: { r: 0, g: 0, b: 255 }
   },
   {
@@ -752,7 +782,7 @@ export const cssColors = [
     name: 'MediumBlue',
     colorString: 'mediumblue',
     textColor: 'white',
-    hex: '0000CD',
+    hex: '#0000CD',
     rgb: { r: 0, g: 0, b: 205 }
   },
   {
@@ -760,7 +790,7 @@ export const cssColors = [
     name: 'DarkBlue',
     colorString: 'darkblue',
     textColor: 'white',
-    hex: '00008B',
+    hex: '#00008B',
     rgb: { r: 0, g: 0, b: 139 }
   },
   {
@@ -768,7 +798,7 @@ export const cssColors = [
     name: 'Navy',
     colorString: 'navy',
     textColor: 'white',
-    hex: '000080',
+    hex: '#000080',
     rgb: { r: 0, g: 0, b: 128 }
   },
   {
@@ -776,7 +806,7 @@ export const cssColors = [
     name: 'MidnightBlue',
     colorString: 'midnightblue',
     textColor: 'white',
-    hex: '191970',
+    hex: '#191970',
     rgb: { r: 25, g: 25, b: 112 }
   },
   {
@@ -784,7 +814,7 @@ export const cssColors = [
     name: 'Cornsilk',
     colorString: 'cornsilk',
     textColor: 'black',
-    hex: 'FFF8DC',
+    hex: '#FFF8DC',
     rgb: { r: 255, g: 248, b: 220 }
   },
   {
@@ -792,7 +822,7 @@ export const cssColors = [
     name: 'BlanchedAlmond',
     colorString: 'blanchedalmond',
     textColor: 'black',
-    hex: 'FFEBCD',
+    hex: '#FFEBCD',
     rgb: { r: 255, g: 235, b: 205 }
   },
   {
@@ -800,7 +830,7 @@ export const cssColors = [
     name: 'Bisque',
     colorString: 'bisque',
     textColor: 'black',
-    hex: 'FFE4C4',
+    hex: '#FFE4C4',
     rgb: { r: 255, g: 228, b: 196 }
   },
   {
@@ -808,7 +838,7 @@ export const cssColors = [
     name: 'NavajoWhite',
     colorString: 'navajowhite',
     textColor: 'black',
-    hex: 'FFDEAD',
+    hex: '#FFDEAD',
     rgb: { r: 255, g: 222, b: 173 }
   },
   {
@@ -816,7 +846,7 @@ export const cssColors = [
     name: 'Wheat',
     colorString: 'wheat',
     textColor: 'black',
-    hex: 'F5DEB3',
+    hex: '#F5DEB3',
     rgb: { r: 245, g: 222, b: 179 }
   },
   {
@@ -824,7 +854,7 @@ export const cssColors = [
     name: 'BurlyWood',
     colorString: 'burlywood',
     textColor: 'white',
-    hex: 'DEB887',
+    hex: '#DEB887',
     rgb: { r: 222, g: 184, b: 135 }
   },
   {
@@ -832,7 +862,7 @@ export const cssColors = [
     name: 'Tan',
     colorString: 'tan',
     textColor: 'white',
-    hex: 'D2B48C',
+    hex: '#D2B48C',
     rgb: { r: 210, g: 180, b: 140 }
   },
   {
@@ -840,7 +870,7 @@ export const cssColors = [
     name: 'RosyBrown',
     colorString: 'rosybrown',
     textColor: 'white',
-    hex: 'BC8F8F',
+    hex: '#BC8F8F',
     rgb: { r: 188, g: 143, b: 143 }
   },
   {
@@ -848,7 +878,7 @@ export const cssColors = [
     name: 'SandyBrown',
     colorString: 'sandybrown',
     textColor: 'white',
-    hex: 'F4A460',
+    hex: '#F4A460',
     rgb: { r: 244, g: 164, b: 96 }
   },
   {
@@ -856,7 +886,7 @@ export const cssColors = [
     name: 'Goldenrod',
     colorString: 'goldenrod',
     textColor: 'white',
-    hex: 'DAA520',
+    hex: '#DAA520',
     rgb: { r: 218, g: 165, b: 32 }
   },
   {
@@ -864,7 +894,7 @@ export const cssColors = [
     name: 'DarkGoldenrod',
     colorString: 'darkgoldenrod',
     textColor: 'white',
-    hex: 'B8860B',
+    hex: '#B8860B',
     rgb: { r: 184, g: 134, b: 11 }
   },
   {
@@ -872,7 +902,7 @@ export const cssColors = [
     name: 'Peru',
     colorString: 'peru',
     textColor: 'white',
-    hex: 'CD853F',
+    hex: '#CD853F',
     rgb: { r: 205, g: 133, b: 63 }
   },
   {
@@ -880,7 +910,7 @@ export const cssColors = [
     name: 'Chocolate',
     colorString: 'chocolate',
     textColor: 'white',
-    hex: 'D2691E',
+    hex: '#D2691E',
     rgb: { r: 210, g: 105, b: 30 }
   },
   {
@@ -888,7 +918,7 @@ export const cssColors = [
     name: 'SaddleBrown',
     colorString: 'saddlebrown',
     textColor: 'white',
-    hex: '8B4513',
+    hex: '#8B4513',
     rgb: { r: 139, g: 69, b: 19 }
   },
   {
@@ -896,7 +926,7 @@ export const cssColors = [
     name: 'Sienna',
     colorString: 'sienna',
     textColor: 'white',
-    hex: 'A0522D',
+    hex: '#A0522D',
     rgb: { r: 160, g: 82, b: 45 }
   },
   {
@@ -904,7 +934,7 @@ export const cssColors = [
     name: 'Brown',
     colorString: 'brown',
     textColor: 'white',
-    hex: 'A52A2A',
+    hex: '#A52A2A',
     rgb: { r: 165, g: 42, b: 42 }
   },
   {
@@ -912,7 +942,7 @@ export const cssColors = [
     name: 'Maroon',
     colorString: 'maroon',
     textColor: 'white',
-    hex: '800000',
+    hex: '#800000',
     rgb: { r: 128, g: 0, b: 0 }
   },
   {
@@ -920,7 +950,7 @@ export const cssColors = [
     name: 'White',
     colorString: 'white',
     textColor: 'black',
-    hex: 'FFFFFF',
+    hex: '#FFFFFF',
     rgb: { r: 255, g: 255, b: 255 }
   },
   {
@@ -928,7 +958,7 @@ export const cssColors = [
     name: 'Snow',
     colorString: 'snow',
     textColor: 'black',
-    hex: 'FFFAFA',
+    hex: '#FFFAFA',
     rgb: { r: 255, g: 250, b: 250 }
   },
   {
@@ -936,7 +966,7 @@ export const cssColors = [
     name: 'Honeydew',
     colorString: 'honeydew',
     textColor: 'black',
-    hex: 'F0FFF0',
+    hex: '#F0FFF0',
     rgb: { r: 240, g: 255, b: 240 }
   },
   {
@@ -944,7 +974,7 @@ export const cssColors = [
     name: 'MintCream',
     colorString: 'mintcream',
     textColor: 'black',
-    hex: 'F5FFFA',
+    hex: '#F5FFFA',
     rgb: { r: 245, g: 255, b: 250 }
   },
   {
@@ -952,7 +982,7 @@ export const cssColors = [
     name: 'Azure',
     colorString: 'azure',
     textColor: 'black',
-    hex: 'F0FFFF',
+    hex: '#F0FFFF',
     rgb: { r: 240, g: 255, b: 255 }
   },
   {
@@ -960,7 +990,7 @@ export const cssColors = [
     name: 'AliceBlue',
     colorString: 'aliceblue',
     textColor: 'black',
-    hex: 'F0F8FF',
+    hex: '#F0F8FF',
     rgb: { r: 240, g: 248, b: 255 }
   },
   {
@@ -968,7 +998,7 @@ export const cssColors = [
     name: 'GhostWhite',
     colorString: 'ghostwhite',
     textColor: 'black',
-    hex: 'F8F8FF',
+    hex: '#F8F8FF',
     rgb: { r: 248, g: 248, b: 255 }
   },
   {
@@ -976,7 +1006,7 @@ export const cssColors = [
     name: 'WhiteSmoke',
     colorString: 'whitesmoke',
     textColor: 'black',
-    hex: 'F5F5F5',
+    hex: '#F5F5F5',
     rgb: { r: 245, g: 245, b: 245 }
   },
   {
@@ -984,7 +1014,7 @@ export const cssColors = [
     name: 'Seashell',
     colorString: 'seashell',
     textColor: 'black',
-    hex: 'FFF5EE',
+    hex: '#FFF5EE',
     rgb: { r: 255, g: 245, b: 238 }
   },
   {
@@ -992,7 +1022,7 @@ export const cssColors = [
     name: 'Beige',
     colorString: 'beige',
     textColor: 'black',
-    hex: 'F5F5DC',
+    hex: '#F5F5DC',
     rgb: { r: 245, g: 245, b: 220 }
   },
   {
@@ -1000,7 +1030,7 @@ export const cssColors = [
     name: 'OldLace',
     colorString: 'oldlace',
     textColor: 'black',
-    hex: 'FDF5E6',
+    hex: '#FDF5E6',
     rgb: { r: 253, g: 245, b: 230 }
   },
   {
@@ -1008,7 +1038,7 @@ export const cssColors = [
     name: 'FloralWhite',
     colorString: 'floralwhite',
     textColor: 'black',
-    hex: 'FFFAF0',
+    hex: '#FFFAF0',
     rgb: { r: 255, g: 250, b: 240 }
   },
   {
@@ -1016,7 +1046,7 @@ export const cssColors = [
     name: 'Ivory',
     colorString: 'ivory',
     textColor: 'black',
-    hex: 'FFFFF0',
+    hex: '#FFFFF0',
     rgb: { r: 255, g: 255, b: 240 }
   },
   {
@@ -1024,7 +1054,7 @@ export const cssColors = [
     name: 'AntiqueWhite',
     colorString: 'antiquewhite',
     textColor: 'black',
-    hex: 'FAEBD7',
+    hex: '#FAEBD7',
     rgb: { r: 250, g: 235, b: 215 }
   },
   {
@@ -1032,7 +1062,7 @@ export const cssColors = [
     name: 'Linen',
     colorString: 'linen',
     textColor: 'black',
-    hex: 'FAF0E6',
+    hex: '#FAF0E6',
     rgb: { r: 250, g: 240, b: 230 }
   },
   {
@@ -1040,7 +1070,7 @@ export const cssColors = [
     name: 'LavenderBlush',
     colorString: 'lavenderblush',
     textColor: 'black',
-    hex: 'FFF0F5',
+    hex: '#FFF0F5',
     rgb: { r: 255, g: 240, b: 245 }
   },
   {
@@ -1048,7 +1078,7 @@ export const cssColors = [
     name: 'MistyRose',
     colorString: 'mistyrose',
     textColor: 'black',
-    hex: 'FFE4E1',
+    hex: '#FFE4E1',
     rgb: { r: 255, g: 228, b: 225 }
   },
   {
@@ -1056,7 +1086,7 @@ export const cssColors = [
     name: 'Gainsboro',
     colorString: 'gainsboro',
     textColor: 'black',
-    hex: 'DCDCDC',
+    hex: '#DCDCDC',
     rgb: { r: 220, g: 220, b: 220 }
   },
   {
@@ -1064,7 +1094,7 @@ export const cssColors = [
     name: 'LightGrey',
     colorString: 'lightgrey',
     textColor: 'black',
-    hex: 'D3D3D3',
+    hex: '#D3D3D3',
     rgb: { r: 211, g: 211, b: 211 }
   },
   {
@@ -1072,7 +1102,7 @@ export const cssColors = [
     name: 'LightGray',
     colorString: 'lightgrey',
     textColor: 'black',
-    hex: 'D3D3D3',
+    hex: '#D3D3D3',
     rgb: { r: 211, g: 211, b: 211 }
   },
   {
@@ -1080,7 +1110,7 @@ export const cssColors = [
     name: 'Silver',
     colorString: 'silver',
     textColor: 'black',
-    hex: 'C0C0C0',
+    hex: '#C0C0C0',
     rgb: { r: 192, g: 192, b: 192 }
   },
   {
@@ -1088,7 +1118,7 @@ export const cssColors = [
     name: 'DarkGrey',
     colorString: 'darkgrey',
     textColor: 'black',
-    hex: 'A9A9A9',
+    hex: '#A9A9A9',
     rgb: { r: 169, g: 169, b: 169 }
   },
   {
@@ -1096,7 +1126,7 @@ export const cssColors = [
     name: 'DarkGray',
     colorString: 'darkgray',
     textColor: 'black',
-    hex: 'A9A9A9',
+    hex: '#A9A9A9',
     rgb: { r: 169, g: 169, b: 169 }
   },
   {
@@ -1104,7 +1134,7 @@ export const cssColors = [
     name: 'Grey',
     colorString: 'grey',
     textColor: 'black',
-    hex: '808080',
+    hex: '#808080',
     rgb: { r: 128, g: 128, b: 128 }
   },
   {
@@ -1112,7 +1142,7 @@ export const cssColors = [
     name: 'Gray',
     colorString: 'gray',
     textColor: 'black',
-    hex: '808080',
+    hex: '#808080',
     rgb: { r: 128, g: 128, b: 128 }
   },
   {
@@ -1120,7 +1150,7 @@ export const cssColors = [
     name: 'DimGrey',
     colorString: 'dimgrey',
     textColor: 'white',
-    hex: '696969',
+    hex: '#696969',
     rgb: { r: 105, g: 105, b: 105 }
   },
   {
@@ -1128,7 +1158,7 @@ export const cssColors = [
     name: 'DimGray',
     colorString: 'dimgray',
     textColor: 'white',
-    hex: '696969',
+    hex: '#696969',
     rgb: { r: 105, g: 105, b: 105 }
   },
   {
@@ -1136,7 +1166,7 @@ export const cssColors = [
     name: 'LightSlateGrey',
     colorString: 'lightslategrey',
     textColor: 'white',
-    hex: '778899',
+    hex: '#778899',
     rgb: { r: 119, g: 136, b: 153 }
   },
   {
@@ -1144,7 +1174,7 @@ export const cssColors = [
     name: 'LightSlateGray',
     colorString: 'lightslategray',
     textColor: 'white',
-    hex: '778899',
+    hex: '#778899',
     rgb: { r: 119, g: 136, b: 153 }
   },
   {
@@ -1152,7 +1182,7 @@ export const cssColors = [
     name: 'SlateGrey',
     colorString: 'slategrey',
     textColor: 'white',
-    hex: '708090',
+    hex: '#708090',
     rgb: { r: 112, g: 128, b: 144 }
   },
   {
@@ -1160,7 +1190,7 @@ export const cssColors = [
     name: 'SlateGray',
     colorString: 'slategray',
     textColor: 'white',
-    hex: '708090',
+    hex: '#708090',
     rgb: { r: 112, g: 128, b: 144 }
   },
   {
@@ -1168,7 +1198,7 @@ export const cssColors = [
     name: 'DarkSlateGrey',
     colorString: 'darkslategrey',
     textColor: 'white',
-    hex: '2F4F4F',
+    hex: '#2F4F4F',
     rgb: { r: 47, g: 79, b: 79 }
   },
   {
@@ -1176,7 +1206,7 @@ export const cssColors = [
     name: 'DarkSlateGray',
     colorString: 'darkslategray',
     textColor: 'white',
-    hex: '2F4F4F',
+    hex: '#2F4F4F',
     rgb: { r: 47, g: 79, b: 79 }
   },
   {
@@ -1184,7 +1214,9 @@ export const cssColors = [
     name: 'Black',
     colorString: 'black',
     textColor: 'white',
-    hex: '000000',
+    hex: '#000000',
     rgb: { r: 0, g: 0, b: 0 }
   }
 ];
+
+export default CssColors;
