@@ -12,6 +12,10 @@ export const animations = [
   {
     name: 'Loading',
     className: 'ani-loading'
+  },
+  {
+    name: 'Throbbing',
+    className: 'ani-throbbing'
   }
 ];
 
@@ -41,12 +45,28 @@ function AnimationSelect(props) {
   }
 
   function handleBlur(evt) {
-    let newValue = props.value.toLowerCase();
-    const index = animations.findIndex(animation => {
-      return animation.className === newValue;
+    // Set value if text is valid
+    let value = evt.target.value.toLowerCase();
+    //  handle empty string
+    if (!value) {
+      handleSelect({ className: '' });
+      setInputFocus(false);
+      return;
+    }
+    //  check if value is valid
+    let index = animations.findIndex(animation => {
+      return animation.name.toLowerCase() === value;
     });
-    if (index !== -1) setFilterText(animations[index].name);
-    else setFilterText('');
+    if (index !== -1) handleSelect(animations[index]);
+    else {
+      //  set filter text equal to the last valid value
+      let oldValue = props.value.toLowerCase();
+      let index = animations.findIndex(animation => {
+        return animation.className === oldValue;
+      });
+      if (index !== -1) setFilterText(animations[index].name);
+      else setFilterText('');
+    }
 
     setShowList(false);
     setInputFocus(false);

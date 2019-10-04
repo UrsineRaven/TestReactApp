@@ -27,7 +27,7 @@ function CssColorSelect(props) {
   }, [props.value]);
 
   function handleSelect(color) {
-    if (color.colorString) {
+    if (color.colorString !== undefined) {
       props.onChange(color.colorString);
       setShowList(false);
     }
@@ -35,16 +35,32 @@ function CssColorSelect(props) {
 
   function handleBlur(evt) {
     // TODO: allow entering hex values
-    // TODO: use cssColors class findName function
-    let newValue = props.value.toLowerCase();
-    if (newValue.startsWith('#')) newValue = newValue.substring(1);
+    // Set value if text is valid
+    let value = evt.target.value.toLowerCase();
+    if (value.startsWith('#')) value = value.substring(1);
+    //  handle empty string
+    if (!value) {
+      handleSelect({ colorString: '' });
+      setInputFocus(false);
+      return;
+    }
+    //  check if value is valid
     const index = cssColors.findIndex(color => {
-      return (
-        color.colorString === newValue || color.hex.toLowerCase() === newValue
-      );
+      return color.colorString === value || color.hex.toLowerCase() === value;
     });
-    if (index !== -1) setFilterText(cssColors[index].name);
-    else setFilterText('');
+    if (index !== -1) handleSelect(cssColors[index]);
+    else {
+      // TODO: use cssColors class findName function
+      let newValue = props.value.toLowerCase();
+      if (newValue.startsWith('#')) newValue = newValue.substring(1);
+      const index = cssColors.findIndex(color => {
+        return (
+          color.colorString === newValue || color.hex.toLowerCase() === newValue
+        );
+      });
+      if (index !== -1) setFilterText(cssColors[index].name);
+      else setFilterText('');
+    }
 
     setShowList(false);
     setInputFocus(false);

@@ -37,14 +37,14 @@ function RowFormattingWizard(props) {
   }
 
   function handleDone() {
-    props.setFormatting(formatting);
+    props.setFormatting(JSON.stringify(formatting));
     handleDismiss();
   }
 
   // Handlers
 
   function parse(formattingString) {
-    const obj = JSON.parse(props.formatting || '{}');
+    const obj = JSON.parse(formattingString || '{}');
     return obj;
   }
 
@@ -90,7 +90,6 @@ function RowFormattingWizard(props) {
           </tbody>
         </Table>
         <Modal.Body>
-          {/* Wizard pages */}
           <ChooseClass
             curStep={curStep}
             steps={steps}
@@ -104,6 +103,12 @@ function RowFormattingWizard(props) {
             setFormatting={setFormatting}
           />
           <ChooseRowStyle
+            curStep={curStep}
+            steps={steps}
+            formatting={formatting}
+            setFormatting={setFormatting}
+          />
+          <FinishPage
             curStep={curStep}
             steps={steps}
             formatting={formatting}
@@ -152,11 +157,10 @@ function RowFormattingWizard(props) {
 }
 
 function ChooseClass(props) {
-  const [className, setClassName] = useState(props.formatting.className || '');
-
   const stepName = 'Choose Class';
   const stepDescription =
     'Choosing a class allows you to set a starting point for your formatting.';
+  const classPrefix = 'table-';
   const rowClasses = [
     'active',
     'danger',
@@ -169,14 +173,15 @@ function ChooseClass(props) {
     'warning'
   ];
 
+  const [className, setClassName] = useState(getRowClass());
+
   function handleClassChange(newVal) {
-    // TODO: fix this and the one on the class selection page
     let formatting = Object.assign({}, props.formatting);
     let classes =
       (formatting.className && formatting.className.split(' ')) || [];
-    classes.forEach(cls => {
-      let index = rowClasses.findIndex(rc => 'table-' + rc === cls);
-      if (index !== -1) classes.splice(index, 1);
+    classes.forEach((cls, idx) => {
+      let index = rowClasses.findIndex(rc => classPrefix + rc === cls);
+      if (index !== -1) classes.splice(idx, 1);
     });
     classes.push(newVal);
     const value = classes.join(' ');
@@ -186,9 +191,20 @@ function ChooseClass(props) {
     setClassName(newVal);
   }
 
+  function getRowClass() {
+    let classes =
+      (props.formatting.className && props.formatting.className.split(' ')) ||
+      [];
+    for (let i = 0; i < classes.length; i++) {
+      let index = rowClasses.findIndex(rc => classPrefix + rc === classes[i]);
+      if (index !== -1) return classes[i];
+    }
+    return '';
+  }
+
   const classOptions = rowClasses.map(name => {
     const title = name.charAt(0).toUpperCase() + name.substring(1);
-    const value = 'table-' + name;
+    const value = classPrefix + name;
     return (
       <option key={value} value={value}>
         {title}
@@ -225,6 +241,24 @@ function ChooseClass(props) {
 
 // TODO: move these wizard pages to their own files
 function ChooseFontStyle(props) {
+  const stepName = 'Choose Font Style';
+  const stepDescription = 'Select any changes you want to make to the font.';
+  const weights = [
+    { name: 'Normal', value: 'normal' },
+    { name: 'Bold', value: 'bold' },
+    { name: 'Really Bold', value: '900' }
+  ];
+  const sizes = [
+    { name: 'Normal', value: 'inherit' },
+    { name: 'Smaller', value: '0.75em' },
+    { name: 'Larger', value: '1.25em' },
+    { name: 'Much Larger', value: '1.5em' }
+  ];
+  const decorations = [
+    { name: 'Underline', value: 'underline' },
+    { name: 'Strike-Through', value: 'line-through' }
+  ];
+
   const [fontStyle, setFontStyle] = useState(
     (props.formatting.style && props.formatting.style.fontStyle === 'italic') ||
       ''
@@ -246,24 +280,6 @@ function ChooseFontStyle(props) {
   const [fontSize, setFontSize] = useState(
     (props.formatting.style && props.formatting.style.fontSize) || ''
   );
-
-  const stepName = 'Choose Font Style';
-  const stepDescription = 'Select any changes you want to make to the font.';
-  const weights = [
-    { name: 'Normal', value: 'normal' },
-    { name: 'Bold', value: 'bold' },
-    { name: 'Really Bold', value: '900' }
-  ];
-  const sizes = [
-    { name: 'Normal', value: 'inherit' },
-    { name: 'Smaller', value: '0.75em' },
-    { name: 'Larger', value: '1.25em' },
-    { name: 'Much Larger', value: '1.5em' }
-  ];
-  const decorations = [
-    { name: 'Underline', value: 'underline' },
-    { name: 'Strike-Through', value: 'line-through' }
-  ];
 
   function handleStyleChange(newVal) {
     const style = newVal ? 'italic' : '';
@@ -450,13 +466,6 @@ function ChooseFontStyle(props) {
 }
 
 function ChooseRowStyle(props) {
-  // Choose row style (background color, text-align, animation?)
-  const [className, setClassName] = useState(getAnimationClass());
-  const [backColor, setBackColor] = useState(
-    (props.formatting.style && props.formatting.style.backgroundColor) || ''
-  );
-  const [textAlign, setTextAlign] = useState(props.formatting.textAlign || '');
-
   const stepName = 'Choose Row Style';
   const stepDescription = 'Select any changes you want to make to the row.';
   const alignments = [
@@ -466,6 +475,12 @@ function ChooseRowStyle(props) {
     { name: 'Right', value: 'right' },
     { name: 'Justify', value: 'justify' }
   ];
+
+  const [className, setClassName] = useState(getAnimationClass());
+  const [backColor, setBackColor] = useState(
+    (props.formatting.style && props.formatting.style.backgroundColor) || ''
+  );
+  const [textAlign, setTextAlign] = useState(props.formatting.textAlign || '');
 
   function handleColorChange(newVal) {
     let formatting = Object.assign({}, props.formatting);
@@ -491,10 +506,13 @@ function ChooseRowStyle(props) {
     let formatting = Object.assign({}, props.formatting);
     let classes =
       (formatting.className && formatting.className.split(' ')) || [];
-    classes.forEach(cls => {
-      let index = animations.findIndex(a => a.className === cls);
-      if (index !== -1) classes.splice(index, 1);
-    });
+    for (let i = 0; i < classes.length; i++) {
+      let index = animations.findIndex(a => a.className === classes[i]);
+      if (index !== -1) {
+        classes.splice(i, 1);
+        break;
+      }
+    }
     classes.push(newVal);
     const value = classes.join(' ');
     formatting.className = value;
@@ -507,10 +525,10 @@ function ChooseRowStyle(props) {
     let classes =
       (props.formatting.className && props.formatting.className.split(' ')) ||
       [];
-    classes.forEach(cls => {
-      let index = animations.findIndex(a => a.className === cls);
-      if (index !== -1) return cls;
-    });
+    for (let i = 0; i < classes.length; i++) {
+      let index = animations.findIndex(a => a.className === classes[i]);
+      if (index !== -1) return classes[i];
+    }
     return '';
   }
 
@@ -530,7 +548,7 @@ function ChooseRowStyle(props) {
         <Form className="mt-3">
           <Form.Group as={Row} controlId="inputBackgroundColor">
             <Form.Label column xs="auto">
-              Font Color
+              Background Color
             </Form.Label>
             <ColorPicker
               value={backColor}
@@ -566,6 +584,19 @@ function ChooseRowStyle(props) {
             />
           </Form.Group>
         </Form>
+      </>
+    )
+  );
+}
+
+function FinishPage(props) {
+  const stepName = 'Finish';
+  const stepDescription = 'Click Save to apply your formatting changes.';
+  return (
+    props.steps[props.curStep] === stepName && (
+      <>
+        <h5>{stepName}</h5>
+        <span className="form-text">{stepDescription}</span>
       </>
     )
   );

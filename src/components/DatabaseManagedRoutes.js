@@ -514,7 +514,7 @@ function DatabaseManagedRoutes() {
   }
 
   return [
-    <RulesEngineAlerts key="rules-engine-alerts" />,
+    <RulesEngineAlerts key="rules-engine-alerts" />, // TODO: Notifications page/dropdown w/ badge
     <Route
       path="/"
       exact

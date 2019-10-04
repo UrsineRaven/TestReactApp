@@ -8,6 +8,7 @@
   top: 100%;
   list-style: none;
   border: 1px solid dodgerblue;
+  background: white;
   /* cursor: pointer; */
   margin: 0;
   padding: 0;
@@ -50,9 +51,19 @@
     background-color: yellow;
   }
 }
+
+@keyframes text-throbbing {
+  from {
+    font-size: 1em;
+    letter-spacing: normal;
+  }
+  to {
+    font-size: 1.5em;
+    letter-spacing: 0.25em;
+  }
+}
+
 @keyframes background-progress {
-  /* from {background: repeating-linear-gradient(45deg, lightgrey, darkgrey 10%, lightgrey 20%);}
-  to {background: repeating-linear-gradient(45deg, darkgrey, lightgrey 10%, darkgrey 20%);} */
   0% {
     background: repeating-linear-gradient(
       135deg,
@@ -60,7 +71,7 @@
       darkgrey 1%,
       lightgrey 2%
     );
-    background-size: 800%;
+    background-size: 300rem;
     background-position: 400% 100%;
   }
   50% {
@@ -70,7 +81,7 @@
       darkgrey 1%,
       lightgrey 2%
     );
-    background-size: 800%;
+    background-size: 300rem;
     background-position: 0% 100%;
   }
   100% {
@@ -80,7 +91,7 @@
       darkgrey 1%,
       lightgrey 2%
     );
-    background-size: 800%;
+    background-size: 300rem;
     background-position: -400% 100%;
   }
 }
@@ -89,6 +100,18 @@
   animation: background-important 0.5s linear 0s infinite alternate both;
 }
 
+.ani-important > td {
+  background: initial;
+}
+
 .ani-loading {
   animation: background-progress 200s linear 0s infinite normal both;
+}
+
+.ani-loading > td {
+  background: initial;
+}
+
+.ani-throbbing {
+  animation: text-throbbing 1.5s linear 0s infinite alternate both;
 }
