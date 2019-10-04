@@ -1,0 +1,44 @@
+.custom-select-component {
+  position: relative;
+}
+
+.custom-select-component .dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  list-style: none;
+  border: 1px solid dodgerblue;
+  background: white;
+  /* cursor: pointer; */
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  max-height: 20rem;
+  overflow: hidden;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.custom-select-component.show-list .dropdown {
+  display: block;
+}
+
+.custom-select-component .arrow {
+  position: absolute;
+  top: 0.25em;
+  right: 0.5rem;
+  cursor: default;
+}
+
+.custom-select-component.show-list .arrow {
+  top: 0.5em;
+}
+
+.custom-select-component .entry {
+  padding: 0.375rem 0.75rem;
+}
+
+.custom-select-component .entry:hover {
+  border: 1px dashed;
+  font-weight: bold;
+}
