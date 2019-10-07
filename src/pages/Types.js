@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import EventTypeSelector from '../components/EventTypeSelector';
 import PageHeading from '../components/PageHeading';
+import RowFormattingWizard from '../components/RowFormattingWizard';
 
 function Types(props) {
   const [id, setId] = useState('');
@@ -107,7 +109,7 @@ function InputName(props) {
         placeholder="Enter the event type name"
         value={props.value}
         onChange={evt => props.onChange(evt.target.value)}
-      ></Form.Control>
+      />
     </Form.Group>
   );
 }
@@ -116,12 +118,20 @@ function InputFormatting(props) {
   return (
     <Form.Group controlId="inputFormatting">
       <Form.Label>Event Type Formatting</Form.Label>
-      <Form.Control
-        type="text"
-        placeholder="Enter the event type formatting"
-        value={props.value}
-        onChange={evt => props.onChange(evt.target.value)}
-      ></Form.Control>
+      <InputGroup>
+        <Form.Control
+          type="text"
+          placeholder="Enter the event type formatting"
+          value={props.value}
+          onChange={evt => props.onChange(evt.target.value)}
+        />
+        <InputGroup.Append>
+          <RowFormattingWizard
+            formatting={props.value}
+            setFormatting={props.onChange}
+          />
+        </InputGroup.Append>
+      </InputGroup>
     </Form.Group>
   );
 }
@@ -136,7 +146,7 @@ function CheckDelete(props) {
           label="Delete this event type!"
           checked={props.value}
           onChange={evt => props.onChange(evt.target.checked)}
-        ></Form.Check>
+        />
       </Form.Group>
     )
   );

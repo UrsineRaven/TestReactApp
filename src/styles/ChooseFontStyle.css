@@ -1,0 +1,7 @@
+.check-label-underline > label {
+  text-decoration-line: underline;
+}
+
+.check-label-line-through > label {
+  text-decoration-line: line-through;
+}

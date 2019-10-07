@@ -1,0 +1,13 @@
+.modal-breadcrumb > .breadcrumb {
+  margin-bottom: 2px !important;
+  padding: 0.25rem 1rem;
+}
+
+.example-row {
+  margin: 0.25rem 1rem 0;
+  width: initial;
+}
+
+.honor-row-bg > td {
+  background: initial !important;
+}

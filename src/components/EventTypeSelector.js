@@ -7,7 +7,7 @@ import Row from 'react-bootstrap/Row';
  * @param {Object} props - properties for the component
  * @param {{id:string, name:string}[]} props.evtTypes - Array of event types
  * @param {string} props.value - The selected value (id of event type)
- * @param {function} props.onChange - The function to run when the value changes
+ * @param {(evtType:{id:string, name:string})=>void} props.onChange - The function to run when the value changes
  * @param {string} [props.defaultLabel="Create New"] - The label to show for the default value (defaults to 'Create New')
  * @param {string} [props.description] - An optional description to display below the field
  * @param {boolean} [props.inline] - Make the form group one line. Defaults to false

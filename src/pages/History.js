@@ -11,8 +11,10 @@ import {
   getStartAndEndDatetimes,
   getWeekNumber,
   getWeekStartAndEnd
-} from '../components/Helpers';
+} from '../helpers/TimeHelpers';
 import PageHeading from '../components/PageHeading';
+import TableRow from '../components/TableRow';
+import '../styles/Table.css';
 
 function History(props) {
   const [type, setType] = useState('');
@@ -124,6 +126,7 @@ function History(props) {
       const [date, time] = getLocalIsoDateAndTime(new Date(row.datetime));
       tableRow = (
         <TableRow
+          noBtn
           date={date}
           time={time}
           event={eventTypes[row.event].name}
@@ -167,16 +170,6 @@ function GroupRow(props) {
   return (
     <tr className="table-dark" style={{ fontWeight: 'bold' }}>
       <td colSpan="3">{props.groupName}</td>
-    </tr>
-  );
-}
-
-function TableRow(props) {
-  return (
-    <tr {...(props.formatting && JSON.parse(props.formatting))}>
-      <td className="small-col">{props.date}</td>
-      <td className="small-col">{props.time}</td>
-      <td className="big-col">{props.event}</td>
     </tr>
   );
 }

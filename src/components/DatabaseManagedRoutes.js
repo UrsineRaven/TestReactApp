@@ -6,7 +6,7 @@ import History from '../pages/History';
 import Home from '../pages/Home';
 import Settings from '../pages/Settings';
 import Types from '../pages/Types';
-import { getLocalIsoDateAndTime } from './Helpers';
+import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
 import RulesEngineAlerts from './RulesEngineAlerts';
 
 //#region Test Data        TODO: Remove
@@ -514,7 +514,7 @@ function DatabaseManagedRoutes() {
   }
 
   return [
-    <RulesEngineAlerts></RulesEngineAlerts>,
+    <RulesEngineAlerts key="rules-engine-alerts" />, // TODO: Notifications page/dropdown w/ badge
     <Route
       path="/"
       exact
