@@ -1,19 +1,5 @@
 class CssColors {
   /**
-   * Returns the name of any CSS-defined colors matching colorValue.
-   * @param {string} colorValue - the value of the color to search for. It can be the color name or a hex code (starting with #).
-   * @returns {string} The name of the color matching colorValue, or empty string if there is no match.
-   */
-  static findName(colorValue) {
-    let value = colorValue.toLowerCase();
-    const index = cssColors.findIndex(color => {
-      return color.colorString === value || color.hex.toLowerCase() === value;
-    });
-    if (index !== -1) return cssColors[index].name;
-    else return '';
-  }
-
-  /**
    * Returns the color object of any CSS-defined colors matching colorValue.
    * @param {string} colorValue - the value of the color to search for. It can be the color name or a hex code (starting with #).
    * @returns The color object matching colorValue, or null if there is no match.
@@ -25,6 +11,17 @@ class CssColors {
     });
     if (index !== -1) return cssColors[index];
     else return null;
+  }
+
+  /**
+   * Returns the name of any CSS-defined colors matching colorValue.
+   * @param {string} colorValue - the value of the color to search for. It can be the color name or a hex code (starting with #).
+   * @returns {string} The name of the color matching colorValue, or empty string if there is no match.
+   */
+  static findName(colorValue) {
+    const color = CssColors.findColor(colorValue);
+    if (color) return color.name;
+    else return '';
   }
 }
 

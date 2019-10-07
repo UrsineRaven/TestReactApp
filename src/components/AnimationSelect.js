@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import '../styles/AnimationSelect.css';
+import CustomSelect from './CustomSelect';
 
 /**
  * Array of available animations
@@ -26,107 +27,64 @@ export const animations = [
  * @param {string} props.value - The value of the selector
  */
 function AnimationSelect(props) {
-  const [filterText, setFilterText] = useState('');
-  const [inputFocus, setInputFocus] = useState(false);
-  const [showList, setShowList] = useState(false);
-
-  useEffect(() => {
-    let newValue = props.value.toLowerCase();
-    const index = animations.findIndex(animation => {
-      return animation.className === newValue;
-    });
-    if (index !== -1) setFilterText(animations[index].name);
-    else setFilterText('');
-  }, [props.value]);
-
   function handleSelect(animation) {
+    if (animation.emptyString) {
+      props.onChange('');
+      return false;
+    }
     props.onChange(animation.className);
-    setShowList(false);
+    return true;
   }
 
-  function handleBlur(evt) {
-    // Set value if text is valid
-    let value = evt.target.value.toLowerCase();
-    //  handle empty string
-    if (!value) {
-      handleSelect({ className: '' });
-      setInputFocus(false);
-      return;
-    }
-    //  check if value is valid
-    let index = animations.findIndex(animation => {
-      return animation.name.toLowerCase() === value;
-    });
-    if (index !== -1) handleSelect(animations[index]);
-    else {
-      //  set filter text equal to the last valid value
-      let oldValue = props.value.toLowerCase();
-      let index = animations.findIndex(animation => {
-        return animation.className === oldValue;
-      });
-      if (index !== -1) setFilterText(animations[index].name);
-      else setFilterText('');
-    }
-
-    setShowList(false);
-    setInputFocus(false);
+  function filter(animation, lowerCaseFilterText) {
+    return (
+      animation.name.toLowerCase().indexOf(lowerCaseFilterText) !== -1 ||
+      animation.className.toLowerCase().indexOf(lowerCaseFilterText) !== -1
+    );
   }
 
-  // Generate JSX
-  const lowerFilter = filterText.toLowerCase();
-  const animationOptions = animations
-    .filter(animation => {
+  function findAnimation(searchText) {
+    const value = searchText.toLowerCase();
+    const index = animations.findIndex(animation => {
       return (
-        animation.name.toLowerCase().indexOf(lowerFilter) !== -1 ||
-        animation.className.toLowerCase().indexOf(lowerFilter) !== -1
-      );
-    })
-    .map(animation => {
-      return (
-        <li
-          key={animation.name}
-          className={'entry ' + animation.className}
-          onMouseDown={evt => evt.preventDefault()} // Ensures onClick is called before onBlur is called on the input
-          onClick={() => handleSelect(animation)}
-        >
-          {animation.name}
-        </li>
+        animation.name.toLowerCase() === value ||
+        animation.className.toLowerCase() === value
       );
     });
+    if (index !== -1) return animations[index];
+    else return null;
+  }
+
+  function findAnimationName(searchText) {
+    const animation = findAnimation(searchText);
+    if (animation) return animation.name;
+    else return '';
+  }
+
+  const items = animations.map(animation => {
+    return {
+      name: animation.name,
+      props: {
+        className: 'entry ' + animation.className,
+        style: {
+          color: animation.textColor,
+          backgroundColor: animation.colorString,
+          borderColor: animation.textColor
+        }
+      },
+      object: animation
+    };
+  });
 
   return (
-    <>
-      <div className={'css-animation-select' + (showList ? ' show-list' : '')}>
-        <input
-          type="text"
-          className="form-control"
-          value={filterText}
-          onChange={evt => setFilterText(evt.target.value)}
-          onFocus={evt => {
-            setShowList(true);
-            setInputFocus(true);
-          }}
-          onBlur={evt => handleBlur(evt)}
-          onKeyDown={evt => {
-            if (evt.key === 'Escape') setShowList(false);
-          }}
-          onClick={evt => {
-            if (inputFocus) setShowList(true);
-          }}
-        />
-        <span
-          className="arrow"
-          onClick={evt => {
-            setShowList(val => !val);
-            evt.preventDefault();
-          }}
-          onMouseDown={evt => evt.preventDefault()}
-        >
-          {showList ? <>&#128897;</> : <>&#128899;</>}
-        </span>
-        <ul className="dropdown">{animationOptions}</ul>
-      </div>
-    </>
+    <CustomSelect
+      value={props.value}
+      items={items}
+      handleSelect={handleSelect}
+      filter={filter}
+      findItem={findAnimation}
+      findItemName={findAnimationName}
+    />
   );
 }
 
