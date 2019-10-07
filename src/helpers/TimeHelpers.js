@@ -155,34 +155,73 @@ export const getWeekStartAndEnd = function(dateString) {
 };
 
 // TODO: add comments/description
-export const getHumanReadableTimeSinceDatetime = function(datePast) {
-  // TODO: support passing a formatting string
+export const getHumanReadableTimeSinceDatetime = function(
+  datePast,
+  dateFormat
+) {
+  // TODO: support passing a formatting string (disable by enclosing with ► ◄) (add reset button) (only store string and use that to determine if it's enabled)
+  let year, month, week, day, hour, minute, second, millisecond;
   const dateNow = new Date();
   const difference = dateNow.getTime() - datePast.getTime();
+  let returnValue = dateFormat || '{year}y{day}d';
+  const lowerFormat = dateFormat.toLowerCase();
+
+  const yearToken = /{year}/i;
+  const monthToken = /{month}/i;
+  const weekToken = /{week}/i;
+  const dayToken = /{day}/i;
+  const hourToken = /{hour}/i;
+  const minuteToken = /{minute}/i;
+  const secondToken = /{second}/i;
+  const millisecondToken = /{millisecond}/i;
 
   let remainder = difference;
-  const years = difference / millisecondsInYear;
-  const year = Math.floor(years);
-  remainder = remainder - year * millisecondsInYear;
-  // const months = remainder / millisecondsInMonth;
-  // const month = Math.floor(months);
-  // remainder = remainder - (month * millisecondsInMonth);
-  // const weeks = remainder / millisecondsInWeek;
-  // const week = Math.floor(weeks);
-  // remainder = remainder - (week * millisecondsInWeek);
-  const days = remainder / millisecondsInDay;
-  const day = Math.floor(days);
-  remainder = remainder - day * millisecondsInDay;
-  const hours = remainder / millisecondsInHour;
-  const hour = Math.floor(hours);
-  remainder = remainder - hour * millisecondsInHour;
-  // const minutes = remainder / millisecondsInMinute;
-  // const minute = Math.floor(minutes);
-  // remainder = remainder - (minute * millisecondsInMinute);
-  // const seconds = remainder / millisecondsInSecond;
-  // const second = Math.floor(seconds);
-  // remainder = remainder - (second * millisecondsInSecond);
-  // const millisecond = remainder;
+  if (lowerFormat.search(yearToken) !== -1) {
+    const years = difference / millisecondsInYear;
+    year = Math.floor(years);
+    returnValue = returnValue.replace(yearToken, year);
+    remainder = remainder - year * millisecondsInYear;
+  }
+  if (lowerFormat.search(monthToken) !== -1) {
+    const months = remainder / millisecondsInMonth;
+    month = Math.floor(months);
+    returnValue = returnValue.replace(monthToken, month);
+    remainder = remainder - month * millisecondsInMonth;
+  }
+  if (lowerFormat.search(weekToken) !== -1) {
+    const weeks = remainder / millisecondsInWeek;
+    week = Math.floor(weeks);
+    returnValue = returnValue.replace(weekToken, week);
+    remainder = remainder - week * millisecondsInWeek;
+  }
+  if (lowerFormat.search(dayToken) !== -1) {
+    const days = remainder / millisecondsInDay;
+    day = Math.floor(days);
+    returnValue = returnValue.replace(dayToken, day);
+    remainder = remainder - day * millisecondsInDay;
+  }
+  if (lowerFormat.search(hourToken) !== -1) {
+    const hours = remainder / millisecondsInHour;
+    hour = Math.floor(hours);
+    returnValue = returnValue.replace(hourToken, hour);
+    remainder = remainder - hour * millisecondsInHour;
+  }
+  if (lowerFormat.search(minuteToken) !== -1) {
+    const minutes = remainder / millisecondsInMinute;
+    minute = Math.floor(minutes);
+    returnValue = returnValue.replace(minuteToken, minute);
+    remainder = remainder - minute * millisecondsInMinute;
+  }
+  if (lowerFormat.search(secondToken) !== -1) {
+    const seconds = remainder / millisecondsInSecond;
+    second = Math.floor(seconds);
+    returnValue = returnValue.replace(secondToken, second);
+    remainder = remainder - second * millisecondsInSecond;
+  }
+  if (lowerFormat.search(millisecondToken) !== -1) {
+    millisecond = remainder;
+    returnValue = returnValue.replace(millisecondToken, millisecond);
+  }
 
-  return `${year}y${day}d${hour}h`;
+  return returnValue;
 };
