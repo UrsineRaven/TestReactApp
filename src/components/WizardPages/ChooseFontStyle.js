@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import { isObjectEmpty } from '../../helpers/MiscHelpers';
 import '../../styles/ChooseFontStyle.css';
 import ColorPicker from '../ColorPicker';
+import InlineFormGroup from '../InlineFormGroup';
 
 /**
  * Wizard page for selecting a table row's font styling.
@@ -123,18 +123,19 @@ function ChooseFontStyle(props) {
 
   const decorationOptions = decorations.map(d => {
     return (
-      <Form.Group as={Row} controlId={'inputDecoration' + d.name} key={d.name}>
-        <Form.Label column xs="auto">
-          {d.name}
-        </Form.Label>
+      <InlineFormGroup
+        controlId={'inputDecoration' + d.name}
+        label={d.name}
+        key={d.name}
+      >
         <Form.Check
           type="checkbox"
           label="Example Text"
-          className={'col mx-3 check-label-' + d.value}
+          className={'check-label-' + d.value}
           checked={fontDecoration.indexOf(d.value) !== -1}
           onChange={evt => handleDecorationChange(d.value, evt.target.checked)}
         />
-      </Form.Group>
+      </InlineFormGroup>
     );
   });
 
@@ -160,74 +161,54 @@ function ChooseFontStyle(props) {
         <h5>{stepName}</h5>
         <span className="form-text">{stepDescription}</span>
         <Form className="mt-3">
-          <Form.Group as={Row} controlId="inputStyle">
-            <Form.Label column xs="auto">
-              Italic
-            </Form.Label>
+          <InlineFormGroup controlId="inputStyle" label="Italic">
             <Form.Check
               type="checkbox"
               label="Example Text"
-              className="col mx-3"
               style={{ fontStyle: 'italic' }}
               checked={fontStyle}
               onChange={evt => handleStyleChange(evt.target.checked)}
             />
-          </Form.Group>
+          </InlineFormGroup>
           {decorationOptions}
-          <Form.Group as={Row} controlId="inputFontWeight">
-            <Form.Label column xs="auto">
-              Font Weight
-            </Form.Label>
+          <InlineFormGroup controlId="inputFontWeight" label="Font Weight">
             <Form.Control
               as="select"
               value={fontWeight}
               onChange={evt => handleWeightChange(evt.target.value)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             >
               <option value="">{'--- No change ---'}</option>
               {weightOptions}
             </Form.Control>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputVariant">
-            <Form.Label column xs="auto">
-              Small Caps
-            </Form.Label>
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputVariant" label="Small Caps">
             <Form.Check
               type="checkbox"
               label="Example Text"
-              className="col mx-3"
               style={{ fontVariant: 'small-caps' }}
               checked={fontVariant}
               onChange={evt => handleVariantChange(evt.target.checked)}
             />
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputFontSize">
-            <Form.Label column xs="auto">
-              Font Size
-            </Form.Label>
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputFontSize" label="Font Size">
             <Form.Control
               as="select"
               value={fontSize}
               onChange={evt => handleSizeChange(evt.target.value)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             >
               <option value="">{'--- No change ---'}</option>
               {sizeOptions}
             </Form.Control>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputFontColor">
-            <Form.Label column xs="auto">
-              Font Color
-            </Form.Label>
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputFontColor" label="Font Color">
             <ColorPicker
               value={fontColor}
               onChange={val => handleColorChange(val)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             />
-          </Form.Group>
+          </InlineFormGroup>
         </Form>
       </>
     )

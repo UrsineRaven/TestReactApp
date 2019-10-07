@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/EventTypeSelector';
+import InlineFormGroup from '../components/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
 import TableRow from '../components/TableRow';
 import { getHumanReadableTimeSinceDatetime, getLocalIsoDateAndTime, getLocalIsoString, getStartAndEndDatetimes, getWeekNumber, getWeekStartAndEnd } from '../helpers/TimeHelpers';
@@ -190,42 +189,26 @@ function FilterCard(props) {
             defaultLabel="Any Event Type"
             inline
           />
-          <Form.Group as={Row} controlId="inputEndDate">
-            <Form.Label column xs="auto">
-              Newest Date
-            </Form.Label>
-            <Col>
-              <Form.Control
-                type="date"
-                value={props.endDate}
-                onChange={newDate => props.endDateChange(newDate.target.value)}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputStartDate">
-            <Form.Label column xs="auto">
-              Oldest Date
-            </Form.Label>
-            <Col>
-              <Form.Control
-                type="date"
-                value={props.startDate}
-                onChange={newDate =>
-                  props.startDateChange(newDate.target.value)
-                }
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="chooseGrouping">
-            <Form.Label column xs="auto">
-              Group By
-            </Form.Label>
+          <InlineFormGroup controlId="inputEndDate" label="Newest Date">
+            <Form.Control
+              type="date"
+              value={props.endDate}
+              onChange={newDate => props.endDateChange(newDate.target.value)}
+            />
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputStartDate" label="Oldest Date">
+            <Form.Control
+              type="date"
+              value={props.startDate}
+              onChange={newDate => props.startDateChange(newDate.target.value)}
+            />
+          </InlineFormGroup>
+          <InlineFormGroup controlId="chooseGrouping" label="Group By">
             <Form.Control
               as="select"
               value={props.groupBy}
               // TODO: be more consistent with my anonymous handler function naming and structure
               onChange={evt => props.groupByChange(evt.target.value)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             >
               <option value="">{'--- None ---'}</option>
@@ -234,7 +217,7 @@ function FilterCard(props) {
               <option value="month">{'Month & Year'}</option>
               <option value="year">{'Year'}</option>
             </Form.Control>
-          </Form.Group>
+          </InlineFormGroup>
           {/* TODO: Time range? */}
         </Form>
       </Card.Body>

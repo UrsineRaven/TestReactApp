@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import InlineFormGroup from '../InlineFormGroup';
 
 /**
  * Wizard page for selecting a table row's bootstrap base class.
@@ -68,21 +68,17 @@ function ChooseClass(props) {
         <h5>{stepName}</h5>
         <span className="form-text">{stepDescription}</span>
         <Form className="mt-3">
-          <Form.Group as={Row} controlId="inputClass">
-            <Form.Label column xs="auto">
-              Class
-            </Form.Label>
+          <InlineFormGroup controlId="inputClass" label="Class">
             <Form.Control
               as="select"
               value={className}
               onChange={evt => handleClassChange(evt.target.value)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             >
               <option value="">{'--- None ---'}</option>
               {classOptions}
             </Form.Control>
-          </Form.Group>
+          </InlineFormGroup>
         </Form>
       </>
     )
