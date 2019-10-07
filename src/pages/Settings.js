@@ -48,6 +48,22 @@ function Settings(props) {
                 you to restore those event types.
               </Form.Text>
             </Form.Group>
+            <Form.Group controlId="setShowTimeSince">
+              <Form.Label>Show Time Since</Form.Label>
+              <Form.Check
+                className="text-muted"
+                type="checkbox"
+                label="Show time since an event occurred on the history page"
+                checked={props.showTimeSince}
+                onChange={evt =>
+                  props.onChangeShowTimeSince(evt.target.checked)
+                }
+              />
+              <Form.Text as="small" className="text-muted">
+                Enabling this adds a column on the Event History page that shows
+                how long ago the event was logged.
+              </Form.Text>
+            </Form.Group>
             <Form.Group controlId="setAllowOfflineChanges">
               <Form.Label>Allow Offline Changes</Form.Label>
               <Form.Check

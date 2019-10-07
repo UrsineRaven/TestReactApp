@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
+import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
 import useInterval from '../hooks/useInterval';
 import useLocalStorage from '../hooks/useLocalStorage';
 import History from '../pages/History';
 import Home from '../pages/Home';
 import Settings from '../pages/Settings';
 import Types from '../pages/Types';
-import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
 import RulesEngineAlerts from './RulesEngineAlerts';
 
 //#region Test Data        TODO: Remove
@@ -52,6 +52,10 @@ function DatabaseManagedRoutes() {
   const [pollInterval, setPollInterval] = useLocalStorage('poll-interval', 0);
   const [showHiddenTypes, setShowHiddenTypes] = useLocalStorage(
     'show-hidden-types',
+    false
+  );
+  const [showTimeSince, setShowTimeSince] = useLocalStorage(
+    'show-time-since',
     false
   );
   const [allowOfflineChanges, setAllowOfflineChanges] = useLocalStorage(
@@ -532,7 +536,13 @@ function DatabaseManagedRoutes() {
     />,
     <Route
       path="/history/"
-      render={() => <History evtTypes={eventTypes} rows={events} />}
+      render={() => (
+        <History
+          evtTypes={eventTypes}
+          rows={events}
+          showTimeSince={showTimeSince}
+        />
+      )}
       key="history"
     />,
     <Route
@@ -554,6 +564,8 @@ function DatabaseManagedRoutes() {
           onChangePollInterval={newVal => setPollInterval(newVal)}
           showHiddenTypes={showHiddenTypes}
           onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
+          showTimeSince={showTimeSince}
+          onChangeShowTimeSince={newVal => setShowTimeSince(newVal)}
           allowOfflineChanges={allowOfflineChanges}
           onChangeAllowOfflineChanges={newVal => setAllowOfflineChanges(newVal)}
           offlineOnly={offlineOnly}

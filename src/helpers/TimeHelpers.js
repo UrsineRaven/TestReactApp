@@ -30,8 +30,22 @@ export const splitIsoString = function(isoString) {
   return [dateSplit[0], timeSplit[0]];
 };
 
-/** One less than the number of milliseconds in a day */
-export const millisecondsInDay = 86399999;
+export const millisecondsInSecond = 1000;
+export const secondsInMinute = 60;
+export const minutesInHour = 60;
+export const hoursInDay = 24;
+export const daysInWeek = 7;
+export const daysInYear = 365.25;
+export const monthsInYear = 12;
+export const daysInMonth = daysInYear / monthsInYear;
+export const weeksInYear = daysInYear / daysInWeek;
+export const weeksInMonth = weeksInYear / monthsInYear;
+export const millisecondsInMinute = millisecondsInSecond * secondsInMinute;
+export const millisecondsInHour = millisecondsInMinute * minutesInHour;
+export const millisecondsInDay = millisecondsInHour * hoursInDay;
+export const millisecondsInWeek = millisecondsInDay * daysInWeek;
+export const millisecondsInMonth = millisecondsInDay * daysInMonth;
+export const millisecondsInYear = millisecondsInDay * daysInYear;
 
 /**
  * Return the number of milliseconds of the timezone offset for the provided date.
@@ -50,7 +64,7 @@ export const getTodaysStartAndEndDatetimes = function() {
   const todaysDate = new Date(getLocalIsoString(new Date()).split('T')[0]); // Get beginning of today UTC
   const timezoneOffset = getLocalTimezoneOffset(todaysDate);
   const dayStart = todaysDate.getTime() + timezoneOffset;
-  const dayEnd = dayStart + millisecondsInDay;
+  const dayEnd = dayStart + (millisecondsInDay - 1);
   return [dayStart, dayEnd];
 };
 
@@ -66,7 +80,7 @@ export const getStartAndEndDatetimes = function(startDate, endDate) {
     ? new Date(startDate).getTime() + timezoneOffset
     : null;
   const endDatetime = endDate
-    ? new Date(endDate).getTime() + timezoneOffset + millisecondsInDay
+    ? new Date(endDate).getTime() + timezoneOffset + (millisecondsInDay - 1)
     : null;
   return [startDatetime, endDatetime];
 };
@@ -122,7 +136,7 @@ export const getWeekNumber = function(dateString) {
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() + 1)); // +4 since we're targeting Wednesday, and +1 to make days 1-indexed
   const year = d.getUTCFullYear();
   const yearStart = new Date(Date.UTC(year, 0, 1));
-  const weekNo = Math.ceil((d - yearStart) / (millisecondsInDay + 1) / 7);
+  const weekNo = Math.ceil((d - yearStart) / millisecondsInDay / 7);
   return [year, weekNo];
 };
 
@@ -138,4 +152,37 @@ export const getWeekStartAndEnd = function(dateString) {
   let end = new Date(start.getTime());
   end.setUTCDate(end.getUTCDate() + 6);
   return [start, end];
+};
+
+// TODO: add comments/description
+export const getHumanReadableTimeSinceDatetime = function(datePast) {
+  // TODO: support passing a formatting string
+  const dateNow = new Date();
+  const difference = dateNow.getTime() - datePast.getTime();
+
+  let remainder = difference;
+  const years = difference / millisecondsInYear;
+  const year = Math.floor(years);
+  remainder = remainder - year * millisecondsInYear;
+  // const months = remainder / millisecondsInMonth;
+  // const month = Math.floor(months);
+  // remainder = remainder - (month * millisecondsInMonth);
+  // const weeks = remainder / millisecondsInWeek;
+  // const week = Math.floor(weeks);
+  // remainder = remainder - (week * millisecondsInWeek);
+  const days = remainder / millisecondsInDay;
+  const day = Math.floor(days);
+  remainder = remainder - day * millisecondsInDay;
+  const hours = remainder / millisecondsInHour;
+  const hour = Math.floor(hours);
+  remainder = remainder - hour * millisecondsInHour;
+  // const minutes = remainder / millisecondsInMinute;
+  // const minute = Math.floor(minutes);
+  // remainder = remainder - (minute * millisecondsInMinute);
+  // const seconds = remainder / millisecondsInSecond;
+  // const second = Math.floor(seconds);
+  // remainder = remainder - (second * millisecondsInSecond);
+  // const millisecond = remainder;
+
+  return `${year}y${day}d${hour}h`;
 };

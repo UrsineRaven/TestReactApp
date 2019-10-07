@@ -5,15 +5,9 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/EventTypeSelector';
-import {
-  getLocalIsoDateAndTime,
-  getLocalIsoString,
-  getStartAndEndDatetimes,
-  getWeekNumber,
-  getWeekStartAndEnd
-} from '../helpers/TimeHelpers';
 import PageHeading from '../components/PageHeading';
 import TableRow from '../components/TableRow';
+import { getHumanReadableTimeSinceDatetime, getLocalIsoDateAndTime, getLocalIsoString, getStartAndEndDatetimes, getWeekNumber, getWeekStartAndEnd } from '../helpers/TimeHelpers';
 import '../styles/Table.css';
 
 function History(props) {
@@ -45,6 +39,13 @@ function History(props) {
       return evtType && evtStartDate && evtEndDate;
     })
     .sort((row1, row2) => row2.datetime - row1.datetime);
+  if (props.showTimeSince)
+    processedRows = processedRows.map(row => {
+      return {
+        timeSince: getHumanReadableTimeSinceDatetime(new Date(row.datetime)),
+        ...row
+      };
+    });
 
   // add grouping rows
   let currentGroup = '';
@@ -130,6 +131,7 @@ function History(props) {
           date={date}
           time={time}
           event={eventTypes[row.event].name}
+          timeSince={row.timeSince}
           formatting={eventTypes[row.event].formatting}
           key={row.id}
         />
@@ -158,6 +160,7 @@ function History(props) {
             <th className="small-col">Date</th>
             <th className="small-col">Time</th>
             <th className="big-col">Event</th>
+            {props.showTimeSince && <th className="small-col">Time Since</th>}
           </tr>
         </thead>
         <tbody>{tableRows}</tbody>
