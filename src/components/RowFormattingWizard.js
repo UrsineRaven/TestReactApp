@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import { getLocalIsoDateAndTime } from '../helpers/TimeHelpers';
+import { ReactComponent as WizardHat } from '../resources/wizard-hat.svg';
 import '../styles/Modal.css';
 import '../styles/RowFormattingWizard.css';
 import '../styles/Table.css';
@@ -144,8 +145,12 @@ function RowFormattingWizard(props) {
           )}
         </Modal.Footer>
       </Modal>
-      <Button variant="primary" onClick={() => handleWizardBtn()}>
-        #
+      <Button
+        variant="primary"
+        className="wizard-logo-btn"
+        onClick={() => handleWizardBtn()}
+      >
+        <WizardHat alt="Wizard hat" className="wizard-btn-logo" />
       </Button>
     </>
   );

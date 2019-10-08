@@ -11,3 +11,13 @@
 .honor-row-bg > td {
   background: initial !important;
 }
+
+.wizard-logo-btn {
+  padding: 0.25rem 0.375rem;
+  width: 3em;
+}
+
+.wizard-btn-logo {
+  fill: currentColor;
+  width: 100%;
+}
