@@ -21,7 +21,19 @@ const testDataEventTypes = [
       '{"className":"table-warning", "style":{"fontStyle": "italic"}}',
     lastModified: 1568223239998
   },
-  { name: 'hidden-example', id: '5', hidden: true, lastModified: 1568223239999 }
+  {
+    name: 'hidden-example',
+    id: '5',
+    hidden: true,
+    lastModified: 1568223239999
+  },
+  {
+    name: 'Look at me!',
+    id: '6',
+    formatting:
+      '{"className":"ani-loading ","style":{"fontStyle":"italic","textDecorationLine":"underline  line-through","fontVariant":"small-caps","fontWeight":"bold","fontSize":"1.25em","color":"#0000ff","textAlign":"center"}}',
+    lastModified: 1570558195000
+  }
 ];
 
 const testDataEntries = [
@@ -32,7 +44,8 @@ const testDataEntries = [
   { datetime: 1568309640000, event: '4', id: '400' },
   { datetime: 1568323800000, event: '3', id: '404' },
   { datetime: 1568327040000, event: '2', id: '408' },
-  { datetime: 1568315946000, event: '1', id: '402' }
+  { datetime: 1568315946000, event: '1', id: '402' },
+  { datetime: 1570558195000, event: '6', id: '409' }
 ];
 //#endregion
 
