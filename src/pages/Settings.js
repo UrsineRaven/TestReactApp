@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import InlineFormGroup from '../components/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
+import '../styles/Settings.css';
 
 function Settings(props) {
+  const [showTimeSince, setShowTimeSince] = useState(
+    props.timeSinceFormat &&
+      (typeof props.timeSinceFormat === 'boolean' ||
+        props.timeSinceFormat.charAt(0) !== '►')
+  );
+
+  function handleTimeSinceCheck(newVal) {
+    if (newVal) {
+      // If checkbox is now checked
+      if (props.timeSinceFormat && typeof props.timeSinceFormat === 'string')
+        // If there is a format defined
+        props.onChangeTimeSinceFormat(
+          props.timeSinceFormat.substring(1, props.timeSinceFormat.length - 1)
+        );
+      else props.onChangeTimeSinceFormat(true); // set value of format to true if one isn't defined
+    } else {
+      // If checkbox is now unchecked
+      if (props.timeSinceFormat && typeof props.timeSinceFormat === 'string')
+        // If there is a format defined
+        props.onChangeTimeSinceFormat('►' + props.timeSinceFormat + '◄');
+      else props.onChangeTimeSinceFormat(false); // set value of format to false if one isn't defined
+    }
+    setShowTimeSince(newVal);
+  }
+
   return (
     <>
       <PageHeading>Settings</PageHeading>
@@ -46,6 +73,54 @@ function Settings(props) {
               <Form.Text as="small" className="text-muted">
                 Showing deleted event types on the type management page allows
                 you to restore those event types.
+              </Form.Text>
+            </Form.Group>
+            <Form.Group controlId="setShowTimeSince">
+              <Form.Label>Show Time Since</Form.Label>
+              <Form.Check
+                className="text-muted"
+                type="checkbox"
+                label="Show time since an event occurred on the history page"
+                checked={showTimeSince}
+                onChange={evt => handleTimeSinceCheck(evt.target.checked)}
+              />
+              <Form.Text as="small" className="text-muted">
+                Enabling this adds a column on the Event History page that shows
+                how long ago the event was logged.
+              </Form.Text>
+              <InlineFormGroup
+                controlId="inputTimeSinceFormat"
+                label="Time Since"
+                className="child-inline-form-group"
+              >
+                <Form.Control
+                  type="text"
+                  placeholder="Optionally input format"
+                  value={
+                    typeof props.timeSinceFormat === 'boolean'
+                      ? ''
+                      : props.timeSinceFormat
+                  }
+                  onChange={evt =>
+                    props.onChangeTimeSinceFormat(
+                      evt.target.value || showTimeSince
+                    )
+                  }
+                  {...(!showTimeSince && {
+                    style: { textDecorationLine: 'line-through' }
+                  })}
+                  disabled={!showTimeSince}
+                />
+              </InlineFormGroup>
+              <Form.Text as="small" className="text-muted ml-4">
+                You may specify a format to display the time difference in. The
+                valid placeholders are {'{year}'}, {'{month}'}, {'{week}'},{' '}
+                {'{day}'}, {'{hour}'}, {'{minute}'}, {'{second}'}, and{' '}
+                {'{millisecond}'}. <br /> For example,{' '}
+                <code>{'{year}years, {day}d'}</code> would display the number of
+                years and days since the event occured with 'years, ' after the
+                number of years and 'd' after the number of days. The default
+                format is: <code>{'{year}y{day}d'}</code>.
               </Form.Text>
             </Form.Group>
             <Form.Group controlId="setAllowOfflineChanges">

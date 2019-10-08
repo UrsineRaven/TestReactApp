@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
-import {
-  getLocalIsoDateAndTime,
-  getTodaysStartAndEndDatetimes
-} from '../helpers/TimeHelpers';
+import InlineFormGroup from '../components/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
 import TableRow from '../components/TableRow';
+import { getLocalIsoDateAndTime, getTodaysStartAndEndDatetimes } from '../helpers/TimeHelpers';
 import '../styles/Modal.css';
 import '../styles/Table.css';
 
@@ -182,18 +179,13 @@ function NewEventCard(props) {
       <Card.Header>New Events:</Card.Header>
       <Card.Body>
         <Form>
-          <Form.Group as={Row} controlId="inputTime">
-            <Form.Label column xs="auto">
-              Time (if not now):
-            </Form.Label>
-            <Col>
-              <Form.Control
-                type="time"
-                value={time}
-                onChange={newTime => setTime(newTime.target.value)}
-              />
-            </Col>
-          </Form.Group>
+          <InlineFormGroup controlId="inputTime" label="Time (if not now):">
+            <Form.Control
+              type="time"
+              value={time}
+              onChange={newTime => setTime(newTime.target.value)}
+            />
+          </InlineFormGroup>
           <Row>{eventButtons}</Row>
         </Form>
       </Card.Body>

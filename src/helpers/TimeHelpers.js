@@ -30,8 +30,23 @@ export const splitIsoString = function(isoString) {
   return [dateSplit[0], timeSplit[0]];
 };
 
-/** One less than the number of milliseconds in a day */
-export const millisecondsInDay = 86399999;
+export const millisecondsInSecond = 1000;
+export const secondsInMinute = 60;
+export const minutesInHour = 60;
+export const hoursInDay = 24;
+export const daysInWeek = 7;
+export const averageDaysInYear = 365.25;
+export const monthsInYear = 12;
+export const averageDaysInMonth = averageDaysInYear / monthsInYear;
+export const weeksInYear = averageDaysInYear / daysInWeek;
+export const averageWeeksInMonth = weeksInYear / monthsInYear;
+export const millisecondsInMinute = millisecondsInSecond * secondsInMinute;
+export const millisecondsInHour = millisecondsInMinute * minutesInHour;
+export const millisecondsInDay = millisecondsInHour * hoursInDay;
+export const averageMillisecondsInWeek = millisecondsInDay * daysInWeek;
+export const averageMillisecondsInMonth =
+  millisecondsInDay * averageDaysInMonth;
+export const averageMillisecondsInYear = millisecondsInDay * averageDaysInYear;
 
 /**
  * Return the number of milliseconds of the timezone offset for the provided date.
@@ -50,7 +65,7 @@ export const getTodaysStartAndEndDatetimes = function() {
   const todaysDate = new Date(getLocalIsoString(new Date()).split('T')[0]); // Get beginning of today UTC
   const timezoneOffset = getLocalTimezoneOffset(todaysDate);
   const dayStart = todaysDate.getTime() + timezoneOffset;
-  const dayEnd = dayStart + millisecondsInDay;
+  const dayEnd = dayStart + (millisecondsInDay - 1);
   return [dayStart, dayEnd];
 };
 
@@ -66,7 +81,7 @@ export const getStartAndEndDatetimes = function(startDate, endDate) {
     ? new Date(startDate).getTime() + timezoneOffset
     : null;
   const endDatetime = endDate
-    ? new Date(endDate).getTime() + timezoneOffset + millisecondsInDay
+    ? new Date(endDate).getTime() + timezoneOffset + (millisecondsInDay - 1)
     : null;
   return [startDatetime, endDatetime];
 };
@@ -122,7 +137,7 @@ export const getWeekNumber = function(dateString) {
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() + 1)); // +4 since we're targeting Wednesday, and +1 to make days 1-indexed
   const year = d.getUTCFullYear();
   const yearStart = new Date(Date.UTC(year, 0, 1));
-  const weekNo = Math.ceil((d - yearStart) / (millisecondsInDay + 1) / 7);
+  const weekNo = Math.ceil((d - yearStart) / millisecondsInDay / 7);
   return [year, weekNo];
 };
 
@@ -138,4 +153,83 @@ export const getWeekStartAndEnd = function(dateString) {
   let end = new Date(start.getTime());
   end.setUTCDate(end.getUTCDate() + 6);
   return [start, end];
+};
+
+/**
+ * Calculate the amount of time that has passed since a specified date and return it in a human-readable format. It is possible to define a custom format. \
+ * Note: It uses average lengths for everything (e.g. average number of days in a month)
+ * @param {Date} datePast - The past date to calculate the time since
+ * @param {string} [dateFormat="{year}y{day}d"] - The format to display time since in. Add tokens where you want different time periods to appear. \
+ * Valid tokens are: {year}, {month}, {week}, {day}, {hour}, {minute}, {second}, and {millisecond} \
+ * Defaults to: "{year}y{day}d"
+ * @returns {string} The time since the specified date occured in a human-readable format defined by the dateFormat.
+ */
+export const getHumanReadableTimeSinceDatetime = function(
+  datePast,
+  dateFormat
+) {
+  let year, month, week, day, hour, minute, second, millisecond;
+  const dateNow = new Date();
+  const difference = dateNow.getTime() - datePast.getTime();
+  let returnValue = dateFormat || '{year}y{day}d';
+  const lowerFormat = returnValue.toLowerCase();
+
+  const yearToken = /{year}/i;
+  const monthToken = /{month}/i;
+  const weekToken = /{week}/i;
+  const dayToken = /{day}/i;
+  const hourToken = /{hour}/i;
+  const minuteToken = /{minute}/i;
+  const secondToken = /{second}/i;
+  const millisecondToken = /{millisecond}/i;
+
+  let remainder = difference;
+  if (lowerFormat.search(yearToken) !== -1) {
+    const years = difference / averageMillisecondsInYear;
+    year = Math.floor(years);
+    returnValue = returnValue.replace(yearToken, year);
+    remainder = remainder - year * averageMillisecondsInYear;
+  }
+  if (lowerFormat.search(monthToken) !== -1) {
+    const months = remainder / averageMillisecondsInMonth;
+    month = Math.floor(months);
+    returnValue = returnValue.replace(monthToken, month);
+    remainder = remainder - month * averageMillisecondsInMonth;
+  }
+  if (lowerFormat.search(weekToken) !== -1) {
+    const weeks = remainder / averageMillisecondsInWeek;
+    week = Math.floor(weeks);
+    returnValue = returnValue.replace(weekToken, week);
+    remainder = remainder - week * averageMillisecondsInWeek;
+  }
+  if (lowerFormat.search(dayToken) !== -1) {
+    const days = remainder / millisecondsInDay;
+    day = Math.floor(days);
+    returnValue = returnValue.replace(dayToken, day);
+    remainder = remainder - day * millisecondsInDay;
+  }
+  if (lowerFormat.search(hourToken) !== -1) {
+    const hours = remainder / millisecondsInHour;
+    hour = Math.floor(hours);
+    returnValue = returnValue.replace(hourToken, hour);
+    remainder = remainder - hour * millisecondsInHour;
+  }
+  if (lowerFormat.search(minuteToken) !== -1) {
+    const minutes = remainder / millisecondsInMinute;
+    minute = Math.floor(minutes);
+    returnValue = returnValue.replace(minuteToken, minute);
+    remainder = remainder - minute * millisecondsInMinute;
+  }
+  if (lowerFormat.search(secondToken) !== -1) {
+    const seconds = remainder / millisecondsInSecond;
+    second = Math.floor(seconds);
+    returnValue = returnValue.replace(secondToken, second);
+    remainder = remainder - second * millisecondsInSecond;
+  }
+  if (lowerFormat.search(millisecondToken) !== -1) {
+    millisecond = remainder;
+    returnValue = returnValue.replace(millisecondToken, millisecond);
+  }
+
+  return returnValue;
 };

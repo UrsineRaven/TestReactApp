@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
 import { isObjectEmpty } from '../../helpers/MiscHelpers';
 import AnimationSelect, { animations } from '../AnimationSelect';
 import ColorPicker from '../ColorPicker';
+import InlineFormGroup from '../InlineFormGroup';
 
 /**
  * Wizard page for selecting a table row's styling.
@@ -108,43 +108,34 @@ function ChooseRowStyle(props) {
         <h5>{stepName}</h5>
         <span className="form-text">{stepDescription}</span>
         <Form className="mt-3">
-          <Form.Group as={Row} controlId="inputBackgroundColor">
-            <Form.Label column xs="auto">
-              Background Color
-            </Form.Label>
+          <InlineFormGroup
+            controlId="inputBackgroundColor"
+            label="Background Color"
+          >
             <ColorPicker
               value={backColor}
               onChange={val => handleColorChange(val)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             />
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputTextAlign">
-            <Form.Label column xs="auto">
-              Text Alignment
-            </Form.Label>
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputTextAlign" label="Text Alignment">
             <Form.Control
               as="select"
               value={textAlign}
               onChange={evt => handleAlignChange(evt.target.value)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             >
               <option value="">{'--- No change ---'}</option>
               {alignOptions}
             </Form.Control>
-          </Form.Group>
-          <Form.Group as={Row} controlId="inputAnimation">
-            <Form.Label column xs="auto">
-              Animation
-            </Form.Label>
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputAnimation" label="Animation">
             <AnimationSelect
               value={className}
               onChange={val => handleClassChange(val)}
-              className="col mx-3"
               style={{ minWidth: '9rem' }}
             />
-          </Form.Group>
+          </InlineFormGroup>
         </Form>
       </>
     )

@@ -10,6 +10,7 @@ import '../styles/Table.css';
  * @param {string} props.date - date of the event
  * @param {string} props.time - time of the event
  * @param {string} props.event - name of the event
+ * @param {string} [props.timeSince] - time since the event occurred
  * @param {(evt:React.MouseEvent<HTMLButtonElement, MouseEvent>)=>void} props.onDelete - function to run when the delete button is clicked
  */
 function TableRow(props) {
@@ -27,6 +28,7 @@ function TableRow(props) {
           )}
         </td>
       )}
+      {props.timeSince && <td className="small-col">{props.timeSince}</td>}
     </tr>
   );
 }

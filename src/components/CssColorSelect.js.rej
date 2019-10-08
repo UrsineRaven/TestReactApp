@@ -1,4 +1,0 @@
-diff a/src/components/CssColorSelect.js b/src/components/CssColorSelect.js	(rejected hunks)
-@@ -37 +37 @@ function CssColorSelect(props) {
--    
-+
