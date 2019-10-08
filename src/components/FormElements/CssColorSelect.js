@@ -1,5 +1,5 @@
 import React from 'react';
-import CssColors, { cssColors } from '../helpers/CssColors';
+import CssColors, { cssColors } from '../../helpers/CssColors';
 import CustomSelect from './CustomSelect';
 
 /**

@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import EventTypeSelector from '../components/EventTypeSelector';
+import EventTypeSelector from '../components/FormElements/EventTypeSelector';
 import PageHeading from '../components/PageHeading';
 import RowFormattingWizard from '../components/RowFormattingWizard';
 

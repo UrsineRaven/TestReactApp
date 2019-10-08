@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import InlineFormGroup from '../InlineFormGroup';
+import InlineFormGroup from '../FormElements/InlineFormGroup';
 
 /**
  * Wizard page for selecting a table row's bootstrap base class.

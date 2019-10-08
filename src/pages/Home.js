@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
-import InlineFormGroup from '../components/InlineFormGroup';
+import InlineFormGroup from '../components/FormElements/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
 import TableRow from '../components/TableRow';
 import { getLocalIsoDateAndTime, getTodaysStartAndEndDatetimes } from '../helpers/TimeHelpers';

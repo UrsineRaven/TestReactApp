@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import { isObjectEmpty } from '../../helpers/MiscHelpers';
 import '../../styles/ChooseFontStyle.css';
-import ColorPicker from '../ColorPicker';
-import InlineFormGroup from '../InlineFormGroup';
+import ColorPicker from '../FormElements/ColorPicker';
+import InlineFormGroup from '../FormElements/InlineFormGroup';
 
 /**
  * Wizard page for selecting a table row's font styling.

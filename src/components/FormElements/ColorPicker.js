@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import CssColors from '../helpers/CssColors';
-import '../styles/ColorPicker.css';
-import '../styles/Modal.css';
+import CssColors from '../../helpers/CssColors';
+import '../../styles/ColorPicker.css';
+import '../../styles/Modal.css';
 import CssColorSelect from './CssColorSelect';
 
 /**

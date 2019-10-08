@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/CustomSelect.css';
+import '../../styles/CustomSelect.css';
 
 /**
  * A custom selector that lets you choose one of a few pre-defined items.

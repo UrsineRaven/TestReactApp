@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/AnimationSelect.css';
+import '../../styles/AnimationSelect.css';
 import CustomSelect from './CustomSelect';
 
 /**

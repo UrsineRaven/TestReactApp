@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import InlineFormGroup from '../components/InlineFormGroup';
+import InlineFormGroup from '../components/FormElements/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
 import '../styles/Settings.css';
 
