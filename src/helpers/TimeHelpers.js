@@ -35,17 +35,18 @@ export const secondsInMinute = 60;
 export const minutesInHour = 60;
 export const hoursInDay = 24;
 export const daysInWeek = 7;
-export const daysInYear = 365.25;
+export const averageDaysInYear = 365.25;
 export const monthsInYear = 12;
-export const daysInMonth = daysInYear / monthsInYear;
-export const weeksInYear = daysInYear / daysInWeek;
-export const weeksInMonth = weeksInYear / monthsInYear;
+export const averageDaysInMonth = averageDaysInYear / monthsInYear;
+export const weeksInYear = averageDaysInYear / daysInWeek;
+export const averageWeeksInMonth = weeksInYear / monthsInYear;
 export const millisecondsInMinute = millisecondsInSecond * secondsInMinute;
 export const millisecondsInHour = millisecondsInMinute * minutesInHour;
 export const millisecondsInDay = millisecondsInHour * hoursInDay;
-export const millisecondsInWeek = millisecondsInDay * daysInWeek;
-export const millisecondsInMonth = millisecondsInDay * daysInMonth;
-export const millisecondsInYear = millisecondsInDay * daysInYear;
+export const averageMillisecondsInWeek = millisecondsInDay * daysInWeek;
+export const averageMillisecondsInMonth =
+  millisecondsInDay * averageDaysInMonth;
+export const averageMillisecondsInYear = millisecondsInDay * averageDaysInYear;
 
 /**
  * Return the number of milliseconds of the timezone offset for the provided date.
@@ -154,17 +155,24 @@ export const getWeekStartAndEnd = function(dateString) {
   return [start, end];
 };
 
-// TODO: add comments/description
+/**
+ * Calculate the amount of time that has passed since a specified date and return it in a human-readable format. It is possible to define a custom format. \
+ * Note: It uses average lengths for everything (e.g. average number of days in a month)
+ * @param {Date} datePast - The past date to calculate the time since
+ * @param {string} [dateFormat="{year}y{day}d"] - The format to display time since in. Add tokens where you want different time periods to appear. \
+ * Valid tokens are: {year}, {month}, {week}, {day}, {hour}, {minute}, {second}, and {millisecond} \
+ * Defaults to: "{year}y{day}d"
+ * @returns {string} The time since the specified date occured in a human-readable format defined by the dateFormat.
+ */
 export const getHumanReadableTimeSinceDatetime = function(
   datePast,
   dateFormat
 ) {
-  // TODO: support passing a formatting string (disable by enclosing with ► ◄) (add reset button) (only store string and use that to determine if it's enabled)
   let year, month, week, day, hour, minute, second, millisecond;
   const dateNow = new Date();
   const difference = dateNow.getTime() - datePast.getTime();
   let returnValue = dateFormat || '{year}y{day}d';
-  const lowerFormat = dateFormat.toLowerCase();
+  const lowerFormat = returnValue.toLowerCase();
 
   const yearToken = /{year}/i;
   const monthToken = /{month}/i;
@@ -177,22 +185,22 @@ export const getHumanReadableTimeSinceDatetime = function(
 
   let remainder = difference;
   if (lowerFormat.search(yearToken) !== -1) {
-    const years = difference / millisecondsInYear;
+    const years = difference / averageMillisecondsInYear;
     year = Math.floor(years);
     returnValue = returnValue.replace(yearToken, year);
-    remainder = remainder - year * millisecondsInYear;
+    remainder = remainder - year * averageMillisecondsInYear;
   }
   if (lowerFormat.search(monthToken) !== -1) {
-    const months = remainder / millisecondsInMonth;
+    const months = remainder / averageMillisecondsInMonth;
     month = Math.floor(months);
     returnValue = returnValue.replace(monthToken, month);
-    remainder = remainder - month * millisecondsInMonth;
+    remainder = remainder - month * averageMillisecondsInMonth;
   }
   if (lowerFormat.search(weekToken) !== -1) {
-    const weeks = remainder / millisecondsInWeek;
+    const weeks = remainder / averageMillisecondsInWeek;
     week = Math.floor(weeks);
     returnValue = returnValue.replace(weekToken, week);
-    remainder = remainder - week * millisecondsInWeek;
+    remainder = remainder - week * averageMillisecondsInWeek;
   }
   if (lowerFormat.search(dayToken) !== -1) {
     const days = remainder / millisecondsInDay;

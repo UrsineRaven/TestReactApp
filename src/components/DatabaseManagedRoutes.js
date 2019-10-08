@@ -54,8 +54,8 @@ function DatabaseManagedRoutes() {
     'show-hidden-types',
     false
   );
-  const [showTimeSince, setShowTimeSince] = useLocalStorage(
-    'show-time-since',
+  const [timeSinceFormat, setTimeSinceFormat] = useLocalStorage(
+    'time-since-format',
     false
   );
   const [allowOfflineChanges, setAllowOfflineChanges] = useLocalStorage(
@@ -540,7 +540,7 @@ function DatabaseManagedRoutes() {
         <History
           evtTypes={eventTypes}
           rows={events}
-          showTimeSince={showTimeSince}
+          timeSinceFormat={timeSinceFormat}
         />
       )}
       key="history"
@@ -564,8 +564,8 @@ function DatabaseManagedRoutes() {
           onChangePollInterval={newVal => setPollInterval(newVal)}
           showHiddenTypes={showHiddenTypes}
           onChangeShowHiddenTypes={newVal => setShowHiddenTypes(newVal)}
-          showTimeSince={showTimeSince}
-          onChangeShowTimeSince={newVal => setShowTimeSince(newVal)}
+          timeSinceFormat={timeSinceFormat}
+          onChangeTimeSinceFormat={newVal => setTimeSinceFormat(newVal)}
           allowOfflineChanges={allowOfflineChanges}
           onChangeAllowOfflineChanges={newVal => setAllowOfflineChanges(newVal)}
           offlineOnly={offlineOnly}

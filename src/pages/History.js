@@ -38,10 +38,17 @@ function History(props) {
       return evtType && evtStartDate && evtEndDate;
     })
     .sort((row1, row2) => row2.datetime - row1.datetime);
-  if (props.showTimeSince)
+  if (
+    props.timeSinceFormat &&
+    (typeof props.timeSinceFormat === 'boolean' ||
+      props.timeSinceFormat.charAt(0) !== '►')
+  )
     processedRows = processedRows.map(row => {
       return {
-        timeSince: getHumanReadableTimeSinceDatetime(new Date(row.datetime)),
+        timeSince: getHumanReadableTimeSinceDatetime(
+          new Date(row.datetime),
+          typeof props.timeSinceFormat === 'string' ? props.timeSinceFormat : ''
+        ),
         ...row
       };
     });
@@ -159,7 +166,11 @@ function History(props) {
             <th className="small-col">Date</th>
             <th className="small-col">Time</th>
             <th className="big-col">Event</th>
-            {props.showTimeSince && <th className="small-col">Time Since</th>}
+            {props.timeSinceFormat &&
+              (typeof props.timeSinceFormat === 'boolean' ||
+                props.timeSinceFormat.charAt(0) !== '►') && (
+                <th className="small-col">Time Since</th>
+              )}
           </tr>
         </thead>
         <tbody>{tableRows}</tbody>
