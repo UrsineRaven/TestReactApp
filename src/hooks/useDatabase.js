@@ -58,7 +58,6 @@ function useDatabase() {
     let success = true;
     // TODO: uncomment
     try {
-      //
       // const typeResponse = await fetch('/event-types');
       // if (typeResponse.ok) responseTypes = await typeResponse.json();
       // else throw new Error('non-success response');
@@ -75,7 +74,7 @@ function useDatabase() {
   }
 
   /**
-   * Attempt to add or modify an event type in the database.
+   * Determine if the event type is new or modified and take the appropriate action in the database.
    * @param {EventType} eventType - The event type to add/modify.
    * @returns {boolean} True if the transaction succeeds.
    */
@@ -84,35 +83,57 @@ function useDatabase() {
     const index = eventTypes.findIndex(e => e.id === eventType.id);
     let newType = index === -1;
     if (newType) {
-      try {
-        const url = '/event-types';
-        const options = {
-          method: 'POST',
-          body: JSON.stringify(eventType),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        };
-        const typeResponse = await fetch(url, options);
-        if (!typeResponse.ok) succeeds = false;
-      } catch {
-        succeeds = false;
-      }
+      succeeds = tryAddType(eventType);
     } else {
-      try {
-        const url = `/event-types/${eventType.id}`;
-        const options = {
-          method: 'PUT',
-          body: JSON.stringify(eventType),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        };
-        const typeResponse = await fetch(url, options);
-        if (!typeResponse.ok) succeeds = false;
-      } catch {
-        succeeds = false;
-      }
+      succeeds = tryUpdateType(eventType);
+    }
+    return succeeds;
+  }
+
+  /**
+   * Attempt to add an event type to the database.
+   * @param {EventType} eventType - The event type to add.
+   * @returns {boolean} True if the add succeeds.
+   */
+  async function tryAddType(eventType) {
+    let succeeds = true;
+    try {
+      const url = '/event-types';
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(eventType),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+      const typeResponse = await fetch(url, options);
+      if (!typeResponse.ok) succeeds = false;
+    } catch {
+      succeeds = false;
+    }
+    return succeeds;
+  }
+
+  /**
+   * Attempt to update an event type in the database.
+   * @param {EventType} eventType - The modified event type to update.
+   * @returns {boolean} True if the update succeeds.
+   */
+  async function tryUpdateType(eventType) {
+    let succeeds = true;
+    try {
+      const url = `/event-types/${eventType.id}`;
+      const options = {
+        method: 'PUT',
+        body: JSON.stringify(eventType),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+      const typeResponse = await fetch(url, options);
+      if (!typeResponse.ok) succeeds = false;
+    } catch {
+      succeeds = false;
     }
     return succeeds;
   }
@@ -173,6 +194,7 @@ function useDatabase() {
     // eslint-disable-next-line no-unused-vars
     for (let evtType of array) {
       // TODO: maybe update event types in bulk and respond with failures
+      let success = true;
       const origId = evtType.id;
       const index = eventTypes.findIndex(e => e.id === evtType.id);
       const newType = index === -1;
@@ -195,12 +217,12 @@ function useDatabase() {
         }
       }
 
-      if (newType) {
-        // TODO: push event type to database (Put)
-      } else {
-        // TODO: update event type in database (Post)
-      }
-      let success = true; // TODO: actually set success state based off database request response
+      // TODO: uncomment
+      // if (newType) {
+      //   success = tryAddType(evtType);
+      // } else {
+      //   success = tryUpdateType(evtType);
+      // }
       if (success) {
         const idx = eventTypesToModify.findIndex(t => t.id === origId);
         successes.push(eventTypesToModify.splice(idx, 1)[0]);
@@ -220,10 +242,12 @@ function useDatabase() {
     // eslint-disable-next-line no-unused-vars
     for (let evt of array) {
       // TODO: maybe add events in bulk and respond with failures
-      // TODO: Try to push to database
-      // if succeeds:
-      const index = eventsToAdd.indexOf(evt);
-      successes.push(eventsToAdd.splice(index, 1)[0]);
+      //if (tryAddEvent(evt)) {
+      if (true) {
+        // TODO: Delete and uncomment line above
+        const index = eventsToAdd.indexOf(evt);
+        successes.push(eventsToAdd.splice(index, 1)[0]);
+      }
     }
     return successes;
   }
@@ -249,10 +273,12 @@ function useDatabase() {
         continue;
       }
       // TODO: maybe delete events in bulk and respond with failures
-      // TODO: Try to delete from database
-      // if succeeds:
-      const index = eventsToDelete.indexOf(id);
-      successes.push(eventsToDelete.splice(index, 1)[0]);
+      //if (tryDeleteEvent(id)) {
+      if (true) {
+        // TODO: Delete and uncomment line above
+        const index = eventsToDelete.indexOf(id);
+        successes.push(eventsToDelete.splice(index, 1)[0]);
+      }
     }
     return successes;
   }
