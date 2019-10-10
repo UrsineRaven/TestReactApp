@@ -40,6 +40,7 @@ const testDataEntries = [
 ];
 //#endregion
 
+/** Hook that keeps the state of the data from the database and handles interactions with the database */
 function useDatabase() {
   const [eventTypes, setEventTypes] = useState(testDataEventTypes);
   const [events, setEvents] = useState(testDataEntries);
