@@ -64,7 +64,7 @@ function Types(props) {
   return (
     <>
       <PageHeading alerts={alerts}>Event Type Management</PageHeading>
-      <Card border="primary">
+      <Card border="primary" className="mb-3">
         <Card.Body>
           <Form>
             <EventTypeSelector

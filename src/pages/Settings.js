@@ -34,7 +34,7 @@ function Settings(props) {
   return (
     <>
       <PageHeading>Settings</PageHeading>
-      <Card border="primary">
+      <Card border="primary" className="mb-3">
         <Card.Body>
           <Form>
             <Form.Text>
