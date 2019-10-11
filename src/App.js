@@ -7,10 +7,11 @@ import About from './pages/About';
 
 // Router
 function AppRouter() {
+  const basename = '/TestReactApp';
   return (
-    <Router basename="/TestReactApp">
+    <Router basename={basename}>
       <Container>
-        <NavigationBar />
+        <NavigationBar basename={basename} />
 
         <DbRoutes />
         <Route path="/about/" component={About} />

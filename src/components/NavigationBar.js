@@ -4,7 +4,12 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 import { ReactComponent as Logo } from '../resources/logo.svg';
 
-function NavigationBar() {
+/**
+ * The Navigation Bar component for this app. It remains at the top at all times.
+ * @param {Object} props - The props object for NavigationBar
+ * @param {string} props.basename - The base folder of the hosted application. Needed for the Logo link.
+ */
+function NavigationBar(props) {
   const [navCollapsed, setNavCollapsed] = useState(true);
 
   function changeCollapsed(toggle) {
@@ -16,7 +21,7 @@ function NavigationBar() {
 
   return (
     <Navbar expand="lg" bg="primary" variant="dark" expanded={!navCollapsed}>
-      <Navbar.Brand href="/">
+      <Navbar.Brand href={props.basename}>
         {/* TODO: determine if I want to change this to a Link instead (so that it doesn't reload the app) */}
         <Logo className="d-inline-block align-top logo" />
         {' TestApp'}
