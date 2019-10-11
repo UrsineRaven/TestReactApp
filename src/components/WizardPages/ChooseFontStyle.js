@@ -33,7 +33,7 @@ function ChooseFontStyle(props) {
       ''
   );
   const [fontDecoration, setFontDecoration] = useState(
-    (props.formatting.style && props.formatting.style.textDecoration) || ''
+    (props.formatting.style && props.formatting.style.textDecorationLine) || ''
   );
   const [fontWeight, setFontWeight] = useState(
     (props.formatting.style && props.formatting.style.fontWeight) || ''

@@ -24,7 +24,9 @@ function ChooseRowStyle(props) {
   const [backColor, setBackColor] = useState(
     (props.formatting.style && props.formatting.style.backgroundColor) || ''
   );
-  const [textAlign, setTextAlign] = useState(props.formatting.textAlign || '');
+  const [textAlign, setTextAlign] = useState(
+    (props.formatting.style && props.formatting.style.textAlign) || ''
+  );
 
   function handleColorChange(newVal) {
     let formatting = Object.assign({}, props.formatting);
