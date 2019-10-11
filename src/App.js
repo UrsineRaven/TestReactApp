@@ -8,7 +8,7 @@ import About from './pages/About';
 // Router
 function AppRouter() {
   return (
-    <Router>
+    <Router basename="/TestReactApp">
       <Container>
         <NavigationBar />
 
