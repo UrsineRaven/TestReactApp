@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.0d2c0135.chunk.css",
-    "main.js": "/static/js/main.0483c206.chunk.js",
-    "main.js.map": "/static/js/main.0483c206.chunk.js.map",
-    "runtime~main.js": "/static/js/runtime~main.56958c66.js",
-    "runtime~main.js.map": "/static/js/runtime~main.56958c66.js.map",
-    "static/js/2.d5b88c01.chunk.js": "/static/js/2.d5b88c01.chunk.js",
-    "static/js/2.d5b88c01.chunk.js.map": "/static/js/2.d5b88c01.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.ebd6790a1f44a700f5bdbc53d913e38f.js": "/precache-manifest.ebd6790a1f44a700f5bdbc53d913e38f.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.0d2c0135.chunk.css.map": "/static/css/main.0d2c0135.chunk.css.map",
-    "static/media/logo.svg": "/static/media/logo.ee7cd8ed.svg",
-    "static/media/wizard-hat.7796c3e3.svg": "/static/media/wizard-hat.7796c3e3.svg"
+    "main.css": "/TestReactApp/static/css/main.0d2c0135.chunk.css",
+    "main.js": "/TestReactApp/static/js/main.dd498b79.chunk.js",
+    "main.js.map": "/TestReactApp/static/js/main.dd498b79.chunk.js.map",
+    "runtime~main.js": "/TestReactApp/static/js/runtime~main.d3200544.js",
+    "runtime~main.js.map": "/TestReactApp/static/js/runtime~main.d3200544.js.map",
+    "static/js/2.d5b88c01.chunk.js": "/TestReactApp/static/js/2.d5b88c01.chunk.js",
+    "static/js/2.d5b88c01.chunk.js.map": "/TestReactApp/static/js/2.d5b88c01.chunk.js.map",
+    "index.html": "/TestReactApp/index.html",
+    "precache-manifest.6b6b21fb28eee6e686d60c72b555d73c.js": "/TestReactApp/precache-manifest.6b6b21fb28eee6e686d60c72b555d73c.js",
+    "service-worker.js": "/TestReactApp/service-worker.js",
+    "static/css/main.0d2c0135.chunk.css.map": "/TestReactApp/static/css/main.0d2c0135.chunk.css.map",
+    "static/media/logo.svg": "/TestReactApp/static/media/logo.ee7cd8ed.svg",
+    "static/media/wizard-hat.7796c3e3.svg": "/TestReactApp/static/media/wizard-hat.7796c3e3.svg"
   }
 }
