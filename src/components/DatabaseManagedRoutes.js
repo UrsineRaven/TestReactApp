@@ -241,7 +241,7 @@ function DatabaseManagedRoutes() {
     database.setNotConnected(error); // TODO: Show alert
     database.setEventTypes(eventTypeChangeQueue);
     database.setEvents(eventChangeQueue);
-    alert('pretend the data was refreshed :)');
+    console.log('pretend the data was synced to a databse :)');
   }
 
   const [events, eventTypes] = localChanges.apply(
