@@ -65,12 +65,12 @@ exports.addEventType = function(eventType) {
 exports.modifyEventType = async function(eventType) {
 	let repo = torm.getRepository(logEventType),
 	    et = repo.find(eventType.id);
-	if (eventType.show === false)
-		repo.update(eventType.id, { show: false });
+	if (eventType.hidden === true)
+		repo.update(eventType.id, { hidden: true });
     // if name changes, hide old event type, and make new one (so history is preserved)
     // TODO: notify user of this behavior and make the rest of the code work the same way
 	else if (et.name !== eventType.name) {
-		et.show = false;
+		et.hidden = true;
 		await repo.save(et);
 		await this.addEventType(eventType); // TODO: find unique id before saving it...
 	}

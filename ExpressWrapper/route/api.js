@@ -11,7 +11,13 @@ var router = express.Router();
 // Events
 router.get('/events', async function getEvents(req, res) {
     try {
-        res.json(await helper.getEvents());
+        let events = await helper.getEvents();
+        events = events.map((evt) => {
+            evt.event = evt.type;
+            delete evt.type;
+            return evt;
+        });
+        res.json(events);
     } catch (error) {
         res.status(500).send('Failed to retrieve events.');
     }
@@ -19,7 +25,10 @@ router.get('/events', async function getEvents(req, res) {
 router.route('/events/:eventId')
     .get(async function getEvent(req, res) {
         try {
-            res.json(await helper.getEvent(req.params.eventId)[0]);
+            let event = (await helper.getEvent(req.params.eventId))[0];
+            event.event = event.type;
+            delete event.type;
+            res.json(event);
         } catch (error) {
             res.status(404).send(`Couldn't find/retrieve event with id: ${req.params.eventId}`);
         }
@@ -30,7 +39,11 @@ router.route('/events/:eventId')
     })
     .put(async function putEvent(req, res) {
         try {
-            res.json(await helper.addEvent(req.body));
+            let event = req.body;
+            event.type = event.event;
+            delete event.event;
+            await helper.addEvent(event);
+            res.send("success");
         } catch (error) {
             res.status(500).send(`Failed to add event with id: ${req.params.eventId}`);
         }

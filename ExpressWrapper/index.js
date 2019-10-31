@@ -1,7 +1,10 @@
 const express = require('express');
 const api = require('./route/api');
 const path = require('path');
+const config = require('./siteConfig.json');
 const app = express();
+
+// TODO: potentially set a base path here (like in the react portion)
 
 app.use(express.static(path.join(__dirname, 'build')));
 app.set('trust proxy', true);
@@ -18,4 +21,4 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(3031);
+app.listen(config.Site.Port);

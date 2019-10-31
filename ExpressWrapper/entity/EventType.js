@@ -20,9 +20,9 @@ module.exports = new EntitySchema({
     lastModified: {
         type: "int"
     },
-    show: {
+    hidden: {
       type: "boolean",
-      default: "true"
+      default: "false"
     }
   }
 });
