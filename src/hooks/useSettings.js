@@ -29,7 +29,10 @@ function useSettings() {
     'allow-offline-changes',
     false
   );
-  const [offlineOnly, setOfflineOnly] = useLocalStorage('offline-only', false);
+  const [offlineOnly, setOfflineOnly] = useLocalStorage(
+    'offline-only',
+    process.env.REACT_APP_SETTINGS_DEFAULTS_OFFLINEONLY
+  );
 
   return {
     pollInterval: pollInterval,

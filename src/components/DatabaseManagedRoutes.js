@@ -59,8 +59,7 @@ function DatabaseManagedRoutes() {
   //#region Handlers
   async function handleEditType(evtType) {
     let succeeds = true;
-    // TODO: uncomment
-    //succeeds = database.tryModifyType(evtType);
+    succeeds = await database.tryModifyType(evtType);
 
     if (succeeds && !settings.offlineOnly) {
       database.updateEventTypesInRAM([evtType]);
@@ -73,8 +72,7 @@ function DatabaseManagedRoutes() {
   async function handleNewEvent(id, timeStr) {
     let succeeds = true;
     const newEvt = generateNewEvent(id, timeStr);
-    // TODO: uncomment
-    //succeeds = await database.tryCreateEvent(newEvt);
+    succeeds = await database.tryAddEvent(newEvt);
 
     if (succeeds && !settings.offlineOnly) {
       database.addNewEventsToRAM([newEvt]);
@@ -86,8 +84,7 @@ function DatabaseManagedRoutes() {
 
   async function handleDeleteEvent(id) {
     let succeeds = true;
-    // TODO: uncomment
-    //succeeds = await database.tryDeleteEvent(id);
+    succeeds = await database.tryDeleteEvent(id);
 
     if (succeeds && !settings.offlineOnly) {
       database.deleteEventsFromRAM([id]);
@@ -241,7 +238,6 @@ function DatabaseManagedRoutes() {
     database.setNotConnected(error); // TODO: Show alert
     database.setEventTypes(eventTypeChangeQueue);
     database.setEvents(eventChangeQueue);
-    console.log('pretend the data was synced to a databse :)');
   }
 
   const [events, eventTypes] = localChanges.apply(

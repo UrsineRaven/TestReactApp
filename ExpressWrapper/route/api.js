@@ -2,6 +2,8 @@ var express = require('express');
 const helper = require('../helpers');
 var router = express.Router();
 
+// TODO: add logging...
+
 // // middleware that is specific to this router
 // router.use(function timeLog(req, res, next) {
 //   console.log('Time: ', Date.now())
@@ -33,11 +35,7 @@ router.route('/events/:eventId')
             res.status(404).send(`Couldn't find/retrieve event with id: ${req.params.eventId}`);
         }
     })
-    .post(function postEvent(req, res) {
-        // Won't be modifying events, since we can just delete them and recreate them
-        res.status(404).send("API doesn't support modifying events");
-    })
-    .put(async function putEvent(req, res) {
+    .post(async function postEvent(req, res) {
         try {
             let event = req.body;
             event.type = event.event;
@@ -47,6 +45,10 @@ router.route('/events/:eventId')
         } catch (error) {
             res.status(500).send(`Failed to add event with id: ${req.params.eventId}`);
         }
+    })
+    .put(function putEvent(req, res) {
+        // Won't be modifying events, since we can just delete them and recreate them
+        res.status(404).send("API doesn't support modifying events");
     })
     .delete(async function deleteEvent(req, res) {
         try {
@@ -69,19 +71,19 @@ router.route('/event-types/:eventTypeId')
         // Currently no need to get a single event type
         res.status(404).send("API doesn't support retrieving a single event type");
     })
-    .post(function postEventType(req, res) {
+    .post(async function postEventType(req, res) {
+        try {
+            res.json(await helper.addEventType(req.body));
+        } catch (error) {
+            res.status(500).send(`Failed to add event type with id: ${req.params.eventTypeId}`);
+        }
+    })
+    .put(function putEventType(req, res) {
         try {
             helper.modifyEventType(req.body);
             res.send("succeeded"); // TODO: if new event type was created, return the new id
         } catch (error) {
             res.status(404).send(`Couldn't find/update event type with id: ${req.params.eventId}`);
-        }
-    })
-    .put(async function putEventType(req, res) {
-        try {
-            res.json(await helper.addEventType(req.body));
-        } catch (error) {
-            res.status(500).send(`Failed to add event type with id: ${req.params.eventTypeId}`);
         }
     })
     .delete(function deleteEventType(req, res) {

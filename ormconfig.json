@@ -1,0 +1,20 @@
+{
+    "type": "sqlite",
+    "database": "ExpressWrapper/database.sqlite",
+    "synchronize": true,
+    "logging": false,
+    "entities": [
+       "ExpressWrapper/entity/**/*.js"
+    ],
+    "migrations": [
+       "ExpressWrapper/migration/**/*.js"
+    ],
+    "subscribers": [
+       "ExpressWrapper/subscriber/**/*.js"
+    ],
+    "cli": {
+       "entitiesDir": "ExpressWrapper/entity",
+       "migrationsDir": "ExpressWrapper/migration",
+       "subscribersDir": "ExpressWrapper/subscriber"
+    }
+ }

@@ -8,21 +8,24 @@ module.exports = new EntitySchema({
     id: {
       primary: true,
       type: "int",
-      generated: true
+      unique: true
     },
     name: {
       type: "varchar",
       length: 25
     },
     formatting: {
-      type: "text"
+      type: "text",
+      nullable: true
     },
     lastModified: {
-        type: "int"
+        type: "int",
+        nullable: true
     },
     hidden: {
       type: "boolean",
-      default: "false"
+      default: false,
+      nullable: true
     }
   }
 });

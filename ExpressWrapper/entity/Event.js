@@ -8,17 +8,21 @@ module.exports = new EntitySchema({
     id: {
       primary: true,
       type: "int",
-      generated: true
+      unique: true
     },
     datetime: {
       type: "int"
+    },
+    typeId: {
+      type: "int",
+      nullable: true
     }
   },
   relations: {
     type: {
       target: "EventType",
       type: "many-to-one",
-      eager: true
+      nullable: false
     }
   }
 });
