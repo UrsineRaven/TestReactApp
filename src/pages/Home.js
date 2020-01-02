@@ -61,8 +61,9 @@ function Home(props) {
       evtName = row.evtName;
       evtFormat = row.evtFormat;
     } else {
-      evtName = eventTypes[row.typeId || row.event].name;
-      evtFormat = eventTypes[row.typeId || row.event].formatting;
+      let id = row.typeId || row.event;
+      evtName = eventTypes[id].name;
+      evtFormat = eventTypes[id].formatting;
     }
     evtTime = row.datetime
       ? getLocalIsoDateAndTime(new Date(row.datetime))[1]

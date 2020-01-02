@@ -21,6 +21,7 @@ router.get('/events', async function getEvents(req, res) {
         });
         res.json(events);
     } catch (error) {
+        console.dir(error);
         res.status(500).send('Failed to retrieve events.');
     }
 });
@@ -32,6 +33,7 @@ router.route('/events/:eventId')
             delete event.type;
             res.json(event);
         } catch (error) {
+            console.dir(error);
             res.status(404).send(`Couldn't find/retrieve event with id: ${req.params.eventId}`);
         }
     })
@@ -43,6 +45,7 @@ router.route('/events/:eventId')
             await helper.addEvent(event);
             res.send("success");
         } catch (error) {
+            console.dir(error);
             res.status(500).send(`Failed to add event with id: ${req.params.eventId}`);
         }
     })
@@ -54,6 +57,7 @@ router.route('/events/:eventId')
         try {
             res.json(await helper.deleteEvent(req.params.eventId)[0]);
         } catch (error) {
+            console.dir(error);
             res.status(404).send(`Couldn't find/delete event with id: ${req.params.eventId}`);
         }
     });
@@ -63,6 +67,7 @@ router.get('/event-types', async function getEventTypes(req, res) {
     try {
         res.json(await helper.getEventTypes());
     } catch (error) {
+        console.dir(error);
         res.status(500).send('Failed to retrieve event types.');
     }
 });
@@ -75,6 +80,7 @@ router.route('/event-types/:eventTypeId')
         try {
             res.json(await helper.addEventType(req.body));
         } catch (error) {
+            console.dir(error);
             res.status(500).send(`Failed to add event type with id: ${req.params.eventTypeId}`);
         }
     })
@@ -83,6 +89,7 @@ router.route('/event-types/:eventTypeId')
             helper.modifyEventType(req.body);
             res.send("succeeded"); // TODO: if new event type was created, return the new id
         } catch (error) {
+            console.dir(error);
             res.status(404).send(`Couldn't find/update event type with id: ${req.params.eventId}`);
         }
     })
