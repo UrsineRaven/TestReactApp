@@ -140,9 +140,9 @@ function History(props) {
           noBtn
           date={date}
           time={time}
-          event={eventTypes[row.typeId || row.event].name}
+          event={eventTypes[row.event].name}
           timeSince={row.timeSince}
-          formatting={eventTypes[row.typeId || row.event].formatting}
+          formatting={eventTypes[row.event].formatting}
           key={row.id}
         />
       );
