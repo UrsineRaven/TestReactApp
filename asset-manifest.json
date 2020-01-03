@@ -1,17 +1,24 @@
 {
   "files": {
-    "main.css": "/TestReactApp/static/css/main.0d2c0135.chunk.css",
-    "main.js": "/TestReactApp/static/js/main.ac3a4794.chunk.js",
-    "main.js.map": "/TestReactApp/static/js/main.ac3a4794.chunk.js.map",
-    "runtime~main.js": "/TestReactApp/static/js/runtime~main.d3200544.js",
-    "runtime~main.js.map": "/TestReactApp/static/js/runtime~main.d3200544.js.map",
-    "static/js/2.d5b88c01.chunk.js": "/TestReactApp/static/js/2.d5b88c01.chunk.js",
-    "static/js/2.d5b88c01.chunk.js.map": "/TestReactApp/static/js/2.d5b88c01.chunk.js.map",
+    "main.css": "/TestReactApp/static/css/main.c01626a2.chunk.css",
+    "main.js": "/TestReactApp/static/js/main.7bd544c1.chunk.js",
+    "main.js.map": "/TestReactApp/static/js/main.7bd544c1.chunk.js.map",
+    "runtime-main.js": "/TestReactApp/static/js/runtime-main.181db692.js",
+    "runtime-main.js.map": "/TestReactApp/static/js/runtime-main.181db692.js.map",
+    "static/js/2.8001172f.chunk.js": "/TestReactApp/static/js/2.8001172f.chunk.js",
+    "static/js/2.8001172f.chunk.js.map": "/TestReactApp/static/js/2.8001172f.chunk.js.map",
     "index.html": "/TestReactApp/index.html",
-    "precache-manifest.81d0a3bb82ac636633f734d394dd7664.js": "/TestReactApp/precache-manifest.81d0a3bb82ac636633f734d394dd7664.js",
+    "precache-manifest.820b5559a67b5b216f94f1ca6768189a.js": "/TestReactApp/precache-manifest.820b5559a67b5b216f94f1ca6768189a.js",
     "service-worker.js": "/TestReactApp/service-worker.js",
-    "static/css/main.0d2c0135.chunk.css.map": "/TestReactApp/static/css/main.0d2c0135.chunk.css.map",
-    "static/media/logo.svg": "/TestReactApp/static/media/logo.ee7cd8ed.svg",
-    "static/media/wizard-hat.7796c3e3.svg": "/TestReactApp/static/media/wizard-hat.7796c3e3.svg"
-  }
+    "static/css/main.c01626a2.chunk.css.map": "/TestReactApp/static/css/main.c01626a2.chunk.css.map",
+    "static/js/2.8001172f.chunk.js.LICENSE": "/TestReactApp/static/js/2.8001172f.chunk.js.LICENSE",
+    "static/media/logo.svg": "/TestReactApp/static/media/logo.5d5d9eef.svg",
+    "static/media/wizard-hat.c554ba05.svg": "/TestReactApp/static/media/wizard-hat.c554ba05.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.181db692.js",
+    "static/js/2.8001172f.chunk.js",
+    "static/css/main.c01626a2.chunk.css",
+    "static/js/main.7bd544c1.chunk.js"
+  ]
 }
