@@ -32,4 +32,4 @@ app.get('/*', function(req, res) {
   });
 });
 
-app.listen(config.Site.Port);
+app.listen(config.Site.Port, () => {console.log(`Listening on port ${config.Site.Port}!`)});
