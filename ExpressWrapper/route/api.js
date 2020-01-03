@@ -28,7 +28,7 @@ router.get('/events', async function getEvents(req, res) {
 router.route('/events/:eventId')
     .get(async function getEvent(req, res) {
         try {
-            let event = (await helper.getEvent(req.params.eventId))[0];
+            let event = (await helper.getEvent(req.params.eventId));
             event.event = event.type;
             delete event.type;
             res.json(event);
@@ -55,7 +55,7 @@ router.route('/events/:eventId')
     })
     .delete(async function deleteEvent(req, res) {
         try {
-            res.json(await helper.deleteEvent(req.params.eventId)[0]);
+            res.json(await helper.deleteEvent(req.params.eventId));
         } catch (error) {
             console.dir(error);
             res.status(404).send(`Couldn't find/delete event with id: ${req.params.eventId}`);

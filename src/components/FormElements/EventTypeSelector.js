@@ -26,7 +26,7 @@ function EventTypeSelector(props) {
   });
 
   function handleChange(evt) {
-    let type = props.evtTypes.find(t => t.id === evt.target.value);
+    let type = props.evtTypes.find(t => t.id == evt.target.value); // eslint-disable-line eqeqeq
     props.onChange(type || {});
   }
 

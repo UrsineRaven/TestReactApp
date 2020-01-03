@@ -1,6 +1,6 @@
 {
     "prettier.singleQuote": true,
     "files.watcherExclude": {
-        "**/build/**": true
+        "**/build/*/**": true
     }
 }

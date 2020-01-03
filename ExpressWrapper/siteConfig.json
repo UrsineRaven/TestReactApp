@@ -6,5 +6,8 @@
         "Url":"TODO",
         "Port":3031,
         "Use_Https":false
+    },
+    "Database": {
+        "File":"./database.sqlite"
     }
 }
