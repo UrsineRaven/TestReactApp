@@ -69,9 +69,9 @@ function DatabaseManagedRoutes() {
     }
   }
 
-  async function handleNewEvent(id, timeStr) {
+  async function handleNewEvent(id, timeStr, dateStr) {
     let succeeds = true;
-    const newEvt = generateNewEvent(id, timeStr);
+    const newEvt = generateNewEvent(id, timeStr, dateStr);
     succeeds = await database.tryAddEvent(newEvt);
 
     if (succeeds && !settings.offlineOnly) {
@@ -107,6 +107,7 @@ function DatabaseManagedRoutes() {
   function generateNewEvent(
     id,
     timeStr = null,
+    dateStr = null,
     dateTime,
     otherReservedEventIds = []
   ) {
@@ -127,12 +128,10 @@ function DatabaseManagedRoutes() {
 
     const newId = String(Number(max) + 1);
     if (!dateTime) {
-      const [date, time] = getLocalIsoDateAndTime(new Date());
-      if (timeStr) {
-        dateTime = new Date(date + 'T' + timeStr).getTime();
-      } else {
-        dateTime = new Date(date + 'T' + time).getTime();
-      }
+      const [dateNow, timeNow] = getLocalIsoDateAndTime(new Date());
+      const time = timeStr || timeNow;
+      const date = dateStr || dateNow;
+      dateTime = new Date(date + 'T' + time).getTime();
     }
 
     return {
@@ -190,6 +189,7 @@ function DatabaseManagedRoutes() {
         newEventsToPush.push(
           generateNewEvent(
             evt.event,
+            null,
             null,
             evt.datetime,
             newEventsToPush.map(e => e.id)
@@ -268,6 +268,7 @@ function DatabaseManagedRoutes() {
         <History
           evtTypes={eventTypes}
           rows={events}
+          onNewEvent={handleNewEvent}
           timeSinceFormat={settings.timeSinceFormat}
         />
       )}

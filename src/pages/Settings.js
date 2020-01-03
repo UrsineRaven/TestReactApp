@@ -63,7 +63,7 @@ function Settings(props) {
               <Form.Label>Show Deleted Types</Form.Label>
               <Form.Check
                 className="text-muted"
-                type="checkbox"
+                type="switch"
                 label="Show deleted event types on the type management page"
                 checked={props.showHiddenTypes}
                 onChange={evt =>
@@ -79,7 +79,7 @@ function Settings(props) {
               <Form.Label>Show Time Since</Form.Label>
               <Form.Check
                 className="text-muted"
-                type="checkbox"
+                type="switch"
                 label="Show time since an event occurred on the history page"
                 checked={showTimeSince}
                 onChange={evt => handleTimeSinceCheck(evt.target.checked)}
@@ -127,7 +127,7 @@ function Settings(props) {
               <Form.Label>Allow Offline Changes</Form.Label>
               <Form.Check
                 className="text-muted"
-                type="checkbox"
+                type="switch"
                 label="Enable adding events and managing event types when unable to access server"
                 checked={props.allowOfflineChanges}
                 onChange={evt =>
@@ -148,7 +148,7 @@ function Settings(props) {
               <Form.Label>Offline Only</Form.Label>
               <Form.Check
                 className="text-muted"
-                type="checkbox"
+                type="switch"
                 label="Never try to interact with server"
                 checked={props.offlineOnly}
                 onChange={evt => props.onChangeOfflineOnly(evt.target.checked)}
