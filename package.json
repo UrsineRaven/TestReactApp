@@ -4,13 +4,15 @@
   "homepage": "https://ursineraven.github.io/TestReactApp/",
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.3.1",
-    "node-sass": "^4.12.0",
-    "react": "^16.9.0",
-    "react-bootstrap": "^1.0.0-beta.12",
-    "react-dom": "^16.9.0",
-    "react-router-dom": "^5.0.1",
-    "react-scripts": "3.1.1"
+    "bootstrap": "^4.4.1",
+    "express": "^4.17.1",
+    "node-sass": "^4.13.0",
+    "react": "^16.12.0",
+    "react-bootstrap": "^1.0.0-beta.16",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.3.0",
+    "sqlite3": "^4.1.1"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,tx,tsx}": [
@@ -51,11 +53,11 @@
     }
   },
   "devDependencies": {
-    "eslint-plugin-react-hooks": "^2.0.1",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "gh-pages": "^2.1.1",
-    "husky": "^3.0.5",
-    "lint-staged": "^9.2.5",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
     "organize-imports-cli": "^0.4.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.19.1"
   }
 }

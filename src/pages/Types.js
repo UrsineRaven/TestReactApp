@@ -9,6 +9,7 @@ import RowFormattingWizard from '../components/RowFormattingWizard';
 
 function Types(props) {
   const [id, setId] = useState('');
+  const [oldId, setOldId] = useState('');
   const [name, setName] = useState('');
   const [formatting, setFormatting] = useState('');
   const [deleteType, setDeleteType] = useState(false);
@@ -16,17 +17,23 @@ function Types(props) {
   const [alertText, setAlertText] = useState('');
 
   useEffect(() => {
-    if (!id) setId(String(Math.max(...props.evtTypes.map(t => t.id), 0) + 1));
+    if (!id) {
+      let newId = String(Math.max(...props.evtTypes.map(t => t.id), 0) + 1);
+      // This is necessary, because with the database delay, it sometimes generates
+      // the new ID before the new event type is in the event types list
+      if (newId === oldId) newId += 1;
+      setId(newId);
+    }
   }, [id, props.evtTypes]);
 
   function handleTypeChange(type) {
     if (!type.id) setNewType(true);
     else setNewType(false);
 
-    setId(type.id || '');
     setName(type.name || '');
     setFormatting(type.formatting || '');
     setDeleteType(type.hidden || false);
+    setId(type.id || '');
   }
 
   function handleSubmit() {
@@ -45,11 +52,12 @@ function Types(props) {
         {' event type!'}
       </>
     );
-    setId('');
     setName('');
     setFormatting('');
     setDeleteType(false);
     setNewType(true);
+    setOldId(id);
+    setId('');
   }
 
   const alerts = [
@@ -70,7 +78,7 @@ function Types(props) {
             <EventTypeSelector
               evtTypes={props.evtTypes}
               value={id}
-              onChange={newType => handleTypeChange(newType)}
+              onChange={newEvtType => handleTypeChange(newEvtType)}
               description="Choose an event type if you want to modify an existing event."
               nofilter={props.showHidden}
             />
@@ -143,7 +151,7 @@ function CheckDelete(props) {
         <Form.Label className="text-danger">Remove Event Type</Form.Label>
         <Form.Check
           type="checkbox"
-          label="Delete this event type!"
+          label="Hide this event type!"
           checked={props.value}
           onChange={evt => props.onChange(evt.target.checked)}
         />

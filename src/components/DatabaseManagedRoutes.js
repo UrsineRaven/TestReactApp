@@ -59,8 +59,7 @@ function DatabaseManagedRoutes() {
   //#region Handlers
   async function handleEditType(evtType) {
     let succeeds = true;
-    // TODO: uncomment
-    //succeeds = database.tryModifyType(evtType);
+    succeeds = await database.tryModifyType(evtType);
 
     if (succeeds && !settings.offlineOnly) {
       database.updateEventTypesInRAM([evtType]);
@@ -70,11 +69,10 @@ function DatabaseManagedRoutes() {
     }
   }
 
-  async function handleNewEvent(id, timeStr) {
+  async function handleNewEvent(id, timeStr, dateStr) {
     let succeeds = true;
-    const newEvt = generateNewEvent(id, timeStr);
-    // TODO: uncomment
-    //succeeds = await database.tryCreateEvent(newEvt);
+    const newEvt = generateNewEvent(id, timeStr, dateStr);
+    succeeds = await database.tryAddEvent(newEvt);
 
     if (succeeds && !settings.offlineOnly) {
       database.addNewEventsToRAM([newEvt]);
@@ -86,8 +84,7 @@ function DatabaseManagedRoutes() {
 
   async function handleDeleteEvent(id) {
     let succeeds = true;
-    // TODO: uncomment
-    //succeeds = await database.tryDeleteEvent(id);
+    succeeds = await database.tryDeleteEvent(id);
 
     if (succeeds && !settings.offlineOnly) {
       database.deleteEventsFromRAM([id]);
@@ -110,6 +107,7 @@ function DatabaseManagedRoutes() {
   function generateNewEvent(
     id,
     timeStr = null,
+    dateStr = null,
     dateTime,
     otherReservedEventIds = []
   ) {
@@ -130,12 +128,10 @@ function DatabaseManagedRoutes() {
 
     const newId = String(Number(max) + 1);
     if (!dateTime) {
-      const [date, time] = getLocalIsoDateAndTime(new Date());
-      if (timeStr) {
-        dateTime = new Date(date + 'T' + timeStr).getTime();
-      } else {
-        dateTime = new Date(date + 'T' + time).getTime();
-      }
+      const [dateNow, timeNow] = getLocalIsoDateAndTime(new Date());
+      const time = timeStr || timeNow;
+      const date = dateStr || dateNow;
+      dateTime = new Date(date + 'T' + time).getTime();
     }
 
     return {
@@ -194,6 +190,7 @@ function DatabaseManagedRoutes() {
           generateNewEvent(
             evt.event,
             null,
+            null,
             evt.datetime,
             newEventsToPush.map(e => e.id)
           )
@@ -241,7 +238,6 @@ function DatabaseManagedRoutes() {
     database.setNotConnected(error); // TODO: Show alert
     database.setEventTypes(eventTypeChangeQueue);
     database.setEvents(eventChangeQueue);
-    console.log('pretend the data was synced to a databse :)');
   }
 
   const [events, eventTypes] = localChanges.apply(
@@ -272,6 +268,7 @@ function DatabaseManagedRoutes() {
         <History
           evtTypes={eventTypes}
           rows={events}
+          onNewEvent={handleNewEvent}
           timeSinceFormat={settings.timeSinceFormat}
         />
       )}

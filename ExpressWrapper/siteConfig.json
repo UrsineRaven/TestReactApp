@@ -1,0 +1,13 @@
+{
+    "Site": {
+        "Name":"TestLogger",
+        "Description":"View and log events during the day.",
+        "Author":"TODO",
+        "Url":"TODO",
+        "Port":3031,
+        "Use_Https":false
+    },
+    "Database": {
+        "File":"./database.sqlite"
+    }
+}

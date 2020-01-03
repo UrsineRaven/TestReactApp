@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import '../helpers/JSDocTypeDefs';
+const basepath = process.env.REACT_APP_BASE_PATH;
 
 //#region Test Data        TODO: Remove
 const testDataEventTypes = [
@@ -40,10 +42,12 @@ const testDataEntries = [
 ];
 //#endregion
 
+// TODO: log response when request fails
+
 /** Hook that keeps the state of the data from the database and handles interactions with the database */
 function useDatabase() {
-  const [eventTypes, setEventTypes] = useState(testDataEventTypes);
-  const [events, setEvents] = useState(testDataEntries);
+  const [eventTypes, setEventTypes] = useState([]);
+  const [events, setEvents] = useState([]);
   const [lastSync, setLastSync] = useState();
   const [notConnected, setNotConnected] = useState(false);
 
@@ -54,21 +58,22 @@ function useDatabase() {
    * @returns {[boolean, Array<EventType>, Array<EventObj>]} Array containing whether it succeeds (index 0), the list of event types (index 1), and the list of events (index 2)
    */
   async function tryPullChanges(eventTypeChangeQueue, eventChangeQueue) {
+    setLastSync(true);
     let responseTypes = eventTypeChangeQueue; // TODO: find a better way to handle this
     let responseEvts = eventChangeQueue;
     let success = true;
-    // TODO: uncomment
     try {
-      // const typeResponse = await fetch('/event-types');
-      // if (typeResponse.ok) responseTypes = await typeResponse.json();
-      // else throw new Error('non-success response');
-      // const evtResponse = await fetch('/events');
-      // if (evtResponse.ok) responseEvts = await evtResponse.json();
-      // else throw new Error('non-success response');
-      // eventTypeChangeQueue = responseTypes;
-      // eventChangeQueue = responseEvts;
+      const typeResponse = await fetch(`${basepath}/api/event-types`);
+      if (typeResponse.ok) responseTypes = await typeResponse.json();
+      else throw new Error('non-success response');
+      const evtResponse = await fetch(`${basepath}/api/events`);
+      if (evtResponse.ok) responseEvts = await evtResponse.json();
+      else throw new Error('non-success response');
+      eventTypeChangeQueue = responseTypes;
+      eventChangeQueue = responseEvts;
       setLastSync(new Date().getTime());
     } catch {
+      console.error('Failed to pull changes from the database!');
       success = false;
     }
     return [success, responseTypes, responseEvts];
@@ -99,7 +104,7 @@ function useDatabase() {
   async function tryAddType(eventType) {
     let succeeds = true;
     try {
-      const url = '/event-types';
+      const url = `${basepath}/api/event-types/${eventType.id}`;
       const options = {
         method: 'POST',
         body: JSON.stringify(eventType),
@@ -123,7 +128,7 @@ function useDatabase() {
   async function tryUpdateType(eventType) {
     let succeeds = true;
     try {
-      const url = `/event-types/${eventType.id}`;
+      const url = `${basepath}/api/event-types/${eventType.id}`;
       const options = {
         method: 'PUT',
         body: JSON.stringify(eventType),
@@ -147,7 +152,7 @@ function useDatabase() {
   async function tryAddEvent(newEvent) {
     let succeeds = true;
     try {
-      const url = '/events';
+      const url = `${basepath}/api/events/${newEvent.id}`;
       const options = {
         method: 'POST',
         body: JSON.stringify(newEvent),
@@ -171,7 +176,7 @@ function useDatabase() {
   async function tryDeleteEvent(eventId) {
     let succeeds = true;
     try {
-      const url = `/events/${eventId}`;
+      const url = `${basepath}/api/events/${eventId}`;
       const options = {
         method: 'DELETE'
       };
@@ -218,12 +223,11 @@ function useDatabase() {
         }
       }
 
-      // TODO: uncomment
-      // if (newType) {
-      //   success = tryAddType(evtType);
-      // } else {
-      //   success = tryUpdateType(evtType);
-      // }
+      if (newType) {
+        success = tryAddType(evtType);
+      } else {
+        success = tryUpdateType(evtType);
+      }
       if (success) {
         const idx = eventTypesToModify.findIndex(t => t.id === origId);
         successes.push(eventTypesToModify.splice(idx, 1)[0]);
@@ -243,9 +247,7 @@ function useDatabase() {
     // eslint-disable-next-line no-unused-vars
     for (let evt of array) {
       // TODO: maybe add events in bulk and respond with failures
-      //if (tryAddEvent(evt)) {
-      if (true) {
-        // TODO: Delete and uncomment line above
+      if (tryAddEvent(evt)) {
         const index = eventsToAdd.indexOf(evt);
         successes.push(eventsToAdd.splice(index, 1)[0]);
       }
@@ -274,9 +276,7 @@ function useDatabase() {
         continue;
       }
       // TODO: maybe delete events in bulk and respond with failures
-      //if (tryDeleteEvent(id)) {
-      if (true) {
-        // TODO: Delete and uncomment line above
+      if (tryDeleteEvent(id)) {
         const index = eventsToDelete.indexOf(id);
         successes.push(eventsToDelete.splice(index, 1)[0]);
       }

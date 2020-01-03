@@ -7,7 +7,7 @@ import About from './pages/About';
 
 // Router
 function AppRouter() {
-  const basename = '/TestReactApp';
+  const basename = process.env.REACT_APP_BASE_PATH;
   return (
     <Router basename={basename}>
       <Container>

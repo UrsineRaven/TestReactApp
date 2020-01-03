@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import EventTypeSelector from '../components/FormElements/EventTypeSelector';
 import InlineFormGroup from '../components/FormElements/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
 import TableRow from '../components/TableRow';
 import { getHumanReadableTimeSinceDatetime, getLocalIsoDateAndTime, getLocalIsoString, getStartAndEndDatetimes, getWeekNumber, getWeekStartAndEnd } from '../helpers/TimeHelpers';
+import '../styles/Modal.css';
 import '../styles/Table.css';
 
 function History(props) {
@@ -16,6 +19,7 @@ function History(props) {
     getLocalIsoString(new Date()).split('T')[0]
   );
   const [groupBy, setGroupBy] = useState('');
+  const [showNewEventModal, setShowNewEventModal] = useState(false);
 
   const eventTypes = {};
   props.evtTypes.forEach(type => {
@@ -148,7 +152,23 @@ function History(props) {
 
   return (
     <>
-      <PageHeading>Event History</PageHeading>
+      <PageHeading>
+        Event History
+        <Button
+          variant="secondary"
+          style={{ float: 'right' }}
+          onClick={() => setShowNewEventModal(true)}
+          title="Add Historical Event"
+        >
+          Add Event
+        </Button>
+      </PageHeading>
+      <NewEventModal
+        show={showNewEventModal}
+        setShow={setShowNewEventModal}
+        onSave={props.onNewEvent}
+        eventTypes={props.evtTypes}
+      />
       <FilterCard
         eventTypes={props.evtTypes}
         typeValue={type}
@@ -233,6 +253,74 @@ function FilterCard(props) {
         </Form>
       </Card.Body>
     </Card>
+  );
+}
+
+// props: show, setShow, eventTypes, onSave
+function NewEventModal(props) {
+  const [type, setType] = useState();
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
+
+  function handleDismiss(evt) {
+    setType();
+    setDate();
+    setTime();
+    props.setShow(false);
+  }
+
+  function handleSave(evt) {
+    props.onSave(type, time, date);
+    handleDismiss();
+  }
+
+  return (
+    <Modal show={props.show} onHide={handleDismiss} dialogClassName="modal-w">
+      <Modal.Header closeButton>
+        <Modal.Title>Add Historical Event</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <EventTypeSelector
+            evtTypes={props.eventTypes}
+            value={type}
+            onChange={newType => setType(newType.id)}
+            defaultLabel="Pick Event Type"
+            inline
+          />
+          <InlineFormGroup controlId="inputDate" label="Date">
+            <Form.Control
+              type="date"
+              value={date}
+              onChange={newDate => setDate(newDate.target.value)}
+            />
+          </InlineFormGroup>
+          <InlineFormGroup controlId="inputTime" label="Time:">
+            <Form.Control
+              type="time"
+              value={time}
+              onChange={newTime => setTime(newTime.target.value)}
+            />
+          </InlineFormGroup>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer className="row justify-content-around">
+        <Button
+          variant="secondary"
+          className="col-md-3 col-5"
+          onClick={handleDismiss}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          className="col-md-3 col-5"
+          onClick={handleSave}
+        >
+          Save
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 
