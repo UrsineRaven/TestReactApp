@@ -31,7 +31,8 @@ function useSettings() {
   );
   const [offlineOnly, setOfflineOnly] = useLocalStorage(
     'offline-only',
-    process.env.REACT_APP_SETTINGS_DEFAULTS_OFFLINEONLY
+    process.env.REACT_APP_SETTINGS_DEFAULTS_OFFLINEONLY.toLocaleLowerCase() ===
+      'true'
   );
 
   return {
