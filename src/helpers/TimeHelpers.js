@@ -62,7 +62,11 @@ export const getLocalTimezoneOffset = function(date) {
  * @returns {Array<number>} Array containing the datetimes (in milliseconds) of the beginning of today (index 0) and end of today (index 1) for the local timezone.
  */
 export const getTodaysStartAndEndDatetimes = function() {
-  const todaysDate = new Date(getLocalIsoString(new Date()).split('T')[0]); // Get beginning of today UTC
+  const todaysDate = new Date(
+    getLocalIsoString(new Date())
+      .split('T')[0]
+      .replace(/-/g, '/')
+  ); // Get beginning of today UTC
   const timezoneOffset = getLocalTimezoneOffset(todaysDate);
   const dayStart = todaysDate.getTime() + timezoneOffset;
   const dayEnd = dayStart + (millisecondsInDay - 1);
@@ -78,10 +82,12 @@ export const getTodaysStartAndEndDatetimes = function() {
 export const getStartAndEndDatetimes = function(startDate, endDate) {
   const timezoneOffset = getLocalTimezoneOffset(new Date());
   const startDatetime = startDate
-    ? new Date(startDate).getTime() + timezoneOffset
+    ? new Date(startDate.replace(/-/g, '/')).getTime() + timezoneOffset
     : null;
   const endDatetime = endDate
-    ? new Date(endDate).getTime() + timezoneOffset + (millisecondsInDay - 1)
+    ? new Date(endDate.replace(/-/g, '/')).getTime() +
+      timezoneOffset +
+      (millisecondsInDay - 1)
     : null;
   return [startDatetime, endDatetime];
 };
@@ -133,7 +139,7 @@ export const getIsoWeekNumber = function(d) {
  * @returns {Array<number>} Array with the week's year (index 0) and week number (index 1) of the provided date
  */
 export const getWeekNumber = function(dateString) {
-  let d = new Date(dateString);
+  let d = new Date(dateString.replace(/-/g, '/'));
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() + 1)); // +4 since we're targeting Wednesday, and +1 to make days 1-indexed
   const year = d.getUTCFullYear();
   const yearStart = new Date(Date.UTC(year, 0, 1));
@@ -147,7 +153,7 @@ export const getWeekNumber = function(dateString) {
  * @returns {Array<Date>} Array containing the date for the beginning of the week (index 0) and the end of the week (index 1)
  */
 export const getWeekStartAndEnd = function(dateString) {
-  let start = new Date(dateString);
+  let start = new Date(dateString.replace(/-/g, '/'));
   start.setUTCDate(start.getUTCDate() - start.getUTCDay());
   start = new Date(start.getTime() + getLocalTimezoneOffset(start));
   let end = new Date(start.getTime());
