@@ -131,7 +131,7 @@ function DatabaseManagedRoutes() {
       const [dateNow, timeNow] = getLocalIsoDateAndTime(new Date());
       const time = timeStr || timeNow;
       const date = dateStr || dateNow;
-      dateTime = new Date(date + 'T' + time).getTime();
+      dateTime = Date.parse(date.replace(/-/g, '/') + ' ' + time);
     }
 
     return {
