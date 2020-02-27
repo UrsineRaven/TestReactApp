@@ -24,7 +24,7 @@ function Types(props) {
       if (newId === oldId) newId += 1;
       setId(newId);
     }
-  }, [id, props.evtTypes]);
+  }, [id, oldId, props.evtTypes]);
 
   function handleTypeChange(type) {
     if (!type.id) setNewType(true);

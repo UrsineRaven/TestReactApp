@@ -24,7 +24,7 @@ function DatabaseManagedRoutes() {
 
   // Fetch data for initial load
   useEffect(() => {
-    if (!database.lastSync) {
+    if (!database.lastSync && !settings.offlineOnly) {
       syncData();
     }
   });

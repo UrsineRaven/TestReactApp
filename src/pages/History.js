@@ -3,7 +3,9 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Table from 'react-bootstrap/Table';
+import Tooltip from 'react-bootstrap/Tooltip';
 import EventTypeSelector from '../components/FormElements/EventTypeSelector';
 import InlineFormGroup from '../components/FormElements/InlineFormGroup';
 import PageHeading from '../components/PageHeading';
@@ -72,10 +74,13 @@ function History(props) {
     'October',
     'November',
     'December'
-  ]; // TODO: use internationalization API once it's more supported (https://stackoverflow.com/a/18648314) (https://caniuse.com/#search=intl)
-  processedRows.forEach((row, index) => {
+  ]; // TODO: use internationalization API (https://stackoverflow.com/a/18648314)
+  let j = processedRows.length;
+  for (let i = 0; i < j; i++) {
     if (groupBy) {
       let date, day;
+      const row = processedRows[i];
+      const index = i;
       switch (groupBy) {
         case 'day':
           date = new Date(row.datetime);
@@ -85,6 +90,8 @@ function History(props) {
             processedRows.splice(index, 0, {
               group: date.toDateString()
             });
+            i++;
+            j++;
           }
           break;
         case 'week':
@@ -98,6 +105,8 @@ function History(props) {
             processedRows.splice(index, 0, {
               group: `Week of: ${begin.toDateString()} - ${end.toDateString()}`
             });
+            i++;
+            j++;
           }
           break;
         case 'month':
@@ -109,6 +118,8 @@ function History(props) {
             processedRows.splice(index, 0, {
               group: monthNames[date.getMonth()] + ' ' + day.split('-')[0]
             });
+            i++;
+            j++;
           }
           break;
         case 'year':
@@ -120,19 +131,21 @@ function History(props) {
             processedRows.splice(index, 0, {
               group: year
             });
+            i++;
+            j++;
           }
           break;
         default:
           break;
       }
     }
-  });
+  }
 
   // convert rows to JSX
   const tableRows = processedRows.map(row => {
     let tableRow;
     if (row.group) {
-      tableRow = <GroupRow groupName={row.group} />;
+      tableRow = <GroupRow groupName={row.group} key={row.group} />;
     } else {
       const [date, time] = getLocalIsoDateAndTime(new Date(row.datetime));
       tableRow = (
@@ -274,6 +287,25 @@ function NewEventModal(props) {
     handleDismiss();
   }
 
+  function validate() {
+    let message = '';
+    //(!type && type !== 0) || !date || !time
+    if (!type && type !== 0) {
+      message += 'Please select an event type';
+    }
+    if (!date) {
+      if (message.length > 0) message += ' and ';
+      else message += 'Please select ';
+      message += 'a date';
+    }
+    if (!time) {
+      if (message.length > 0) message += ' and ';
+      else message += 'Please select ';
+      message += 'a time';
+    }
+    return message;
+  }
+
   return (
     <Modal show={props.show} onHide={handleDismiss} dialogClassName="modal-w">
       <Modal.Header closeButton>
@@ -312,13 +344,27 @@ function NewEventModal(props) {
         >
           Cancel
         </Button>
-        <Button
-          variant="primary"
-          className="col-md-3 col-5"
-          onClick={handleSave}
+        <OverlayTrigger
+          overlay={
+            <Tooltip hidden={!Boolean(validate())}>{validate()}</Tooltip>
+          }
         >
-          Save
-        </Button>
+          <span>
+            <Button
+              variant="primary"
+              className="col-md-3 col-5"
+              onClick={handleSave}
+              disabled={Boolean(validate())}
+              // This and the span are necessary for the ToolTip
+              style={{
+                minWidth: 'fit-content',
+                ...(Boolean(validate()) && { pointerEvents: 'none' })
+              }}
+            >
+              Save
+            </Button>
+          </span>
+        </OverlayTrigger>
       </Modal.Footer>
     </Modal>
   );
